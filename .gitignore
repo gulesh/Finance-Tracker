@@ -1,0 +1,29 @@
+### IntelliJ IDEA ###
+.idea/
+.vscode/
+*.iml
+*.ipr
+*.iws
+
+### build artifacts and compiled output ###
+target/
+build/
+dist/
+*.class
+
+### dependencies directory ###
+node_modules/
+vendor/
+
+
+### Log files and temporary files ###
+*.log
+*.tmp
+
+### Configuration files with sensitive information ###
+config.ini
+.env
+
+### Operating system-specific files ###
+.DS_Store
+Thumbs.db
