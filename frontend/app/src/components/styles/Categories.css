@@ -1,0 +1,57 @@
+/* Container styles */
+.split-categoriespage {
+    display: flex;
+    /* Use flexbox for layout */
+    height: 100vh;
+    /* Set the container height to 100% of the viewport height */
+}
+
+/* Left side styles (2/3 of the screen) */
+.left-side {
+    flex: 2;
+    /* Take up 2/3 of the available horizontal space */
+    background-color: #f1f1f1;
+    /* Adjust the background color as needed */
+    padding: 10px;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+    /* Add padding as needed */
+}
+
+/* Right side styles (1/3 of the screen) */
+.right-side {
+    flex: 1;
+    /* Take up 1/3 of the available horizontal space */
+    background-color: #f1f1f1;
+    /* Adjust the background color as needed */
+    padding: 10px;
+    /* Add padding as needed */
+    margin-top: 4rem;
+    margin-bottom: 3rem;
+    display: flex;
+    /* Use flex layout */
+    flex-direction: column;
+    /* Column layout */
+}
+
+.right-container{
+    padding: .5rem;
+}
+
+.table thead th {
+    position: sticky;
+    top: 0;
+    background-color: #b4afaf;
+    z-index: 1;
+    /* Ensure header is above the table content */
+}
+
+/* Add this class for the table container */
+.table-container {
+    overflow-y: scroll;
+    max-height: calc(100vh - 8rem);
+    display: block;
+    padding-bottom: 3rem;
+    /* Add bottom padding equal to the height of the footer */
+    margin-bottom: 4rem;
+}

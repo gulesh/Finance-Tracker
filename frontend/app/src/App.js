@@ -1,24 +1,27 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
+import Header from "./components/layout/header/Header";
+import Footer from './components/layout/footer/Footer';
+import Home  from './components/routes/Home';
+import ErrorPage from './components/routes/ErrorPage'
+import Expenses from './components/routes/Expenses';
+import Categories from './components/routes/Categories'
+import Accounts from './components/routes/Accounts';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <Router>
+      <Header />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/expenses" element={<Expenses />} />
+          <Route path="/categories" element={<Categories />} />
+          <Route path="/accounts" element={<Accounts />} />
+          {/* Add a "not found" route */}
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      <Footer />
+    </Router>
   );
 }
 

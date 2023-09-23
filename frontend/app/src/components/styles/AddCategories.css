@@ -1,0 +1,43 @@
+/* AddCategory.css */
+.add-category-form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-category-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.add-category-form .form-group {
+    margin-bottom: 20px;
+}
+
+.add-category-form .form-check {
+    margin-bottom: 20px;
+}
+
+.add-category-form .modal-body {
+    text-align: center;
+}
+
+.add-category-form .modal-footer {
+    justify-content: center;
+}
+
+.add-category-form button[type="submit"] {
+    width: 100%;
+    background-color: #007bff;
+    color: #fff;
+}
+
+.add-category-form button[type="submit"]:hover {
+    background-color: #0056b3;
+}
+
+/* You can adjust the styles further as needed */
