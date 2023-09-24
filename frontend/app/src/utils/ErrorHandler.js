@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import ErrorPage from "../components/routes/ErrorPage";
+import ErrorPage from "../routes/ErrorPage";
 
 class ErrorHandler extends Component {
   constructor(props) {

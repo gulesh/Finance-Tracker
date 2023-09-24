@@ -1,0 +1,56 @@
+.row {
+    display: flex;
+    flex-direction: column;
+    /* width: 5.5rem;
+    height: 5.5rem; */
+    border: 1px solid #ececec;
+    background-color: #578765;
+    color: rgb(248, 242, 242);
+    border-radius: 12px;
+    align-items: left;
+    justify-content: center;
+    font-weight: bold;
+}
+
+/* Style the container div */
+.container {
+    display: flex;
+    justify-content: space-between;
+    /* Adjust as needed for spacing */
+    border: 1px solid #ccc;
+    /* Add a border to the container */
+    padding: 10px;
+    /* Add padding for spacing around boxes */
+}
+
+.title{
+    align-items: center;
+    /* Vertical alignment */
+    justify-content: center;
+    /* Horizontal alignment */
+}
+
+/* Style the individual boxes */
+.box {
+    flex: 1;
+    /* Allow boxes to grow and fill available space */
+    /* border: 1px solid #ccc; */
+    /* Add a border to each box */
+    padding: 10px;
+    /* Add padding for spacing within boxes */
+    margin-right: 10px;
+    /* Add margin between boxes */
+    text-align: center;
+    /* Center the content horizontally */
+    background-color: rgb(205, 187, 187);
+}
+
+
+.buttonStyle {
+    background-color: rgb(136, 142, 73);
+    color: #fff;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 5px;  /* Add rounded corners */
+    cursor: pointer; /* Add pointer cursor on hover */
+}

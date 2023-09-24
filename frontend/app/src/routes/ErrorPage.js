@@ -1,5 +1,5 @@
 import React from 'react'
-import Main from '../layout/main/Main'
+import Main from '../components/layout/main/Main'
 function Test()
 {
     return (

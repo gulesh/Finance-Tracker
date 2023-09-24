@@ -53,7 +53,7 @@ const AddCategory = () => {
           ></Form.Control>
         </Form.Group>
         <Form.Group>
-          <Form.Label> AmountAllocated </Form.Label>
+          <Form.Label> Amount Allocated </Form.Label>
           <Form.Control
             id={category.amountAllocated}
             type="text"
@@ -81,10 +81,9 @@ const AddCategory = () => {
           </Form.Group>
         </Form.Group>
         <Form.Group>
-          <Form.Label> Recurring </Form.Label>
           <Form.Check type="switch" id="recurring-check" label="Recurring" />
         </Form.Group>
-        <Button type="submit"> Add Category </Button>
+        <Button className="button-category-margins" type="submit"> Add Category </Button>
       </Form>
       {/* Confirmation Dialog */}
       <Modal show={showConfirmation} onHide={handleCloseConfirmation}>

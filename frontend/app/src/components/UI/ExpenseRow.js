@@ -1,21 +1,37 @@
 import React from "react";
-import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+import '../styles/Expenses.css'
+import "../styles/ExpenseDate.css";
+import ExpenseDate from "./ExpenseDate";
+import EditExpense from "../../utils/EditExpenses";
+const ExpenseRow = (props) => {
+  const category = props.data.category.name;
+  const account = props.data.account.name;
+  const amount = props.data.amount;
+  const date = props.data.date;
 
-const ExpenseRow = ({data}) => {
-    console.log(data);
-    return (
-        <Container>
-            <Row>
-                {Object.entries(data).map(([key, value])=> (
-                    key !== "id" && 
-                    <Col>
-                    </Col>
-                ))}
-            </Row>
-        </Container>
-    );
+  return (
+    <>
+      <div className="box">
+        <ExpenseDate date={new Date(date)} />
+      </div>
+      <div className="box">
+        <div className="expense-date">{category}</div>
+      </div>
+      <div className="box">
+        <div className="expense-date"> {account} </div>
+      </div>
+      <div className="box">
+        <div className="expense-date"> {amount}</div>
+      </div>
+      <div className="box">
+        {" "}
+        <div className="expense-date">
+          <EditExpense styleclass="buttonStyle"/>
+        </div>
+      </div>
+      <div className="box"> Delete </div>
+    </>
+  );
 }
 
 export default ExpenseRow;

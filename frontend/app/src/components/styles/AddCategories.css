@@ -32,7 +32,7 @@
 
 .add-category-form button[type="submit"] {
     width: 100%;
-    background-color: #007bff;
+    background-color: #305e90;
     color: #fff;
 }
 
@@ -40,4 +40,8 @@
     background-color: #0056b3;
 }
 
+
+.button-category-margins{
+    margin-top: 0.5rem;;
+}
 /* You can adjust the styles further as needed */

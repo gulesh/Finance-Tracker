@@ -1,10 +1,12 @@
 import React, { useState } from "react";
-import Main from '../layout/main/Main'
-import Card from '../layout/others/Card'
-import FetchData from "../../utils/FetchData";
+import Main from '../components/layout/main/Main'
+import FetchData from "../utils/FetchData";
 import Container from "react-bootstrap/Container";
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
+
+import '../components/styles/Expenses.css'
+import ExpenseRow from "../components/UI/ExpenseRow";
 
 const Expenses = () =>
 {
@@ -14,9 +16,6 @@ const Expenses = () =>
     const handleDataFetch = ({ data, fetchState }) => {
       setExpenses(data);
       setFetchingData(fetchState);
-      console.log(data);
-      console.log("data fetched!");
-      console.log(expenses);
     };
 
     return (
@@ -27,23 +26,16 @@ const Expenses = () =>
             apiFromParent="http://localhost:8080/expenses/"
             fetchState={fetchingData}
           />
-          
           <Container>
-            <Row className="justify-content-md-center">
-              <Col md="auto">
-                <h1> Expenses </h1>
-              </Col>
-            </Row>
-          </Container>
-          <Card>
-            <div>
-              {expenses.map((row) => (
-                <div key={row.id}>
-                  <h1> {row.category.name} </h1>
-                </div>
-              ))}
+            <div className="container title">
+              <h1> Expenses </h1>
             </div>
-          </Card>
+          </Container>
+          {expenses.map((row) => (
+            <div className="container" key={row.id}>
+              <ExpenseRow data={row} />
+            </div>
+          ))}
         </Main>
       </>
     );

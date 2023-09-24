@@ -2,11 +2,11 @@ import React from 'react'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import Header from "./components/layout/header/Header";
 import Footer from './components/layout/footer/Footer';
-import Home  from './components/routes/Home';
-import ErrorPage from './components/routes/ErrorPage'
-import Expenses from './components/routes/Expenses';
-import Categories from './components/routes/Categories'
-import Accounts from './components/routes/Accounts';
+import Home  from './routes/Home';
+import ErrorPage from './routes/ErrorPage'
+import Expenses from './routes/Expenses';
+import Categories from './routes/Categories'
+import Accounts from './routes/Accounts';
 
 function App() {
   return (

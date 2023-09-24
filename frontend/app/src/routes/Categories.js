@@ -1,11 +1,12 @@
 import React, { useContext, useState } from "react";
-import "../styles/Categories.css";
-import "../styles/AddCategories.css"; 
-import List from "../UI/List";
-import TableTitle from "../UI/TableTitle";
-import AddCategory from "../UI/AddCategory";
-import FetchData from "../../utils/FetchData";
-import { MyContext } from "../../MyContext";
+import "../components/styles/Categories.css";
+import "../components/styles/AddCategories.css"; 
+import "../components/styles/ExpenseDate.css"; 
+import List from "../components/UI/List";
+import TableTitle from "../components/UI/TableTitle";
+import AddCategory from "../components/UI/AddCategory";
+import FetchData from "../utils/FetchData";
+import { MyContext } from "../MyContext";
 
 
 const CategoriesList = () => {
@@ -52,10 +53,10 @@ const CategoriesList = () => {
           <div className="right-container">
             <div className="category-form">
               {/* 2/3 of the right-side. Content for the category-form */}
-              <div>
-                <h2> Add New User </h2>
+              <div className="expense-date">
+                <h2> Add New Category </h2>
               </div>
-              <AddCategory></AddCategory>
+              <AddCategory />
             </div>
             <div className="graph"></div>
           </div>

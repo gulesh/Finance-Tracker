@@ -1,8 +1,8 @@
 import React, { useContext, useState } from "react";
-import { MyContext } from "../../MyContext"; 
+import { MyContext } from "../MyContext"; 
 
-import Main from "../layout/main/Main";
-import FetchData from "../../utils/FetchData";
+import Main from '../components/layout/main/Main';
+import FetchData from "../utils/FetchData";
 
 const Accounts = () => {
     const { accounts, updateAccounts } = useContext(MyContext);
