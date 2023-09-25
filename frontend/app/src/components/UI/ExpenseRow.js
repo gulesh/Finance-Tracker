@@ -24,7 +24,6 @@ const ExpenseRow = (props) => {
         <div className="expense-date"> {amount}</div>
       </div>
       <div className="box">
-        {" "}
         <div className="expense-date">
           <EditExpense styleclass="buttonStyle"/>
         </div>

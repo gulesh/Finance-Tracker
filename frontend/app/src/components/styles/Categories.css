@@ -55,3 +55,38 @@
     /* Add bottom padding equal to the height of the footer */
     margin-bottom: 4rem;
 }
+
+.filter-button {
+    margin: 0.5rem;
+    padding: 0.5rem;
+}
+
+.container {
+    display: flex;
+    justify-content: space-between;
+    /* Adjust as needed for spacing */
+    border: 1px solid #ccc;
+    /* Add a border to the container */
+    padding: 10px;
+    /* Add padding for spacing around boxes */
+}
+
+/* Style the individual boxes */
+.box {
+    flex: 1;
+    /* Allow boxes to grow and fill available space */
+    /* border: 1px solid #ccc; */
+    /* Add a border to each box */
+    padding: 10px;
+    /* Add padding for spacing within boxes */
+    margin-right: 10px;
+    /* Add margin between boxes */
+    text-align: center;
+    /* Center the content horizontally */
+    background-color: rgb(205, 187, 187);
+}
+
+.card {
+    border-radius: 12px;
+    box-shadow: 0 1px 8px rgba(0, 0, 0, 0.25);
+}

@@ -14,11 +14,38 @@ const CategoriesList = () => {
   const { categories, updateCategories } = useContext(MyContext);
   const [columns, setColumns] = useState([]);
   const [fetchingData, setFetchingData] = useState(true);
+  //setting filters
+  const [filter, setFilter] = useState("All");
 
   // Get the current route
   // const location = useLocation();
   // const currentRoute = location.pathname;
 
+  //defining a filter map
+  const FILTER_MAP = {
+    All: () => true,
+    Recurring: (category) => category.recurring, 
+    NotRecurring: (category) => !category.recurring
+
+  }
+
+  //filter names
+  const FILTER_NAMES = Object.keys(FILTER_MAP);
+
+  const filterList = FILTER_NAMES.map((name) => (
+    <button
+      key={name}
+      className="filter-button box"
+      aria-pressed={name === filter}
+      onClick={() => setFilter(name)}
+    >
+      {" "}
+      {name}{" "}
+    </button>
+  ));
+
+  //filtered categories
+  const filteredCategories = categories.filter(FILTER_MAP[filter]);
 
   const handleDataFetch = ({ data, fetchState }) => {
     // console.log(currentRoute);
@@ -31,18 +58,18 @@ const CategoriesList = () => {
     <>
       <div className="split-categoriespage">
         <div className="left-side">
-          <TableTitle title="List of Expenses" />
-          <div className="coniatner">
+          <TableTitle title="List of Expenses" className="box" />
+          <div className="card">
             <div className="table-container">
               {/* {currentRoute === "/categories" && ( */}
-                <FetchData
-                  sendDataToParent={handleDataFetch}
-                  apiFromParent="http://localhost:8080/categories/"
-                  fetchState={fetchingData}
-                />
+              <FetchData
+                sendDataToParent={handleDataFetch}
+                apiFromParent="http://localhost:8080/categories/"
+                fetchState={fetchingData}
+              />
               {/* )} */}
               <List
-                data={categories}
+                data={filteredCategories}
                 columnHeadings={columns}
                 title="List of Categories"
               />
@@ -51,6 +78,7 @@ const CategoriesList = () => {
         </div>
         <div className="right-side">
           <div className="right-container">
+            <div className="container">{filterList}</div>
             <div className="category-form">
               {/* 2/3 of the right-side. Content for the category-form */}
               <div className="expense-date">
