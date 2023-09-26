@@ -6,7 +6,9 @@ import java.util.List;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document(collection="months")
 public class Month {
     @Id
     private String id;
@@ -54,6 +56,27 @@ public class Month {
         return categories;
     }
 
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+    public List<Expense> getExpenses() {
+        return expenses;
+    }
+
+    public void setExpenses(List<Expense> expenses) {
+        this.expenses = expenses;
+    }
+
+    public List<Transfer> getTransfers() {
+        return transfers;
+    }
+
+    public void setTransfers(List<Transfer> transfers) {
+        this.transfers = transfers;
+    }
+
     public int getYear() {
         return year;
     }
@@ -94,7 +117,5 @@ public class Month {
             return false;
         return true;
     }
-
-    
    
 }

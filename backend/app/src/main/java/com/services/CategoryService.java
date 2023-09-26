@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 // import org.springframework.data.mongodb.core.FindAndModifyOptions;
 // import org.springframework.data.mongodb.core.query.Criteria;
 // import org.springframework.data.mongodb.core.query.Query;
@@ -42,13 +43,13 @@ public class CategoryService {
     }
 
     //add new category
-    public Category addNewCategory(Category category)
+    public Category addNewCategory(Category category) throws DuplicateCategory
     {
         try
         {
             return this.categoryRepo.save(category);
         }
-        catch(Exception e)
+        catch(DataIntegrityViolationException e)
         {
             throw new DuplicateCategory(category.getName());
         }

@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Main from '../components/layout/main/Main'
 import FetchData from "../utils/FetchData";
 import Container from "react-bootstrap/Container";
-import Row from "react-bootstrap/Row";
-import Col from "react-bootstrap/Col";
+
 
 import '../components/styles/Expenses.css'
 import ExpenseRow from "../components/UI/ExpenseRow";
