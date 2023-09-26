@@ -58,7 +58,8 @@ public class MonthService {
         List<Transfer> transfersForThisMonth = this.transferRepo.findAll();
         List<Expense> expensesForThisMonth = this.expenseRepo.findAll();
 
-        if (monthExists != null){
+        if (monthExists != null)
+        {
             //get categories and other and all to the month and set the attributes 
             monthExists.setExpenses(expensesForThisMonth);
             monthExists.setTransfers(transfersForThisMonth);
@@ -73,7 +74,9 @@ public class MonthService {
             }
 
 
-        } else {
+        } 
+        else 
+        {
             Month newMonth = new Month(monthName, currentYear);
 
             //set the attributes
@@ -89,6 +92,7 @@ public class MonthService {
 
     public List<Month> getAllMonths()
     {
+        logger.info("getting all the months from the months collection");
         return this.monthRepo.findAll();
     }
 

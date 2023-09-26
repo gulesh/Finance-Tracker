@@ -12,7 +12,7 @@ public class Year {
     @Id
     private String id;
     @Indexed(unique = true)
-    private int year; 
+    private String year; 
     @DBRef
     private List<Month> months;
 
@@ -22,7 +22,7 @@ public class Year {
 
     }
 
-    public Year(int year, List<Month> months) {
+    public Year(String year, List<Month> months) {
         this.year = year;
         this.months = months;
     }
@@ -37,11 +37,11 @@ public class Year {
         this.id = id;
     }
     
-    public int getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(String year) {
         this.year = year;
     }
 
@@ -58,11 +58,13 @@ public class Year {
         return "Year [year=" + year + ", months=" + months + "]";
     }
 
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + year;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((year == null) ? 0 : year.hashCode());
         result = prime * result + ((months == null) ? 0 : months.hashCode());
         return result;
     }
@@ -76,7 +78,15 @@ public class Year {
         if (getClass() != obj.getClass())
             return false;
         Year other = (Year) obj;
-        if (year != other.year)
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        if (year == null) {
+            if (other.year != null)
+                return false;
+        } else if (!year.equals(other.year))
             return false;
         if (months == null) {
             if (other.months != null)
