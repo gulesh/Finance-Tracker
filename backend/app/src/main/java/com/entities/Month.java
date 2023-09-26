@@ -14,6 +14,11 @@ public class Month {
     private String nameOfTheMonth;
     @DBRef
     private List<Category> categories;
+    @DBRef
+    private List<Expense> expenses;
+    @DBRef
+    private List<Transfer> transfers;
+
     private int year;
 
     //constructors
