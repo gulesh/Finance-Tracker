@@ -41,7 +41,7 @@
 </td>
 <td>
 <div class="infoBox" id="duration">
-<div class="counter">1.065s</div>
+<div class="counter">0.782s</div>
 <p>duration</p>
 </div>
 </td>
@@ -79,7 +79,7 @@
 </thead>
 <tr>
 <td class="success">contextLoads()</td>
-<td class="success">1.065s</td>
+<td class="success">0.782s</td>
 <td class="success">passed</td>
 </tr>
 </table>
@@ -87,8 +87,8 @@
 <div id="tab1" class="tab">
 <h2>Standard output</h2>
 <span class="code">
-<pre>14:30:15.652 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils -- Could not detect default configuration classes for test class [com.app.ApplicationTests]: ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-14:30:15.777 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper -- Found @SpringBootConfiguration com.app.Application for test class com.app.ApplicationTests
+<pre>14:40:59.341 [Test worker] INFO org.springframework.test.context.support.AnnotationConfigContextLoaderUtils - Could not detect default configuration classes for test class [com.app.ApplicationTests]: ApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
+14:40:59.476 [Test worker] INFO org.springframework.boot.test.context.SpringBootTestContextBootstrapper - Found @SpringBootConfiguration com.app.Application for test class com.app.ApplicationTests
 
   .   ____          _            __ _ _
  /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
@@ -98,31 +98,15 @@
  =========|_|==============|___/=/_/_/_/
  :: Spring Boot ::                (v3.1.3)
 
-2023-09-02T14:30:16.272-04:00  INFO 47124 --- [    Test worker] com.app.ApplicationTests                 : Starting ApplicationTests using Java 20.0.1 with PID 47124 (started by gulesh_shukla in /Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app)
-2023-09-02T14:30:16.277-04:00  INFO 47124 --- [    Test worker] com.app.ApplicationTests                 : No active profile set, falling back to 1 default profile: &quot;default&quot;
-2023-09-02T14:30:16.494-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/controllers/AccountController.class]
-2023-09-02T14:30:16.502-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/controllers/BasicController.class]
-2023-09-02T14:30:16.507-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/controllers/CategoryController.class]
-2023-09-02T14:30:16.508-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/controllers/UserController.class]
-2023-09-02T14:30:16.528-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/services/AccountService.class]
-2023-09-02T14:30:16.529-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/services/CategoryService.class]
-2023-09-02T14:30:16.529-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/services/UserService.class]
-2023-09-02T14:30:16.567-04:00 DEBUG 47124 --- [    Test worker] o.s.c.a.ClassPathBeanDefinitionScanner   : Identified candidate component class: file [/Users/gulesh_shukla/Desktop/BudgetAndExpensesTracker/backend/app/build/classes/java/main/com/config/MongoConfig.class]
-2023-09-02T14:30:16.977-04:00  INFO 47124 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
-2023-09-02T14:30:17.051-04:00  INFO 47124 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 69 ms. Found 8 MongoDB repository interfaces.
-2023-09-02T14:30:17.801-04:00  INFO 47124 --- [    Test worker] org.mongodb.driver.client                : MongoClient with metadata {&quot;driver&quot;: {&quot;name&quot;: &quot;mongo-java-driver|sync&quot;, &quot;version&quot;: &quot;4.9.1&quot;}, &quot;os&quot;: {&quot;type&quot;: &quot;Darwin&quot;, &quot;name&quot;: &quot;Mac OS X&quot;, &quot;architecture&quot;: &quot;x86_64&quot;, &quot;version&quot;: &quot;13.4.1&quot;}, &quot;platform&quot;: &quot;Java/Homebrew/20.0.1&quot;} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, streamFactoryFactory=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@7af52ec7, com.mongodb.Jep395RecordCodecProvider@77c1e611]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[127.0.0.1:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='30000 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, sendBufferSize=0}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, sendBufferSize=0}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, contextProvider=null}
-2023-09-02T14:30:17.837-04:00  INFO 47124 --- [127.0.0.1:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=34233417}
-2023-09-02T14:30:18.170-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Account for index information
-2023-09-02T14:30:18.328-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Category for index information
-2023-09-02T14:30:18.366-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.User for index information
-2023-09-02T14:30:18.402-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Month for index information
-2023-09-02T14:30:18.402-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Year for index information
-2023-09-02T14:30:18.423-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Expense for index information
-2023-09-02T14:30:18.444-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Transfer for index information
-2023-09-02T14:30:18.456-04:00 DEBUG 47124 --- [    Test worker] .m.c.i.MongoPersistentEntityIndexCreator : Analyzing class class com.entities.Goal for index information
-2023-09-02T14:30:19.365-04:00  INFO 47124 --- [    Test worker] com.app.ApplicationTests                 : Started ApplicationTests in 3.447 seconds (process running for 5.002)
+2023-09-27T14:40:59.940-04:00  INFO 88848 --- [    Test worker] com.app.ApplicationTests                 : Starting ApplicationTests using Java 17.0.8 with PID 88848 (started by gulesh_shukla in /Users/gulesh_shukla/Desktop/FTProdRepo/backend/app)
+2023-09-27T14:40:59.942-04:00  INFO 88848 --- [    Test worker] com.app.ApplicationTests                 : No active profile set, falling back to 1 default profile: &quot;default&quot;
+2023-09-27T14:41:00.636-04:00  INFO 88848 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data MongoDB repositories in DEFAULT mode.
+2023-09-27T14:41:00.705-04:00  INFO 88848 --- [    Test worker] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 65 ms. Found 7 MongoDB repository interfaces.
+2023-09-27T14:41:01.568-04:00  INFO 88848 --- [    Test worker] org.mongodb.driver.client                : MongoClient with metadata {&quot;driver&quot;: {&quot;name&quot;: &quot;mongo-java-driver|sync&quot;, &quot;version&quot;: &quot;4.9.1&quot;}, &quot;os&quot;: {&quot;type&quot;: &quot;Darwin&quot;, &quot;name&quot;: &quot;Mac OS X&quot;, &quot;architecture&quot;: &quot;x86_64&quot;, &quot;version&quot;: &quot;13.4.1&quot;}, &quot;platform&quot;: &quot;Java/BellSoft/17.0.8+7-LTS&quot;} created with settings MongoClientSettings{readPreference=primary, writeConcern=WriteConcern{w=null, wTimeout=null ms, journal=null}, retryWrites=true, retryReads=true, readConcern=ReadConcern{level=null}, credential=null, streamFactoryFactory=null, commandListeners=[], codecRegistry=ProvidersCodecRegistry{codecProviders=[ValueCodecProvider{}, BsonValueCodecProvider{}, DBRefCodecProvider{}, DBObjectCodecProvider{}, DocumentCodecProvider{}, CollectionCodecProvider{}, IterableCodecProvider{}, MapCodecProvider{}, GeoJsonCodecProvider{}, GridFSFileCodecProvider{}, Jsr310CodecProvider{}, JsonObjectCodecProvider{}, BsonCodecProvider{}, EnumCodecProvider{}, com.mongodb.client.model.mql.ExpressionCodecProvider@59b32539, com.mongodb.Jep395RecordCodecProvider@5b47731f]}, loggerSettings=LoggerSettings{maxDocumentLength=1000}, clusterSettings={hosts=[127.0.0.1:27017], srvServiceName=mongodb, mode=SINGLE, requiredClusterType=UNKNOWN, requiredReplicaSetName='null', serverSelector='null', clusterListeners='[]', serverSelectionTimeout='30000 ms', localThreshold='30000 ms'}, socketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=0, receiveBufferSize=0, sendBufferSize=0}, heartbeatSocketSettings=SocketSettings{connectTimeoutMS=10000, readTimeoutMS=10000, receiveBufferSize=0, sendBufferSize=0}, connectionPoolSettings=ConnectionPoolSettings{maxSize=100, minSize=0, maxWaitTimeMS=120000, maxConnectionLifeTimeMS=0, maxConnectionIdleTimeMS=0, maintenanceInitialDelayMS=0, maintenanceFrequencyMS=60000, connectionPoolListeners=[], maxConnecting=2}, serverSettings=ServerSettings{heartbeatFrequencyMS=10000, minHeartbeatFrequencyMS=500, serverListeners='[]', serverMonitorListeners='[]'}, sslSettings=SslSettings{enabled=false, invalidHostNameAllowed=false, context=null}, applicationName='null', compressorList=[], uuidRepresentation=UNSPECIFIED, serverApi=null, autoEncryptionSettings=null, contextProvider=null}
+2023-09-27T14:41:01.589-04:00  INFO 88848 --- [127.0.0.1:27017] org.mongodb.driver.cluster               : Monitor thread successfully connected to server with description ServerDescription{address=127.0.0.1:27017, type=STANDALONE, state=CONNECTED, ok=true, minWireVersion=0, maxWireVersion=21, maxDocumentSize=16777216, logicalSessionTimeoutMinutes=30, roundTripTimeNanos=22328541}
+2023-09-27T14:41:02.918-04:00  INFO 88848 --- [    Test worker] com.app.ApplicationTests                 : Started ApplicationTests in 3.324 seconds (process running for 4.607)
 Hello!!!
-</pre>
+inside testApplication class</pre>
 </span>
 </div>
 </div>
@@ -133,7 +117,7 @@ Hello!!!
 <input id="line-wrapping-toggle" type="checkbox" autocomplete="off"/>
 </label>
 </div>Generated by 
-<a href="http://www.gradle.org">Gradle 8.3</a> at Sep 2, 2023, 2:30:20 PM</p>
+<a href="http://www.gradle.org">Gradle 8.2.1</a> at Sep 27, 2023, 2:41:04 PM</p>
 </div>
 </div>
 </body>

@@ -41,7 +41,8 @@ public class MonthService {
         this.transferRepo = transferrepo;
     }
 
-    @Scheduled(cron = "59 59 23 28-31 * ?") //run on last day of the month at 11:59 pm;
+    // @Scheduled(cron = "0 59 23 28-31 * ?") //run on last day of the month at 11:59 pm;
+    @Scheduled(cron = "0 * * * * *")
     public void AddDataToMonthCollection()
     {
         
@@ -72,7 +73,8 @@ public class MonthService {
             {
                 category.setAmountSpent(0);
             }
-
+            //save the categories as well
+            this.categoryRepo.saveAll(categoriesForThisMonth);
 
         } 
         else 

@@ -22,7 +22,6 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mvnrepository.com/artifact/javax.persistence/javax.persistence-api
 	compileOnly("org.springframework.boot:spring-boot-devtools")
-	testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
 	
 }
 

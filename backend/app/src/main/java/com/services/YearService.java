@@ -19,7 +19,7 @@ public class YearService {
     //inject repos here
     private final MonthRepository monthRepo;
     private final YearRepository yearRepo;
-    private static final Logger logger = LoggerFactory.getLogger(MonthService.class);
+    private static final Logger logger = LoggerFactory.getLogger(YearService.class);
 
 
     @Autowired
@@ -29,7 +29,8 @@ public class YearService {
         this.yearRepo = yearrepo;
     }
 
-    @Scheduled(cron = "59 23 31 12 * *") //run this job on the last day of the year at 11:59 pm
+    // @Scheduled(cron = "0 59 23 31 12 *") //run this job on the last day of the year at 11:59 pm
+    @Scheduled(cron = "0 */2 * * * *")
     public void AddDataToYearCollection()
     {
         LocalDate localDate = LocalDate.now();
@@ -51,7 +52,7 @@ public class YearService {
             this.yearRepo.save(newYear);
 
         }
-        logger.info("Adding" + currentYear + "to the year collection!");
+        logger.info("Adding " + currentYear + " to the year collection!");
     }
 
     public List<Year> getAllYears()
