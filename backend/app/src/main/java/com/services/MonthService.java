@@ -41,8 +41,7 @@ public class MonthService {
         this.transferRepo = transferrepo;
     }
 
-    // @Scheduled(cron = "0 59 23 28-31 * ?") //run on last day of the month at 11:59 pm;
-    @Scheduled(cron = "0 * * * * *")
+    @Scheduled(cron = "0 59 23 28-31 * ?") //run on last day of the month at 11:59 pm;
     public void AddDataToMonthCollection()
     {
         
@@ -89,7 +88,13 @@ public class MonthService {
             //add to the collection
             this.monthRepo.save(newMonth);
         }
-        logger.info("Added" + monthName  + "to the months collection for the year: " + currentYear);
+        logger.info("Added " + monthName  + " to the months collection for the year: " + currentYear);
+
+        //now I want to delete all the transfer and expenses data for the month 
+        this.transferRepo.deleteAll();
+        this.expenseRepo.deleteAll();
+
+        logger.info("Deleting expenses and transfers for " + monthName  + " " + currentYear);
     }
 
     public List<Month> getAllMonths()

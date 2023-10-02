@@ -29,8 +29,7 @@ public class YearService {
         this.yearRepo = yearrepo;
     }
 
-    // @Scheduled(cron = "0 59 23 31 12 *") //run this job on the last day of the year at 11:59 pm
-    @Scheduled(cron = "0 */2 * * * *")
+    @Scheduled(cron = "0 59 23 31 12 *") //run this job on the last day of the year at 11:59 pm
     public void AddDataToYearCollection()
     {
         LocalDate localDate = LocalDate.now();
@@ -52,7 +51,8 @@ public class YearService {
             this.yearRepo.save(newYear);
 
         }
-        logger.info("Adding " + currentYear + " to the year collection!");
+        logger.info("Adding " + currentYear + " to the year collection!"); 
+
     }
 
     public List<Year> getAllYears()
