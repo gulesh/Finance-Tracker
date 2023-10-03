@@ -1,0 +1,202 @@
+/* Category page header*/
+.category-header {
+    position: sticky;
+    top: 0;
+    background-color: white;
+    /* Optional: Add a background color */
+    z-index: 1;
+    /* Ensure the header appears above the content */
+    width: 50%;
+    /* Adjust the percentage as needed */
+    margin: 0 auto;
+    /* Center horizontally */
+    display: flex;
+    justify-content: center;
+    /* Center vertically */
+    align-items: center;
+    /* Center vertically */
+    height: 8vh;
+    /* Adjust the percentage as needed for vertical centering */
+    /* border: 1px solid #581e1e; */
+    background: linear-gradient(180deg, #67788f, #d7cfd3);
+    /* Optional: Add a border for visualization */
+}
+
+.category-header-content{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /* Vertically align the content in the middle */
+    width: 100%;
+    padding: .5rem;
+}
+
+.category-list-container {
+    position: relative;
+    overflow: hidden;
+    /* Hide overflow to prevent horizontal scrolling */
+    height: 100%;  /* Set the height of the container to 100% of its parent */
+}
+
+.category-list-wrapper {
+    max-height: calc(100% - 8vh); /* Subtract the height of the header */
+    /* Adjust the max-height as a percentage of the parent's height */
+    overflow-y: scroll;
+    /* Enable vertical scrolling */
+}
+
+.full-height {
+    height: calc(100vh - 8vh);
+    /* Subtract the height of the header */
+}
+
+/* Media Query for Smaller Screens */
+@media (max-width: 768px) {
+    .category-header {
+        width: 80%;
+        /* Adjust width for smaller screens */
+        padding: 1rem;
+        /* Add padding for spacing */
+    }
+}
+
+/* Media Query for Even Smaller Screens (e.g., mobile) */
+@media (max-width: 480px) {
+    .category-header {
+        width: 90%;
+        /* Adjust width for very small screens */
+    }
+
+    .category-header-content {
+        flex-direction: column;
+        /* Stack content vertically on smaller screens */
+        text-align: center;
+        /* Center text in vertical layout */
+    }
+}
+
+/* styles for the New Category Form */
+.form-category {
+    max-width: 500px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 1rem;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #67788f, #d7cfd3);
+}
+
+.input-group-category {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.input-group-category p {
+    flex: 1;
+}
+
+.form label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    color: #05221c;
+    /* Adjust the label color */
+}
+
+.input-field {
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #669589;
+    border-radius: 0.25rem;
+    background-color: wheat;
+    color: #05221c;
+    /* Adjust the text color */
+    font-size: 1rem;
+}
+
+.select-field {
+    display: block;
+    /* Make the select element block-level */
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #76c0ae;
+    border-radius: 0.25rem;
+    background-color: wheat;
+    color: #05221c;
+    /* Adjust the text color */
+    font-size: 1rem;
+}
+
+.actions {
+    display: flex;
+    justify-content: flex-end;
+    /* Align buttons to the right */
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    background: linear-gradient(180deg, #30768f, #3d6792);
+    color: #d7e0e7;
+    font-family: 'Roboto Condensed', sans-serif;
+    cursor: pointer;
+    margin: 0.25rem;
+}
+
+.buttonAlt {
+    font-family: 'Roboto Condensed', sans-serif;
+    border: none;
+    background: transparent;
+    color: #a15044;
+    cursor: pointer;
+}
+
+button:hover {
+    background: linear-gradient(180deg, #1b5346, #113c32);
+}
+
+.buttonAlt:hover {
+    background: rgb(143, 154, 143);
+    color: #91e1d0;
+}
+
+/*  Styles for categories list */
+.category-list-wrapper {
+    max-height: 300px;
+    /* Adjust the height as needed */
+    overflow-y: auto;
+    /* Enable vertical scrolling when content exceeds the height */
+}
+
+.categories {
+    /* max-width: 50rem; */
+    width: 80%;
+    margin: 2rem auto;
+    padding: 2rem;
+    /* table-layout: fixed; */
+    border-spacing: 1rem;
+    text-align: center;
+}
+
+.categories thead {
+    font-size: 1.5rem;
+    color: #4d5954;
+    background-color: #d7cfd3;
+}
+
+.categories tbody {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 1.25rem;
+    color: #05221c;
+}
+
+/* Toggle button to show and hide the form properties*/
+.toggle-button-category.active {
+    transform: rotate(180deg);
+}

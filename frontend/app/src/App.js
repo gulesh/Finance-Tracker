@@ -1,25 +1,23 @@
 import React from 'react'
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
-import Header from "./components/layout/header/Header";
-import Footer from './components/layout/footer/Footer';
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home  from './routes/Home';
-import ErrorPage from './routes/ErrorPage'
-import Expenses from './routes/Expenses';
-import Categories from './routes/Categories'
-import Accounts from './routes/Accounts';
+import Expense from './routes/Expense';
+import Category from './routes/Category';
+import Header from './components/layout/Header';
+import Footer from './components/layout/Footer';
+import Content from './components/layout/Content';
 
 function App() {
   return (
     <Router>
       <Header />
+      <Content>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route path="/expenses" element={<Expenses />} />
-          <Route path="/categories" element={<Categories />} />
-          <Route path="/accounts" element={<Accounts />} />
-          {/* Add a "not found" route */}
-          <Route path="*" element={<ErrorPage />} />
+          <Route path="/expenses" element={<Expense />} />
+          <Route path="/categories" element={<Category />} />
         </Routes>
+      </Content>
       <Footer />
     </Router>
   );

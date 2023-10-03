@@ -5,6 +5,8 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,6 +29,8 @@ import com.exceptionhandler.CategoryNotFound;
 public class AccountController {
     //inject AccountService
     private final AccountService accountService;
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
+
 
     public AccountController(AccountService accountservice)
     {
@@ -35,7 +39,9 @@ public class AccountController {
 
      // Get all accounts from the DB
     @GetMapping("/")
-    public ResponseEntity<List<Account>> showAllAccounts() {
+    public ResponseEntity<List<Account>> showAllAccounts() 
+    {
+        logger.info("Fetching all accounts");
         List<Account> accounts = this.accountService.getAllAccounts();
         return ResponseEntity.ok(accounts);
     }

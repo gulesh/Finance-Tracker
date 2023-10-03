@@ -5,6 +5,8 @@ import java.net.URLDecoder;
 import java.util.List;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,8 @@ import com.exceptionhandler.CategoryNotFound;
 public class CategoryController {
     //inject CategoryService here
     private final CategoryService categoryService;
+    private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
+
 
     @Autowired
     public CategoryController(CategoryService categoryservice)
@@ -37,6 +41,7 @@ public class CategoryController {
     @GetMapping("/")
     public ResponseEntity<List<Category>> showAllCategories()
     {
+        logger.info("Fetching all categories");
         List<Category> categories = this.categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }
