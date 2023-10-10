@@ -18,10 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.services.CategoryService;
 import com.entities.Category;
-import com.exceptionhandler.CategoryNotFound;
 
 @RestController
 @RequestMapping("/categories")
@@ -50,32 +50,27 @@ public class CategoryController {
     @PostMapping("/")
     ResponseEntity<Category> addNewCategory(@RequestBody Category category)
     {
+        logger.info("Adding new category");
         Category newCategory = this.categoryService.addNewCategory(category);
         return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
     }
 
     //modify existing category
-    @PatchMapping("/{categoryName}")
-    ResponseEntity<Category> editCategory(@PathVariable("categoryName") String categoryName, @RequestBody Map<String, Object> attributes)
+    @PatchMapping("/{categoryId}")
+    ResponseEntity<Category> editCategory(@PathVariable("categoryId") String id, @RequestBody Map<String, Object> attributes)
     {
+        System.out.println("correctly reached the route" + id);
         try
         {
-            String decodedCategoryName = URLDecoder.decode(categoryName, "UTF-8");
-            Category category = this.categoryService.getCategoryByName(decodedCategoryName);
-            if(category != null)
-            {
-                Category updatedCategory = this.categoryService.editCategory(decodedCategoryName, attributes);
-                return ResponseEntity.ok(updatedCategory);
-            } 
-            else
-            {
-                throw new CategoryNotFound(decodedCategoryName);
-            }
+            Category updatedCategory = this.categoryService.editCategory(id, attributes);
+            logger.info("Correctly edited the category");
+            return ResponseEntity.ok(updatedCategory);
+            
         }
-        catch (UnsupportedEncodingException e) 
-        {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error occurred", e);
         }
+        
     }
 
     //delete a category

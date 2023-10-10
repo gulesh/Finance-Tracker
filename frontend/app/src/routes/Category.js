@@ -1,11 +1,28 @@
-import React, { useState } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import NewCategoryForm from "../components/categorycomponents/AddNewCategoryForm";
 import CategoryList from "../components/categorycomponents/CategoryList";
-import '../components/categorycomponents/CategoryStyles.css'
-import PageTitle from '../components/general/PageTitle'
+import "../components/categorycomponents/CategoryStyles.css";
+import PageTitle from "../components/general/PageTitle";
+import MyContext from "../MyContext";
+import axios from "axios";
 
 const Category = () => {
   const [isAddCategoryFormVisible, setIsAddCategoryFormVisible] = useState(true);
+  const { categories, updateCategories } = useContext(MyContext);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get("http://localhost:8080/categories/");
+        const categoriesData = response.data;
+        updateCategories(categoriesData);
+      } catch (error) {
+        console.error("Error fetching data: ", error);
+      }
+    };
+    fetchData();
+
+  }, [updateCategories]);
 
   const handleAddCateforyFormVisibility = () => {
     setIsAddCategoryFormVisible(!isAddCategoryFormVisible);
@@ -26,10 +43,10 @@ const Category = () => {
       </div>
       <div className="">
         {isAddCategoryFormVisible && <NewCategoryForm />}
-        <CategoryList />
+        <CategoryList categorieslist={categories} />
       </div>
     </div>
   );
-}
+};
 
 export default Category;

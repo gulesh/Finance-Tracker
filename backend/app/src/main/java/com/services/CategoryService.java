@@ -2,6 +2,7 @@ package com.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +17,7 @@ import com.repositories.CategoryRepository;
 import com.entities.Category;
 import com.exceptionhandler.CategoryNotFound;
 import com.exceptionhandler.DuplicateCategory;
+import com.exceptionhandler.InvalidNumberFormatException;
 
 @Service
 public class CategoryService {
@@ -42,6 +44,19 @@ public class CategoryService {
         return this.categoryRepo.findByName(name);
     }
 
+    public Category getCategoryById(String id) throws Exception
+    {
+        Optional<Category> optionalCategory = this.categoryRepo.findById(id);
+        if(optionalCategory.isPresent())
+        {
+            return optionalCategory.get();
+        } 
+        else
+        {
+            return null; //later check this null
+        }
+    }
+
     //add new category
     public Category addNewCategory(Category category) throws DuplicateCategory
     {
@@ -56,17 +71,18 @@ public class CategoryService {
     }
 
     //modify existing category
-    public Category editCategory(String name, Map<String, Object> attributes)
+    public Category editCategory(String id, Map<String, Object> attributes) throws Exception
     {
-        Category existingCategory = this.categoryRepo.findByName(name);
-        if(existingCategory == null)
+        Optional<Category> optionalExistingCategory = this.categoryRepo.findById(id);
+        if(!optionalExistingCategory.isPresent())
         {
-            throw new CategoryNotFound(name);
+            throw new CategoryNotFound("Id: " + id);
         }
         else 
         {
+            Category existingCategory = optionalExistingCategory.get();
             String newName = (String) attributes.get("name");
-            if(newName != null && !newName.equals(name))
+            if(newName != null && !newName.equals(existingCategory.getName()))
             {
                 Category categoryWithNewName = this.categoryRepo.findByName(newName);
                 if(categoryWithNewName != null)
@@ -81,11 +97,24 @@ public class CategoryService {
                         existingCategory.setName((String) value);
                         break;
                     case "amountAllocated":
-                        existingCategory.setAmountAllocated((Integer) value);
+                        try {
+                            int amountAllocated = Integer.parseInt((String) value);
+                            existingCategory.setAmountAllocated(amountAllocated);
+                        } catch (NumberFormatException e) {
+                            // Handle invalid integer value here
+                            throw new InvalidNumberFormatException("Invalid integer value for amountAllocated: " + value);
+                        }
                         break;
                     case "amountSpent":
-                        existingCategory.setAmountSpent((Integer) value);
+                        try {
+                            int amountSpent = Integer.parseInt((String) value);
+                            existingCategory.setAmountSpent(amountSpent);
+                        } catch (NumberFormatException e) {
+                            // Handle invalid integer value here
+                            throw new InvalidNumberFormatException("Invalid integer value for amountSpent: " + value);
+                        }
                         break;
+                        
                     case "recurring":
                         existingCategory.setRecurring((boolean) value);
                         break;

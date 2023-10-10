@@ -1,6 +1,5 @@
 package com.exceptionhandler;
 
-
 public class MonthServiceException extends RuntimeException{
     
     public MonthServiceException(String message) {

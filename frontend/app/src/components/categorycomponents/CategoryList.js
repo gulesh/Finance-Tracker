@@ -1,23 +1,46 @@
 import "./CategoryStyles.css";
 import React, { useContext } from "react";
-import MyContext from '../../MyContext';
-import DeleteConfirmationDialog from "./DeleteConfirmationDialog"; // Import the confirmation dialog component
 import "./CategoryStyles.css";
-import { RiDeleteBin5Fill } from "react-icons/ri";
 import { FiEdit  } from "react-icons/fi";
+import DeleteConfirmationDialog from "../categorycomponents/DeleteConfirmationDialog";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import MyContext from "../../MyContext";
 
-const CategoryList = () => {
-    const { categories } = useContext(MyContext);
+const CategoryList = (props) => {
+  const navigate = useNavigate();
+  let categories = props.categorieslist;
+  const {updateCategories} = useContext(MyContext);
 
-    const handleDeleteCategory = (categoryId) => {
-    // Perform the deletion of the category with the given categoryId
-    // You can use an API request or update the state to remove the category
-    };
+  const redirectToEditCategory = (category) => {
+      navigate(`/categories/edit/${category.id}`, {
+        state: { categoryData: category },
+      });
+  }
 
-    const handleEditCategory = (categoryId) => {
-      // Perform the deletion of the category with the given categoryId
-      // You can use an API request or update the state to remove the category
-    };
+  const handleConfirmDelete = ( categoryName ) => {
+    //make the api call
+    if (categoryName !== null) {
+      deleteCategoryById(categoryName);
+    }
+  };
+
+  // Function to delete a category by its ID
+  const deleteCategoryById = async (categoryName) => {
+    categories = categories.filter( (category) => category.name !== categoryName);
+    updateCategories(categories);
+    try {
+      const response = await axios.delete(
+        `http://localhost:8080/categories/${encodeURIComponent(categoryName)}`
+      );
+      if (response.status === 200) {
+        console.log(`Successfully deleted category with ID ${categoryName}`);
+      }
+    } catch (error) {
+      console.error("Error deleting the category: " + error);
+    }
+    // deletion logic via API
+  };
 
   return (
     <div>
@@ -49,15 +72,18 @@ const CategoryList = () => {
                 )}
                 <td>
                   <button
-                    className="edit-category-button"
-                    onClick={() => handleEditCategory(row.id)}
+                    onClick={() => {
+                      redirectToEditCategory(row);
+                    }}
                   >
+                    {" "}
                     <FiEdit />
                   </button>
                 </td>
                 <td>
                   <DeleteConfirmationDialog
-                    onConfirmDelete={() => handleDeleteCategory(row.id)}
+                    onConfirmDelete={handleConfirmDelete}
+                    categoryName={row.name}
                   />
                 </td>
               </tr>
