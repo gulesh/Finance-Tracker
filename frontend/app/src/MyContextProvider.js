@@ -9,15 +9,15 @@ const MyContextProvider = (props) => {
   // Use useCallback to memoize the update functions
   const updateAccounts = useCallback((data) => {
     setAccounts(data);
-  }, [setAccounts]);
+  }, []);
 
   const updateCategories = useCallback((data) => {
     setCategories(data);
-  }, [setCategories]);
+  }, []);
 
   const updateTransfers = useCallback((data) => {
     setTransfers(data);
-  }, [setTransfers]);
+  }, []);
 
   return (
     <MyContext.Provider

@@ -1,5 +1,5 @@
 /* Category page header*/
-.category-header {
+.page-header {
     position: sticky;
     top: 0;
     background-color: white;
@@ -22,7 +22,7 @@
     /* Optional: Add a border for visualization */
 }
 
-.category-header-content{
+.page-header-content{
     display: flex;
     justify-content: space-between;
     align-items: center;

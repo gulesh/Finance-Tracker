@@ -1,0 +1,85 @@
+/* Default styles for the .slider */
+.slider {
+    max-width: 600px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 1rem;
+    height: 100%;
+    min-height: 17rem;
+    max-height: 10rem;
+    border-radius: 4px;
+    background-color: rgb(112, 154, 169);
+    justify-content: center;
+    /* Center horizontally */
+    align-items: center;
+    /* Center vertically */
+    display: flex;
+}
+
+/* Media query for larger screens */
+@media (min-width: 768px) {
+    .slider {
+        max-width: 800px;
+        /* Increase max-width for larger screens */
+        min-height: 20rem;
+        /* Increase min-height for larger screens */
+        max-height: 12rem;
+        /* Increase max-height for larger screens */
+    }
+}
+
+/* Media query for even larger screens */
+@media (min-width: 1024px) {
+    .slider {
+        max-width: 1000px;
+        /* Further increase max-width for even larger screens */
+        min-height: 24rem;
+        /* Further increase min-height for even larger screens */
+        max-height: 14rem;
+        /* Further increase max-height for even larger screens */
+    }
+}
+
+.slider-content{
+    justify-content: center;
+    align-content: center;
+    padding: 1rem;
+}
+
+.slider-button {
+    color: rgb(218, 208, 208);
+    background: linear-gradient(180deg, rgb(193, 173, 244), rgb(13, 39, 64));
+}
+
+.account-card {
+    background-color: #f2f2f2;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 1rem;
+    text-align: center;
+    max-width: 300px;
+}
+
+.account-card-header {
+    background-color: #007bff;
+    color: #fff;
+    padding: 0.5rem;
+    border-radius: 10px 10px 0 0;
+}
+
+.account-card-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.account-card-body {
+    padding: 1rem;
+}
+
+.info-label {
+    font-weight: bold;
+}
+
+.info-value {
+    color: #007bff;
+}

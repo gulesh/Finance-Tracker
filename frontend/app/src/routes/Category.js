@@ -30,8 +30,8 @@ const Category = () => {
 
   return (
     <div className="">
-      <div className="category-header">
-        <div className="category-header-content">
+      <div className="page-header">
+        <div className="page-header-content">
           <PageTitle title="Categories" />
           <button
             onClick={handleAddCateforyFormVisibility}

@@ -7,6 +7,7 @@ import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Content from './components/layout/Content';
 import EditCategoryForm from './components/categorycomponents/EditCategoryForm';
+import Account from './routes/Account';
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/expenses" element={<Expense />} />
           <Route path="/categories" element={<Category />} />
+          <Route path="/accounts" element={<Account />} />
           <Route
             path="/categories/edit/:categoryId"
             element={<EditCategoryForm />}
