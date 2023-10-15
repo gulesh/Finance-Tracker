@@ -1,10 +1,10 @@
 import React, { useState, useContext, useEffect } from "react";
-import NewCategoryForm from "../components/categorycomponents/AddNewCategoryForm";
 import CategoryList from "../components/categorycomponents/CategoryList";
 import "../components/categorycomponents/CategoryStyles.css";
 import PageTitle from "../components/general/PageTitle";
 import MyContext from "../MyContext";
 import axios from "axios";
+import AddCategory from "../components/forms/AddCategory";
 
 const Category = () => {
   const [isAddCategoryFormVisible, setIsAddCategoryFormVisible] = useState(true);
@@ -42,7 +42,7 @@ const Category = () => {
         </div>
       </div>
       <div className="">
-        {isAddCategoryFormVisible && <NewCategoryForm />}
+        {isAddCategoryFormVisible && <AddCategory />}
         <CategoryList categorieslist={categories} />
       </div>
     </div>

@@ -1,0 +1,45 @@
+/* styles for the New Category Form */
+.form-category {
+    max-width: 500px;
+    width: 100%;
+    margin: 2rem auto;
+    padding: 1rem;
+    border-radius: 4px;
+    background: linear-gradient(180deg, #67788f, #d7cfd3);
+}
+
+.select-field {
+    display: block;
+    /* Make the select element block-level */
+    width: 100%;
+    padding: 0.5rem;
+    border: 1px solid #76c0ae;
+    border-radius: 0.25rem;
+    background-color: wheat;
+    color: #05221c;
+    /* Adjust the text color */
+    font-size: 1rem;
+}
+
+button {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    color: #d7e0e7;
+    background-color: #1b5346;
+    font-family: 'Roboto Condensed', sans-serif;
+    cursor: pointer;
+    margin: 0.25rem;
+}
+
+button:hover, 
+button:active {
+    background: linear-gradient(180deg, #1b5346, #113c32);
+}
+
+button:disabled,
+button:disabled:hover,
+button:disabled:active{
+    background-color: grey;
+    cursor: not-allowed;
+}

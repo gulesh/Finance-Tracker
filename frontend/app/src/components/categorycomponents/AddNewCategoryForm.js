@@ -26,10 +26,10 @@ const NewCategoryForm = ( ) => {
       recurring,
     };
 
-    setIsValidInput(validateInput(formData));
+    const inputIsValid = validateInput(formData);
+    setIsValidInput(inputIsValid);
     // Get form field values using refs
-    if(isValidInput)
-    {
+    if (inputIsValid) {
       postCategory(formData);
     }
     

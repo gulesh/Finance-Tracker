@@ -1,9 +1,10 @@
-import React,  { useState} from "react";
+import React,  { useState, useContext} from "react";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { validateInput } from "./ValidateCategoryInput";
+import MyContext from "../../MyContext";
 
 const EditCategoryForm = () => {
   const { categoryId } = useParams(); // needed when making the patch request or may be not
@@ -11,7 +12,11 @@ const EditCategoryForm = () => {
   const navigate = useNavigate();
   const [editedData, setEditedData] = useState({}); //key -> value pairs
   const [categoryData, setCategoryData] = useState(location.state.categoryData);
-  const [disabled, setDisabled] = useState(true); // Use diabled for button state here
+  const [isValidInput, setIsValidInput] = useState(true);
+  const { categories, updateCategories } = useContext(MyContext);
+
+  //add a new OnBlue={function} to input fireld to validate the form further
+  //when to validate: on submittion, when input loses focus, and on every key stroke
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -37,18 +42,19 @@ const EditCategoryForm = () => {
         [name]: value,
       });
     }
+     setIsValidInput((prevState) => {
+       const inputIsValid = validateInput(editedData);
+       console.log("validInput: " + inputIsValid);
+       return inputIsValid;
+     });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(categoryData);
     console.log(editedData);
-    //validate the data here 
-    const isValidInput = validateInput(editedData);
-    setDisabled(!isValidInput); 
+  
     //make the patch request here and redirect to previous path
-    if (isValidInput)
-    {
+    if (isValidInput) {
       EditData(editedData);
       // Redirect to the previous page
       navigate(-1);
@@ -59,12 +65,20 @@ const EditCategoryForm = () => {
   const EditData = async (data) => {
 
     try{
-      
       const response = await axios.patch(
           `http://localhost:8080/categories/${encodeURIComponent(categoryId)}`,
           data
       );
-      console.log("server response is: " + response.status);
+      if (response.status === 200) {
+        console.log("Category added successfully!");
+        const updatedCategories = categories.map((category) =>
+          category.id === categoryId ? response.data : category
+        );
+        updateCategories(updatedCategories);
+        setIsValidInput(true);
+      } else {
+        console.error("Failed to add category");
+      }
     }
     catch(error) {
       console.error("Error:" + error);
@@ -129,7 +143,7 @@ const EditCategoryForm = () => {
           </p>
         </div>
         <p>
-          <button type="submit" disabled={disabled}>
+          <button type="submit" disabled={!isValidInput}>
             <AiOutlineSave />
           </button>
           <button onClick={handleCancel}>

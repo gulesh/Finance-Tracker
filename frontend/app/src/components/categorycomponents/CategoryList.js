@@ -9,8 +9,8 @@ import MyContext from "../../MyContext";
 
 const CategoryList = (props) => {
   const navigate = useNavigate();
-  let categories = props.categorieslist;
-  const {updateCategories} = useContext(MyContext);
+  // const categories = props.categorieslist;
+  const {categories, updateCategories} = useContext(MyContext);
 
   const redirectToEditCategory = (category) => {
       navigate(`/categories/edit/${category.id}`, {
@@ -27,8 +27,8 @@ const CategoryList = (props) => {
 
   // Function to delete a category by its ID
   const deleteCategoryById = async (categoryName) => {
-    categories = categories.filter( (category) => category.name !== categoryName);
-    updateCategories(categories);
+    const updatedCategories = categories.filter( (category) => category.name !== categoryName);
+    updateCategories(updatedCategories);
     try {
       const response = await axios.delete(
         `http://localhost:8080/categories/${encodeURIComponent(categoryName)}`

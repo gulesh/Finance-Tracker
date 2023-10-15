@@ -1,8 +1,10 @@
 import React from "react";
-
+import AddExpense from "../components/forms/AddExpense";
 const Home = () =>{
     return (
-        <h1> Home </h1>
+      <>
+        <AddExpense />
+      </>
     );
 }
 

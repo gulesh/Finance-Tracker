@@ -1,8 +1,0 @@
-/* CustomModal.css (or your preferred CSS file) */
-
-.modal-backdrop-custom {
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent background */
-    opacity: 1;
-    /* Make it fully opaque */
-}
