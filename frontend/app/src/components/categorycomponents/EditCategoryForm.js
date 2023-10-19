@@ -15,7 +15,7 @@ const EditCategoryForm = () => {
   const [isValidInput, setIsValidInput] = useState(true);
   const { categories, updateCategories } = useContext(MyContext);
 
-  //add a new OnBlue={function} to input fireld to validate the form further
+  //add a new OnBlur={function} to input fireld to validate the form further
   //when to validate: on submittion, when input loses focus, and on every key stroke
 
   const handleChange = (e) => {

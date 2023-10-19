@@ -6,8 +6,8 @@ import Category from './routes/Category';
 import Header from './components/layout/Header';
 import Footer from './components/layout/Footer';
 import Content from './components/layout/Content';
-import EditCategoryForm from './components/categorycomponents/EditCategoryForm';
 import Account from './routes/Account';
+import EditCategory from './components/forms/EditCategory';
 
 function App() {
   return (
@@ -19,9 +19,7 @@ function App() {
           <Route path="/expenses" element={<Expense />} />
           <Route path="/categories" element={<Category />} />
           <Route path="/accounts" element={<Account />} />
-          <Route
-            path="/categories/edit/:categoryId"
-            element={<EditCategoryForm />}
+          <Route path="/categories/edit/:categoryId" element={<EditCategory />}
           />
         </Routes>
       </Content>

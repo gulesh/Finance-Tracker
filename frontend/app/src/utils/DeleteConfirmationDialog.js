@@ -6,7 +6,7 @@ import { AiOutlineCheck } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 
 
-const DeleteConfirmationDialog = ({ onConfirmDelete, categoryName }) => {
+const DeleteConfirmationDialog = ({ onConfirmDelete, name, type }) => {
 
   const showConfirmationDialog = () => {
     confirmAlert({
@@ -14,10 +14,10 @@ const DeleteConfirmationDialog = ({ onConfirmDelete, categoryName }) => {
         return (
           <div className="custom-ui">
             <h1>Confirm Delete</h1>
-            <p>Are you sure you want to delete this item?</p>
+            <p>Are you sure you want to delete this {type}?</p>
             <button
               onClick={() => {
-                onConfirmDelete(categoryName); // Callback to delete the item
+                onConfirmDelete(name); // Callback to delete the item
                 onClose(); // Close the dialog
               }}
             >

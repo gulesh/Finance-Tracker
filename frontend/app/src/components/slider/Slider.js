@@ -26,6 +26,7 @@ const SliderComponent = (props) => {
             accountName={account.name}
             balance={account.amount}
             isDebt={account.debt}
+            accountObject={account}
           />
         ))}
       </Slider>

@@ -1,13 +1,24 @@
-import React, { useRef } from "react";
+import React, { useRef, useContext } from "react";
 import './AddFormStyles.css'
 import useForm from '../../utils/useForm'
-import CategoryFormObject from './CategoryFormObject'
+import getCategoryFormObject from './CategoryFormObject'
 import axios from "axios";
+import MyContext from "../../MyContext";
 
 const AddCategory= () =>{
-   
-  const { renderFormInputs, isFormValid, form } = useForm(CategoryFormObject);
+  const CategoryObject = getCategoryFormObject({});
+  const { renderFormInputs, isFormValid, form} = useForm(CategoryObject);
+  const { categories, updateCategories } = useContext(MyContext);
+
   const recurringRef = useRef(null);
+  const formRef = useRef(null);
+
+  //set autofill values will be used to reset the form
+  const defaultValues = {
+    name: undefined,
+    amountAllocated: undefined,
+    amountSpent: undefined,
+  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -17,21 +28,25 @@ const AddCategory= () =>{
       name: form.name.value,
       amountAllocated: form.amountAllocated.value,
       amountSpent: form.amountSpent.value,
-      recurring
+      recurring,
     };
-    console.log(formData)
     postCategory(formData);
-
   };
+
   const postCategory = async (data) => {
     try {
       const response = await axios.post(
         "http://localhost:8080/categories/",
         data
       );
-      if (response.status === 200) {
-        console.log("Category added successfully!");
+      console.log(response);
+      if (response.status === 201) {
+        //update the categories
+        const newCat = response.data;
+        updateCategories([...categories, newCat]); // Pass a new array with the updated categories
+        console.log("Category created successfully!");
       }
+      console.log("respose is success");
     } catch (error) {
       console.error("Error:", error);
       console.log("Server Response:", error.response);
@@ -39,7 +54,7 @@ const AddCategory= () =>{
   };
 
   return (
-    <form className="form-category" onSubmit={handleSubmit}>
+    <form className="form-category" onSubmit={handleSubmit} ref={formRef}>
       <h1> Add Category </h1>
       {renderFormInputs()}
       <p>
@@ -54,8 +69,10 @@ const AddCategory= () =>{
           <option value="false"> False </option>
         </select>
       </p>
-      <button disabled={!isFormValid()}> Submit </button>
-      {console.log("isFormValid() value: ", isFormValid())}
+      <button type="submit" disabled={!isFormValid()}>
+        {" "}
+        Submit{" "}
+      </button>
     </form>
   );
 }

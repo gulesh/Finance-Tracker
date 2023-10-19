@@ -2,7 +2,7 @@ import "./CategoryStyles.css";
 import React, { useContext } from "react";
 import "./CategoryStyles.css";
 import { FiEdit  } from "react-icons/fi";
-import DeleteConfirmationDialog from "../categorycomponents/DeleteConfirmationDialog";
+import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import MyContext from "../../MyContext";
@@ -21,12 +21,12 @@ const CategoryList = (props) => {
   const handleConfirmDelete = ( categoryName ) => {
     //make the api call
     if (categoryName !== null) {
-      deleteCategoryById(categoryName);
+      deleteCategoryByName(categoryName);
     }
   };
 
   // Function to delete a category by its ID
-  const deleteCategoryById = async (categoryName) => {
+  const deleteCategoryByName = async (categoryName) => {
     const updatedCategories = categories.filter( (category) => category.name !== categoryName);
     updateCategories(updatedCategories);
     try {
@@ -34,12 +34,11 @@ const CategoryList = (props) => {
         `http://localhost:8080/categories/${encodeURIComponent(categoryName)}`
       );
       if (response.status === 200) {
-        console.log(`Successfully deleted category with ID ${categoryName}`);
+        console.log(`Successfully deleted category with name:  ${categoryName}`);
       }
     } catch (error) {
       console.error("Error deleting the category: " + error);
     }
-    // deletion logic via API
   };
 
   return (
@@ -76,14 +75,14 @@ const CategoryList = (props) => {
                       redirectToEditCategory(row);
                     }}
                   >
-                    {" "}
                     <FiEdit />
                   </button>
                 </td>
                 <td>
                   <DeleteConfirmationDialog
                     onConfirmDelete={handleConfirmDelete}
-                    categoryName={row.name}
+                    name={row.name}
+                    type="category"
                   />
                 </td>
               </tr>

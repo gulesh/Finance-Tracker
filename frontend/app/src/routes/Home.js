@@ -1,9 +1,9 @@
 import React from "react";
-import AddExpense from "../components/forms/AddExpense";
+
 const Home = () =>{
     return (
       <>
-        <AddExpense />
+        <h1> HOME BITCH ...!!! </h1>
       </>
     );
 }
