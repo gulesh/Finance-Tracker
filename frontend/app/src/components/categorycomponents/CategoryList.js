@@ -46,7 +46,7 @@ const CategoryList = (props) => {
       <table className="categories">
         <thead>
           <tr>
-            <th> Category </th>
+            <th > Category </th>
             <th> Amount Allocated ($)</th>
             <th> Amount Spent ($) </th>
             <th> Recurring </th>

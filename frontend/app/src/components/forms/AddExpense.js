@@ -1,12 +1,12 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
 import "./AddFormStyles.css";
 import useForm from "../../utils/useForm";
 import ExpenseFormObject from "./ExpenseFormObject";
-import MyContext from '../../MyContext'
 
 
-const AddExpense= () => {
-    const {categories, accounts} = useContext(MyContext);
+const AddExpense= (props) => {
+    const categories = props.categories;
+    const accounts = props.accounts;
     const { renderFormInputs, isFormValid, form } = useForm(ExpenseFormObject);
     const categoryRef = useRef(null);
     const accountRef = useRef(null);
