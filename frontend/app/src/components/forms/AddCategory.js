@@ -7,18 +7,12 @@ import MyContext from "../../MyContext";
 
 const AddCategory= () =>{
   const CategoryObject = getCategoryFormObject({});
-  const { renderFormInputs, isFormValid, form} = useForm(CategoryObject);
+  const { renderFormInputs, isFormValid, form, resetForm} = useForm(CategoryObject);
   const { categories, updateCategories } = useContext(MyContext);
+  // const [formIsValid, setFormIsValid] = useState(isFormValid());
 
   const recurringRef = useRef(null);
   const formRef = useRef(null);
-
-  //set autofill values will be used to reset the form
-  const defaultValues = {
-    name: undefined,
-    amountAllocated: undefined,
-    amountSpent: undefined,
-  };
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -31,6 +25,7 @@ const AddCategory= () =>{
       recurring,
     };
     postCategory(formData);
+    resetForm();
   };
 
   const postCategory = async (data) => {
@@ -70,8 +65,7 @@ const AddCategory= () =>{
         </select>
       </p>
       <button type="submit" disabled={!isFormValid()}>
-        {" "}
-        Submit{" "}
+        Submit
       </button>
     </form>
   );
