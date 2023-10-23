@@ -26,6 +26,7 @@ const AddCategory= () =>{
     };
     postCategory(formData);
     resetForm();
+    formRef.current.reset();
   };
 
   const postCategory = async (data) => {

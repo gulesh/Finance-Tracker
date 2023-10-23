@@ -27,7 +27,7 @@ const EditCategory = () => {
 
   const [isFormEdited, setIsFormEdited] = useState(false);
 
-  //just use a function as we care only in the start
+  //we know initially all values are valid so use this in the start
   function initialFormValidation() {
     Object.values(form).forEach((inputField) => {
       let valid = isInputFieldValid(inputField);
@@ -36,19 +36,26 @@ const EditCategory = () => {
     return true;
   }
 
-  initialFormValidation(); //validation logic is true in the beginning as the data was already validation previously
+  initialFormValidation(); //call to set the values to true
   
-  //now i want to store if the data was changed along the way
+  //to update the values in the edited form
   const updateFormData = useCallback((formData)=> {
-
     for (const key in formData) {
-      //if the form values is different the previously added data
-      if ( formData.hasOwnProperty(key) && categoryData[key] !== formData[key].value) {
+      //if the form values is different than previously added data
+      if (
+        formData.hasOwnProperty(key) &&
+        categoryData[key] !== formData[key].value
+      ) {
         const value = formData[key].value;
-        editedData[key] = value; // Update 'editedData' with the value from 'form'
+        if (!isNaN(value)) {
+          editedData[key] = Number(formData[key].value);
+        } else {
+          editedData[key] = value;
+        }
         setIsFormEdited(true);
       }
     }
+    
   }, [categoryData, editedData]);
 
   useEffect(() => {
@@ -58,17 +65,21 @@ const EditCategory = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    //update the edited object
-    console.log("hi")
-    for(const key in editedData)
-    {
-      if(editedData[key] === categoryData[key]) return;
+    //check if all the values in editeddata matched categorydata
+    let validChange = true;
+    for (const key in editedData) {
+      if (editedData[key] === categoryData[key]) {
+        validChange = false;
+        break;
+      }
     }
-    console.log(editedData);
     //if we come here then we should call our edited button
-    EditData(editedData);
+    if(validChange)
+    {
+      EditData(editedData);
+      setIsFormEdited(false);
+    }
     navigate(-1);
-    
   };
 
   const handleCancel = () => {
@@ -129,8 +140,6 @@ const EditCategory = () => {
       <button onClick={handleCancel}>
         <RxCross1 />
       </button>
-      {console.log("isFormValid() value: ", isFormValid())}
-      {console.log("isFormEdited: ", !isFormEdited)}
     </form>
   );
 };

@@ -40,8 +40,8 @@ const CategoryObject = (defaultValues)=>{
       validationRules: [
         requiredRule("Amount Spent"),
         greaterThanZero("Amount Spent"),
-      ],
-    },
+      ]
+    }
   };
 };
 

@@ -5,6 +5,7 @@ const MyContextProvider = (props) => {
   const [accounts, setAccounts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [transfers, setTransfers] = useState([]);
+  const [expenses, setExpenses] = useState([]);
 
   // Use useCallback to memoize the update functions
   const updateAccounts = useCallback((data) => {
@@ -19,15 +20,21 @@ const MyContextProvider = (props) => {
     setTransfers(data);
   }, []);
 
+  const updateExpenses = useCallback((data) => {
+    setExpenses(data);
+  }, []);
+
   return (
     <MyContext.Provider
       value={{
         accounts,
         categories,
         transfers,
+        expenses,
         updateAccounts,
         updateTransfers,
-        updateCategories
+        updateCategories,
+        updateExpenses,
       }}
     >
       {props.children}

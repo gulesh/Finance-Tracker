@@ -27,7 +27,7 @@ const AccountInfo = (props) => {
   // Function to delete a category by its ID
   const deleteAccountByName = async (name) => {
     const updatedAccounts = accounts.filter(
-      (category) => category.name !== name
+      (account) => account.name !== name
     );
     updateAccounts(updatedAccounts);
     try {

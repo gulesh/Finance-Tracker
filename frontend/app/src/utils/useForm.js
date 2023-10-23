@@ -15,10 +15,10 @@ function useForm(formObj){
           return true; // Field is considered valid if it hasn't been touched
         }
         for (const rule of inputField.validationRules) {
-        if (!rule.validate(inputField.value)) {
-            inputField.errorMessage = rule.message;
-            return false;
-        }
+          if (!rule.validate(inputField.value)) {
+              inputField.errorMessage = rule.message;
+              return false;
+          }
         }
         return true;
     }, []); //not using any dependencies inside the usecallback
@@ -40,7 +40,6 @@ function useForm(formObj){
         } else if (!isValidInput && inputObj.valid) {
             inputObj.valid = false;
         }
-        
         setForm({ ...form, [name]: inputObj });
         },
         [form, isInputFieldValid]
@@ -49,8 +48,14 @@ function useForm(formObj){
     const isFormValid = useCallback(() => {
         let isValid = true;
         const inputsArr = Object.values(form);
-            for (let i = 0; i < inputsArr.length; i++) {
-            if (!inputsArr[i].valid) {
+        for (let i = 0; i < inputsArr.length; i++) {
+          //input field with no validation rules
+          if(inputsArr[i].validationRules.length === 0)
+          {
+            inputsArr[i].valid = true;
+          }
+          //now check the valid values
+          if (!inputsArr[i].valid) {
                 isValid = false;
                 break;
             }
@@ -65,11 +70,16 @@ function useForm(formObj){
       for (const name in form) {
         if (form.hasOwnProperty(name)) {
           const inputObj = { ...form[name] };
-
-          if (typeof inputObj.value === "number") {
+          if (inputObj.inputType === "number") {
             inputObj.value = 0; // Reset number input fields
-          } 
-          else {
+          } else if (inputObj.inputType === "date") {
+            const today = new Date();
+            const year = today.getFullYear();
+            const month = String(today.getMonth() + 1).padStart(2, "0");
+            const day = String(today.getDate()).padStart(2, "0");
+            const currentDate = `${year}-${month}-${day}`;
+            inputObj.value = currentDate;
+          } else {
             inputObj.value = ""; // Reset text or other input fields
           }
 

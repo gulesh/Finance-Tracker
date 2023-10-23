@@ -29,7 +29,8 @@ export const CreateFormFieldConfig= (label, name, type, defaultValue= "") => {
       value: defaultValue,
       valid: false,
       errorMessage:'',
-      touched: false
+      touched: false, 
+      inputType:type
     };
 };
 

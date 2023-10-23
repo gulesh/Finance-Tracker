@@ -3,8 +3,7 @@ import AddExpense from "../components/forms/AddExpense";
 import PageTitle from "../components/general/PageTitle";
 import "../components/categorycomponents/CategoryStyles.css";
 import { FiPlus } from "react-icons/fi";
-
-
+import Expenses from "../components/expense-components/Expenses";
 
 const Expense = ({accounts, categories}) => {
     const [isAddExpenseFormVisible, setIsAddExpenseFormVisible] = useState(false);
@@ -29,6 +28,9 @@ const Expense = ({accounts, categories}) => {
           {isAddExpenseFormVisible && (
             <AddExpense accounts={accounts} categories={categories} />
           )}
+        </div>
+        <div>
+          <Expenses accounts={accounts} categories={categories} />
         </div>
       </div>
     );

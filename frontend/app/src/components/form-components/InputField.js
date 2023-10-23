@@ -6,8 +6,8 @@ const Input = (props) => {
 
     return (
       <div className="inputContainer">
-        <label>{label}</label>
-        <input type={type} name={name} onChange={handleChange} value={value} />
+        <label htmlFor={name}>{label}</label>
+        <input id={name} type={type} name={name} onChange={handleChange} value={value} />
         {errorMessage && !isValid && (
           <span className="error"> {errorMessage} </span>
         )}

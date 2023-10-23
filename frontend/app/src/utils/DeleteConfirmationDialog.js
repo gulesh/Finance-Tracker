@@ -17,7 +17,7 @@ const DeleteConfirmationDialog = ({ onConfirmDelete, name, type }) => {
             <p>Are you sure you want to delete this {type}?</p>
             <button
               onClick={() => {
-                onConfirmDelete(name); // Callback to delete the item
+                onConfirmDelete(name); // Calling the function with a param to delete the entry 
                 onClose(); // Close the dialog
               }}
             >
@@ -31,7 +31,15 @@ const DeleteConfirmationDialog = ({ onConfirmDelete, name, type }) => {
   };
 
   return (
-    <button className="delete-button" onClick={showConfirmationDialog}>
+    <button
+      className="delete-button"
+      style={{
+        padding: "0.5rem 1.5rem",
+        border: "1px solid white",
+        borderRadius: "12px",
+      }}
+      onClick={showConfirmationDialog}
+    >
       <RiDeleteBin5Fill />
     </button>
   );

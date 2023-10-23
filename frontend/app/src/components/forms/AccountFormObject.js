@@ -5,18 +5,33 @@ import {
   greaterThanZero,
 } from "../../utils/inputValidationRules";
 
-const AccountFormObject = {
-  name: {
-    ...CreateFormFieldConfig("Account Name", "name", "text"),
-    validationRules: [
-      requiredRule("Account Name"),
-      minLengthRule("Account Name", 4),
-    ],
-  },
-  amount: {
-    ...CreateFormFieldConfig("Balance", "amount", "number"),
-    validationRules: [requiredRule("Balance"), greaterThanZero("Balance")],
-  },
+const AccountObject = (defaultValues)=> {
+  return {
+    name: {
+      ...CreateFormFieldConfig(
+        "Account Name",
+        "name",
+        "text",
+        defaultValues !== undefined ? defaultValues.name : undefined
+      ),
+      validationRules: [
+        requiredRule("Account Name"),
+        minLengthRule("Account Name", 4),
+      ]
+    },
+    amount: {
+      ...CreateFormFieldConfig(
+        "Balance",
+        "amount",
+        "number",
+        defaultValues !== undefined ? defaultValues.amount : undefined
+      ),
+      validationRules: [
+        requiredRule("Balance"), 
+        greaterThanZero("Balance")]
+    }
+  };
+  
 };
 
-export default AccountFormObject;
+export default AccountObject;
