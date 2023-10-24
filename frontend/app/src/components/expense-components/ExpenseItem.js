@@ -1,12 +1,15 @@
-import React from 'react';
+import React , { useContext }from 'react';
 import Card from '../general/Card';
 import './ExpenseItem.css'
 import ExpenseDate from "./ExpenseDate";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmationDialog from '../../utils/DeleteConfirmationDialog'
 import { FiEdit } from "react-icons/fi";
+import axios from "axios";
+import MyContext from "../../MyContext";
 
 const ExpenseItem = ({expense, handleDeleteExpense}) => {
+    const { expenses, updateExpenses } = useContext(MyContext);
     const navigate = useNavigate();
     const expenseId = expense.id;
     const accountName = expense.account.name;
@@ -18,7 +21,7 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
 
     const redirectToExpense = (expenseId) => {
       navigate(`/expenses/edit/${expenseId}`, {
-        state: { categoryData: expense },
+        state: { expenseData: expense },
       });
     };
 
@@ -27,9 +30,25 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
       if (expenseId !== null) {
         console.log(expenseId); 
         //call the delete method here
-        console.log(handleDeleteExpense);
-        //handleDeleteExpense(expenseId);
+        deleteExpenseById(expenseId);
       }
+    };
+
+    const deleteExpenseById = async (id) => {
+        console.log(id);
+      const updatedExpenses = expenses.filter((expense) => expense.id !== id);
+      updateExpenses(updatedExpenses);
+      console.log(updatedExpenses)
+        try {
+        const response = await axios.delete(
+            `http://localhost:8080/expenses/${encodeURIComponent(id)}`
+        );
+        if (response.status === 200) {
+            console.log(`Successfully deleted category with id:  ${id}`);
+        }
+        } catch (e) {
+        console.error("Error deleting the category: " + e);
+        }
     };
 
     return (

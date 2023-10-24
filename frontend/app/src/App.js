@@ -11,6 +11,7 @@ import EditCategory from './components/forms/EditCategory';
 import MyContext from './MyContext';
 import axios from "axios";
 import EditAccount from './components/forms/EditAccount';
+import EditExpense from './components/forms/EditExpense';
 
 function App() {
   const {
@@ -60,17 +61,15 @@ function App() {
             path="/categories"
             element={<Category categories={categories} />}
           />
-          <Route 
-            path="/accounts" 
-            element={<Account accounts={accounts} />} 
-          />
+          <Route path="/accounts" element={<Account accounts={accounts} />} />
           <Route
             path="/categories/edit/:categoryId"
             element={<EditCategory />}
           />
-          <Route 
-            path='/accounts/edit/:accountId' 
-            element={<EditAccount />} 
+          <Route path="/accounts/edit/:accountId" element={<EditAccount />} />
+          <Route
+            path="/expenses/edit/:expenseId"
+            element={ <EditExpense categories={categories} accounts={accounts} /> }
           />
         </Routes>
       </Content>

@@ -7,7 +7,7 @@ import AddCategory from "../components/forms/AddCategory";
 
 const Category = ({categories}) => {
   const [isAddCategoryFormVisible, setIsAddCategoryFormVisible] =
-    useState(true);
+    useState(false);
 
   const handleAddCateforyFormVisibility = () => {
     setIsAddCategoryFormVisible(!isAddCategoryFormVisible);
