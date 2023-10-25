@@ -5,15 +5,15 @@ import {
 } from "../../utils/inputValidationRules";
 
 function formatDate(date) {
-  let defaultDate = new Date();
-  if(date !== undefined)
-  {
-    defaultDate = new Date(date);
+  if (date !== undefined) {
+    // Parse the input date string in UTC
+    const defaultDate = new Date(Date.parse(date + "T00:00:00Z"));
+    const year = defaultDate.getUTCFullYear();
+    const month = String(defaultDate.getUTCMonth() + 1).padStart(2, "0"); // Month is 0-based
+    const day = String(defaultDate.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
-  const year = defaultDate.getFullYear();
-  const month = String(defaultDate.getMonth() + 1).padStart(2, "0"); // Month is 0-based
-  const day = String(defaultDate.getDate()).padStart(2, "0");
-  return `${year}-${month}-${day}`;
+  return new Date();; // Handle undefined date
 }
 
 const ExpenseFormObject = (defaultValues) => {

@@ -19,8 +19,9 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
     const date = expense.date;
     const details = expense.details;
 
-    const redirectToExpense = (expenseId) => {
-      navigate(`/expenses/edit/${expenseId}`, {
+    const redirectToExpense = (id) => {
+      console.log("expenseId Item: " + id);
+      navigate(`/expenses/edit/${id}`, {
         state: { expenseData: expense },
       });
     };

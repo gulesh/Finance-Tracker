@@ -5,9 +5,10 @@ import getExpenseFormObject from './ExpenseFormObject';
 import useForm from "../../utils/useForm";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import axios from "axios";
 
 const EditExpense = (props)=>{
-  const { ExpenseId } = useParams();
+  const { expenseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const expenseData = location.state.expenseData;
@@ -17,8 +18,6 @@ const EditExpense = (props)=>{
   const { expenses, updateExpenses } = useContext(MyContext);
   const [isFormEdited, setIsFormEdited] = useState(false);
 
-  console.log(expenseData);
-
   const defaultValues = {
     details: expenseData.details,
     amount: expenseData.amount,
@@ -27,16 +26,13 @@ const EditExpense = (props)=>{
   };
 
   const [editedData, setEditedData] = useState({
-    // Initialize with the initial category and account names
-    category: { name: expenseData.category.name },
-    account: { name: expenseData.account.name },
+    category: {name: ""},
+    account: {name: ""}
   });
 
   
   const expenseObject = getExpenseFormObject(defaultValues);
   const { renderFormInputs, isFormValid, isInputFieldValid, form } = useForm(expenseObject);
-
-  
 
   //we know initially all values are valid so use this in the start
   function initialFormValidation() {
@@ -54,17 +50,13 @@ const EditExpense = (props)=>{
     (formData) => {
       for (const key in formData) {
         //if the form values is different than previously added data
-        if (
-          formData.hasOwnProperty(key) &&
-          expenseData[key] !== formData[key].value
-        ) {
+        if ( expenseData[key] !== formData[key].value ) {
           const value = formData[key].value;
           if (!isNaN(value)) {
             editedData[key] = Number(formData[key].value);
           } else {
             editedData[key] = value;
           }
-          console.log("true");
           setIsFormEdited(true);
         }
       }
@@ -73,14 +65,34 @@ const EditExpense = (props)=>{
   );
 
     useEffect(() => {
-        console.log("is " + isFormEdited);
         updateFormData(form);
     }, [form, isFormEdited, updateFormData]);
 
   //handle submit
   const handleSubmit = (event) => {
     event.preventDefault();
+    if (editedData.account && editedData.account.name === "") delete editedData.account;
+    if (editedData.category && editedData.category.name === "") delete editedData.category;
+    let nochange = false;
+    for (const key in editedData) {
+      if (
+        (key === "category" || key === "account") &&
+        editedData[key].name === expenseData[key].name
+      ) {
+        nochange = true;
+        break;
+      } else if (editedData[key] === expenseData[key]) {
+        nochange = true;
+        break;
+      }
+    }
+    //make a server call if the data changed
+    if (!nochange) {
+      EditData(editedData);
+      setIsFormEdited(false);
+    }
     console.log(editedData);
+    navigate(-1);
   };
 
   const handleCancel = () => {
@@ -88,18 +100,41 @@ const EditExpense = (props)=>{
     navigate(-1);
   };
 
+  const EditData = async ( data ) =>{
+    try
+    {
+        const response = await axios.patch(
+          `http://localhost:8080/expenses/${encodeURIComponent(expenseId)}`,
+          data
+        );
+        if (response.status === 200) {
+            console.log("Expense edited successfully!");
+            const updatedExpenses = expenses.map((expense) =>
+              expense.id === expenseId ? response.data : expense
+            );
+            updateExpenses(updatedExpenses);
+        }
+        else{
+            console.error("Failed to edit expense");
+        }
+    }
+    catch(error)
+    {
+        console.error("Error:" + error);
+    }
+
+  }
+
   const handleChangeForDropDowns = (e) => {
     const { name, value } = e.target;
 
     setEditedData({
       ...editedData,
-      [name]: { name: value },
+      [name]: { "name": value },
     });
-    console.log("here");
+    
     setIsFormEdited(true);
   };
-
-
 
   return (
     <form className="form-category" onSubmit={handleSubmit}>
@@ -111,7 +146,11 @@ const EditExpense = (props)=>{
           className="select-field"
           style={{ display: "block" }}
           onChange={handleChangeForDropDowns}
-          value={editedData.category.name}
+          value={
+            editedData.category && editedData.category.name !== ""
+              ? editedData.category.name
+              : expenseData.category.name
+          }
           name="category"
         >
           {Object.values(categories).map((category) => (
@@ -128,7 +167,11 @@ const EditExpense = (props)=>{
           className="select-field"
           style={{ display: "block" }}
           onChange={handleChangeForDropDowns}
-          value={editedData.account.name}
+          value={
+            editedData.account && editedData.account.name !== ""
+              ? editedData.account.name
+              : expenseData.account.name
+          }
           name="account"
         >
           {Object.values(accounts).map((account) => (
@@ -139,13 +182,12 @@ const EditExpense = (props)=>{
         </select>
       </p>
       {renderFormInputs()}
-      <button onClick={handleCancel}>
-        <RxCross1 />
-      </button>
       <button type="submit" disabled={!isFormEdited || !isFormValid()}>
         <AiOutlineSave />
       </button>
-      {console.log("valid: " + isFormValid())}
+      <button onClick={handleCancel}>
+        <RxCross1 />
+      </button>
     </form>
   );
 }

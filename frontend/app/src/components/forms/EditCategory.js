@@ -73,7 +73,7 @@ const EditCategory = () => {
         break;
       }
     }
-    //if we come here then we should call our edited button
+    //make a server call if the data changed
     if(validChange)
     {
       EditData(editedData);
