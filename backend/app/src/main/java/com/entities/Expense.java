@@ -15,7 +15,7 @@ public class Expense {
     @DBRef
     private Category category;
     private String details;
-    private int amount;
+    private double amount;
     @DBRef
     private Account account;
     @JsonFormat(pattern = "yyyy-MM-dd")
@@ -62,11 +62,11 @@ public class Expense {
         this.details = details;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -101,13 +101,17 @@ public class Expense {
                 + ", date=" + date + ", description=" + description + "]";
     }
 
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((category == null) ? 0 : category.hashCode());
         result = prime * result + ((details == null) ? 0 : details.hashCode());
-        result = prime * result + amount;
+        long temp;
+        temp = Double.doubleToLongBits(amount);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((account == null) ? 0 : account.hashCode());
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
@@ -123,6 +127,11 @@ public class Expense {
         if (getClass() != obj.getClass())
             return false;
         Expense other = (Expense) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
         if (category == null) {
             if (other.category != null)
                 return false;
@@ -133,7 +142,7 @@ public class Expense {
                 return false;
         } else if (!details.equals(other.details))
             return false;
-        if (amount != other.amount)
+        if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
             return false;
         if (account == null) {
             if (other.account != null)

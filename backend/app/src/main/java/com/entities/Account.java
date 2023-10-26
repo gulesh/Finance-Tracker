@@ -11,7 +11,7 @@ public class Account{
     private String id;
     @Indexed(unique = true)
     private String name;
-    private int amount;
+    private double amount;
     private boolean debt;
 
     //constructors
@@ -43,11 +43,11 @@ public class Account{
         this.name = name;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -64,12 +64,16 @@ public class Account{
         return "Account [name=" + name + ", amount=" + amount + ", isDebt=" + debt + "]";
     }
 
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + amount;
+        long temp;
+        temp = Double.doubleToLongBits(amount);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + (debt ? 1231 : 1237);
         return result;
     }
@@ -83,12 +87,17 @@ public class Account{
         if (getClass() != obj.getClass())
             return false;
         Account other = (Account) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
         if (name == null) {
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (amount != other.amount)
+        if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
             return false;
         if (debt != other.debt)
             return false;

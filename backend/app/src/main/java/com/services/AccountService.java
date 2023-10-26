@@ -2,6 +2,7 @@ package com.services;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -54,18 +55,19 @@ public class AccountService {
         }
     }
 
-    //modigy existing Account
-    public Account editAccount(String name, Map<String, Object> attributes)
+    //modify existing Account
+    public Account editAccount(String id, Map<String, Object> attributes)
     {
-        Account existingAccount = this.accountRepo.findByName(name);
-        if(existingAccount == null)
+        Optional<Account> optionalExistingAccount = this.accountRepo.findById(id);
+        if(!optionalExistingAccount.isPresent())
         {
-            throw new AccountNotFound(name);
-        } 
-        else
+            throw new AccountNotFound("Id: " + id);
+        }
+        else 
         {
+            Account existingAccount = optionalExistingAccount.get();
             String newName = (String) attributes.get("name");
-            if(newName != null && !newName.equals(name))
+            if(newName != null && !newName.equals(existingAccount.getName()))
             {
                 Account accountWithNewName = this.accountRepo.findByName(newName);
                 if(accountWithNewName != null)
@@ -78,13 +80,22 @@ public class AccountService {
             {
                 switch (key) {
                     case "name": 
-                        existingAccount.setName((String) value);
+                        if (value instanceof String) {
+                            existingAccount.setName((String) value);
+                        }
                         break;
-                    case "amount": 
-                        existingAccount.setAmount((Integer) value);
+                    case "amount":
+                        if (value instanceof Number) {
+                            // Convert to double and set
+                            existingAccount.setAmount(((Number) value).doubleValue());
+                        }
                         break;
                     case "debt": 
-                        existingAccount.setDebt((boolean) value);
+                        if(value instanceof Boolean )
+                        {
+                            existingAccount.setDebt((boolean) value);
+
+                        }
                         break;
                     default:
                         break;
@@ -92,7 +103,8 @@ public class AccountService {
             });
             this.accountRepo.save(existingAccount);
             return existingAccount;
-        }
+
+        }     
     }
 
 

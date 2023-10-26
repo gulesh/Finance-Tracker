@@ -59,7 +59,6 @@ public class CategoryController {
     @PatchMapping("/{categoryId}")
     ResponseEntity<Category> editCategory(@PathVariable("categoryId") String id, @RequestBody Map<String, Object> attributes)
     {
-        System.out.println("correctly reached the route" + id);
         try
         {
             Category updatedCategory = this.categoryService.editCategory(id, attributes);

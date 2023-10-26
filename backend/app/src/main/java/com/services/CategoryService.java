@@ -17,7 +17,6 @@ import com.repositories.CategoryRepository;
 import com.entities.Category;
 import com.exceptionhandler.CategoryNotFound;
 import com.exceptionhandler.DuplicateCategory;
-import com.exceptionhandler.InvalidNumberFormatException;
 
 @Service
 public class CategoryService {
@@ -94,29 +93,25 @@ public class CategoryService {
             {  
                 switch (key) {
                     case "name": 
-                        existingCategory.setName((String) value);
+                        if (value instanceof String) {
+                            existingCategory.setName((String) value);
+                        }
                         break;
                     case "amountAllocated":
-                        try {
-                            int amountAllocated = Integer.parseInt((String) value);
-                            existingCategory.setAmountAllocated(amountAllocated);
-                        } catch (NumberFormatException e) {
-                            // Handle invalid integer value here
-                            throw new InvalidNumberFormatException("Invalid integer value for amountAllocated: " + value);
+                        if (value instanceof Number) {
+                            existingCategory.setAmountAllocated(((Number) value).doubleValue());
                         }
                         break;
                     case "amountSpent":
-                        try {
-                            int amountSpent = Integer.parseInt((String) value);
-                            existingCategory.setAmountSpent(amountSpent);
-                        } catch (NumberFormatException e) {
-                            // Handle invalid integer value here
-                            throw new InvalidNumberFormatException("Invalid integer value for amountSpent: " + value);
+                        if (value instanceof Number) {
+                            existingCategory.setAmountSpent(((Number) value).doubleValue());
                         }
                         break;
-                        
                     case "recurring":
-                        existingCategory.setRecurring((boolean) value);
+                        if(value instanceof Boolean )
+                        {
+                            existingCategory.setRecurring((boolean) value);
+                        }
                         break;
                     default:
                         break;

@@ -16,5 +16,5 @@ public interface ExpenseRepository extends MongoRepository<Expense, String>{
     @Query("{'category.name' : ?0, 'account.name' : ?1}")
     List<Expense> findByCategoryNameAndAccountName(String categoryName, String accountName);
     List<Expense> findAll();
-    void deleteByCategory_Name( String categoryName);
+    void deleteById(String id);
 }

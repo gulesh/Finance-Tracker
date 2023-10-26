@@ -17,12 +17,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.services.AccountService;
 
 
 import com.entities.Account;
-import com.exceptionhandler.CategoryNotFound;
 
 @RestController
 @RequestMapping("/accounts")
@@ -70,27 +70,18 @@ public class AccountController {
         }
     }
     //edit an existing account
-    @PatchMapping("/{accountName}")
-    ResponseEntity<Account> editAccount(@PathVariable("accountName") String accountName, @RequestBody Map<String, Object> attributes)
+    @PatchMapping("/{accountId}")
+    ResponseEntity<Account> editAccount(@PathVariable("accountId") String id, @RequestBody Map<String, Object> attributes)
     {
         try
         {
-            String decodedAccountName = URLDecoder.decode(accountName, "UTF-8");
-            Account account = this.accountService.getAccountByName(decodedAccountName);
-            if(account != null)
-            {
-                Account updatedAccount = this.accountService.editAccount(decodedAccountName, attributes);
-                return ResponseEntity.ok(updatedAccount);
-            } 
-            else
-            {
-                throw new CategoryNotFound(decodedAccountName);
-            }
-            
+            Account updatedAccount = this.accountService.editAccount(id, attributes);
+            logger.info("Correctly edited the account");
+            return ResponseEntity.ok(updatedAccount);
         }
-        catch (UnsupportedEncodingException e) 
+        catch (Exception e) 
         {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Internal server error occurred", e);
         }
 
     }
