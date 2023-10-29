@@ -1,9 +1,8 @@
-import React, {  useRef, useContext } from "react";
+import React, {  useRef } from "react";
 import "./AddFormStyles.css";
 import useForm from "../../utils/useForm";
 import getExpenseFormObject from "./ExpenseFormObject";
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useExpenseQueries } from '../../queries/expenseQueries'
 
 
 const AddExpense= (props) => {
@@ -11,7 +10,9 @@ const AddExpense= (props) => {
   const accounts = props.accounts;
   const expenseObject = getExpenseFormObject({});
   const { renderFormInputs, isFormValid, form, resetForm } = useForm(expenseObject);
-  const { expenses, updateExpenses } = useContext(MyContext);
+  const { useAddExpenseQuery } = useExpenseQueries();
+  const addExpenseMutation = useAddExpenseQuery();
+
   const categoryRef = useRef(null);
   const accountRef = useRef(null);
   const formRef = useRef(null);
@@ -34,19 +35,11 @@ const AddExpense= (props) => {
   };
 
   const postExpense = async (data) => {
-    try {
-      const response = await axios.post(
-        "http://localhost:8080/expenses/",
-        data
-      );
-      console.log(response);
-      if (response.status === 200) {
-        //update the categories
-        const newExpense = response.data;
-        updateExpenses([...expenses, newExpense]); // Pass a new array with the updated categories
-        console.log("Category created successfully!");
-      }
-      console.log("respose is success");
+    try 
+    {
+      const addedExpense = await addExpenseMutation.mutateAsync(data);
+      console.log(addedExpense);
+      
     } catch (error) {
       console.error("Error:", error);
       console.log("Server Response:", error.response);
@@ -87,7 +80,9 @@ const AddExpense= (props) => {
         </select>
       </p>
       {renderFormInputs()}
-      <button disabled={!isFormValid()}>Submit</button>
+      <button disabled={!isFormValid() || addExpenseMutation.isLoading}>
+        Submit
+      </button>
     </form>
   );
 }

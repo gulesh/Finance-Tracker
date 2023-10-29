@@ -2,16 +2,20 @@ import React, { useState } from "react";
 import CategoryList from "../components/categorycomponents/CategoryList";
 import "../components/categorycomponents/CategoryStyles.css";
 import PageTitle from "../components/general/PageTitle";
+import { useCategoryQueries } from "../queries/categoryQueries";
 
 import AddCategory from "../components/forms/AddCategory";
 
-const Category = ({categories}) => {
+const Category = () => {
   const [isAddCategoryFormVisible, setIsAddCategoryFormVisible] =
     useState(false);
 
   const handleAddCateforyFormVisibility = () => {
     setIsAddCategoryFormVisible(!isAddCategoryFormVisible);
   };
+
+  const { useGetCategoriesQuery } = useCategoryQueries(); //get the query
+  const {isLoading, data: categories, isError} = useGetCategoriesQuery();
 
   return (
     <div className="">
@@ -28,7 +32,9 @@ const Category = ({categories}) => {
       </div>
       <div className="">
         {isAddCategoryFormVisible && <AddCategory />}
-        <CategoryList categorieslist={categories} />
+        {isLoading && <p> Loading... </p>}
+        {isError && <p> Error loading </p>}
+        {categories && <CategoryList categorieslist={categories} />}
       </div>
     </div>
   );

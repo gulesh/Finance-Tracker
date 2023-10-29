@@ -1,19 +1,18 @@
 import "./CategoryStyles.css";
-import React, { useContext } from "react";
+import React from "react";
 import "./CategoryStyles.css";
 import { FiEdit  } from "react-icons/fi";
 import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useCategoryQueries } from '../../queries/categoryQueries'
 
 const CategoryList = (props) => {
   const navigate = useNavigate();
-  // const categories = props.categorieslist;
-  const {categories, updateCategories} = useContext(MyContext);
-  const sortedCategories = [...categories]
-    .slice()
-    .sort((a, b) => a.name.localeCompare(b.name));
+  const categories = props.categorieslist;
+  const { useDeleteCategoryQuery } = useCategoryQueries();
+  const deleteCategoryMutation = useDeleteCategoryQuery();
+
+  const sortedCategories = categories.slice().sort((a, b) => a.name.localeCompare(b.name));
 
   const redirectToEditCategory = (category) => {
       navigate(`/categories/edit/${category.id}`, {
@@ -21,28 +20,25 @@ const CategoryList = (props) => {
       });
   }
 
-  const handleConfirmDelete = ( categoryName ) => {
+  const handleConfirmDelete = async ( categoryName ) => {
     //make the api call
     if (categoryName !== null) {
       deleteCategoryByName(categoryName);
     }
   };
-
-  // Function to delete a category by its ID
-  const deleteCategoryByName = async (categoryName) => {
-    const updatedCategories = categories.filter( (category) => category.name !== categoryName);
-    updateCategories(updatedCategories);
-    try {
-      const response = await axios.delete(
-        `http://localhost:8080/categories/${encodeURIComponent(categoryName)}`
-      );
-      if (response.status === 200) {
-        console.log(`Successfully deleted category with name:  ${categoryName}`);
-      }
-    } catch (error) {
-      console.error("Error deleting the category: " + error);
+  const deleteCategoryByName = async (name) =>{
+    try
+    {
+      const deletedCategory = await deleteCategoryMutation.mutateAsync(name);
+      console.log(deletedCategory);
     }
-  };
+    catch (error)
+    {
+      console.error("Error:", error);
+      console.log("Server Response:", error.response);
+    }
+
+  }
 
   return (
     <div>

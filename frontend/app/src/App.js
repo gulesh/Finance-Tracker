@@ -47,7 +47,7 @@ function App() {
 
     fetchData();
   }, [updateCategories, updateAccounts, updateExpenses]);
-
+//a little later try using React-Query to do fetching to remove unnecessary fetch calls 
   return (
     <Router>
       <Header />
@@ -60,7 +60,8 @@ function App() {
           />
           <Route
             path="/categories"
-            element={<Category categories={categories} />}
+            element={<Category 
+               />}
           />
           <Route path="/accounts" element={<Account accounts={accounts} />} />
           <Route path="/transfers" element={<Transfer accounts={accounts}/>} />

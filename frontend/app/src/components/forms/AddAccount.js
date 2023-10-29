@@ -1,14 +1,14 @@
-import React, { useContext, useRef } from "react";
+import React, { useRef } from "react";
 import "./AddFormStyles.css";
 import useForm from "../../utils/useForm";
 import getAccountFormObject from "./AccountFormObject";
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useAccountQueries } from '../../queries/accountQueries'
 
 const AddAccount = () => {
   const AccountObject = getAccountFormObject({});
   const { renderFormInputs, isFormValid, form, resetForm } = useForm(AccountObject);
-  const { accounts, updateAccounts } = useContext(MyContext);
+  const { useAddAccountQuery } = useAccountQueries();
+  const addAccountMutation = useAddAccountQuery();
 
   const DebtRef = useRef(null);
   const formRef = useRef(null);//to reset the bolean input
@@ -30,15 +30,8 @@ const AddAccount = () => {
 
   const postAccount = async (data) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/accounts/",
-        data
-      );
-      if (response.status === 201) {
-        const newAcct = response.data;
-        updateAccounts([...accounts, newAcct]); //add to the list to display to the user
-        console.log("Account added successfully!");
-      }
+      const addedAccount = await addAccountMutation.mutateAsync(data);
+      console.log(addedAccount);
     } catch (error) {
       console.error("Error:", error);
       console.log("Server Response:", error.response);
@@ -46,7 +39,7 @@ const AddAccount = () => {
   };
 
   return (
-    <form className="form-category" ref={formRef} onSubmit={handleSubmit}>
+    <form className="form-general" ref={formRef} onSubmit={handleSubmit}>
       <h1> Add Account </h1>
       {renderFormInputs()}
       <p>
@@ -61,7 +54,7 @@ const AddAccount = () => {
           <option value="false"> False </option>
         </select>
       </p>
-      <button disabled={!isFormValid()}> Submit </button>
+      <button disabled={!isFormValid() || addAccountMutation.isLoading}> Submit </button>
     </form>
   );
 

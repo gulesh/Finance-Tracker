@@ -1,18 +1,18 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import MyContext from "../../MyContext";
 import useForm from "../../utils/useForm";
-import axios from "axios";
 import getAccountFormObject from './AccountFormObject'
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import { useAccountQueries } from "../../queries/accountQueries";
 
 const EditAccount = ()=>{
   const { accountId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const accountData = location.state.accountData;
-  const { accounts, updateAccounts } = useContext(MyContext);
+  const { useEditAccountQuery } = useAccountQueries();
+  const editAccountMutation = useEditAccountQuery();
 
   //set autofill values
   const defaultValues = {
@@ -79,20 +79,11 @@ const EditAccount = ()=>{
   }
 
   const EditData = async (data) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:8080/accounts/${encodeURIComponent(accountId)}`,
-        data
-      );
-      if (response.status === 200) {
-        console.log("Category edited successfully!");
-        const updatedAccountsList = accounts.map((account) =>
-          account.id === accountId ? response.data : account
-        );
-        updateAccounts(updatedAccountsList);
-      } else {
-        console.error("Failed to edit account");
-      }
+    try 
+    {
+      const editedAccount = await editAccountMutation.mutateAsync({data: data, id: accountId});
+      console.log(editedAccount)
+      
     } catch (error) {
       console.error("Error:" + error);
     }

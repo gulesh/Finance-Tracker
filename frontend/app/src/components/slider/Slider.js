@@ -6,7 +6,7 @@ import "./Slider.css";
 import AccountInfo from "./AccountInfo";
 
 const SliderComponent = (props) => {
-    console.log(props.accounts)
+  const accounts = props.accounts;
     const setting = {
         infinite: true,
         dots: true,
@@ -20,7 +20,7 @@ const SliderComponent = (props) => {
   return (
     <>
       <Slider {...setting}>
-        {props.accounts.map((account) => (
+        {accounts.map((account) => (
           <AccountInfo
             key={account.id}
             accountName={account.name}

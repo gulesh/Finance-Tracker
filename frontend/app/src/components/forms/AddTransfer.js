@@ -35,6 +35,7 @@ const AddTransfer = (props) =>{
     const handleSubmit = (e) =>{
         e.preventDefault();
         console.log(formData);
+        //check here if transfer to is "adjust-balance", we don't care about frm as we check that in the backend
         postTransfer(formData);
         resetForm();
         setAccountFrom("");

@@ -1,16 +1,19 @@
 import React, { useState} from "react";
-
 import PageTitle from "../components/general/PageTitle";
 import AddAccount from "../components/forms/AddAccount";
 import SliderComponent from "../components/slider/Slider";
 import '../components/categorycomponents/CategoryStyles.css'
+import { useAccountQueries } from '../queries/accountQueries'
 
-const Account = ({accounts}) => {
+const Account = () => {
     const [isAddAccountFormVisible, setIsAddAccountFormVisible] = useState(true);
 
     const handleAddAccountFormVisibility = () => {
         setIsAddAccountFormVisible(!isAddAccountFormVisible);
     }
+
+    const { useGetAccountsQuery } = useAccountQueries();
+    const {isLoading, isError, data: accounts} = useGetAccountsQuery();
 
     return (
       <>
@@ -27,7 +30,9 @@ const Account = ({accounts}) => {
             </div>
           </div>
           {isAddAccountFormVisible && <AddAccount />}
-          <SliderComponent accounts={accounts} />
+          {isLoading && <p> Loading... </p>}
+          {isError && <p> Error loading </p>}
+          {accounts && <SliderComponent accounts={accounts} />}
         </div>
       </>
     );

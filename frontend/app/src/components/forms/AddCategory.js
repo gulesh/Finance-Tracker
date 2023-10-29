@@ -1,15 +1,14 @@
-import React, { useRef, useContext } from "react";
+import React, { useRef } from "react";
 import './AddFormStyles.css'
 import useForm from '../../utils/useForm'
 import getCategoryFormObject from './CategoryFormObject'
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useCategoryQueries } from '../../queries/categoryQueries'
 
 const AddCategory= () =>{
   const CategoryObject = getCategoryFormObject({});
   const { renderFormInputs, isFormValid, form, resetForm} = useForm(CategoryObject);
-  const { categories, updateCategories } = useContext(MyContext);
-  // const [formIsValid, setFormIsValid] = useState(isFormValid());
+  const { useAddCategoryQuery } = useCategoryQueries();
+  const addCategoryMutation = useAddCategoryQuery();
 
   const recurringRef = useRef(null);
   const formRef = useRef(null);
@@ -31,18 +30,8 @@ const AddCategory= () =>{
 
   const postCategory = async (data) => {
     try {
-      const response = await axios.post(
-        "http://localhost:8080/categories/",
-        data
-      );
-      console.log(response);
-      if (response.status === 201) {
-        //update the categories
-        const newCat = response.data;
-        updateCategories([...categories, newCat]); // Pass a new array with the updated categories
-        console.log("Category created successfully!");
-      }
-      console.log("respose is success");
+      const addedCategory = await addCategoryMutation.mutateAsync(data)
+      console.log(addedCategory);
     } catch (error) {
       console.error("Error:", error);
       console.log("Server Response:", error.response);
@@ -50,7 +39,7 @@ const AddCategory= () =>{
   };
 
   return (
-    <form className="form-category" onSubmit={handleSubmit} ref={formRef}>
+    <form className="form-general" onSubmit={handleSubmit} ref={formRef}>
       <h1> Add Category </h1>
       {renderFormInputs()}
       <p>
@@ -65,7 +54,10 @@ const AddCategory= () =>{
           <option value="false"> False </option>
         </select>
       </p>
-      <button type="submit" disabled={!isFormValid()}>
+      <button
+        type="submit"
+        disabled={!isFormValid() || addCategoryMutation.isLoading}
+      >
         Submit
       </button>
     </form>

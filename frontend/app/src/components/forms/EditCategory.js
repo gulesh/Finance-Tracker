@@ -1,18 +1,18 @@
-import React, { useState, useContext, useEffect, useCallback } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import getCategoryFormObject from "./CategoryFormObject";
 import useForm from "../../utils/useForm";
-import axios from "axios";
 import { useParams, useLocation, useNavigate } from "react-router-dom";
-import MyContext from "../../MyContext";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import { useCategoryQueries } from "../../queries/categoryQueries";
 
 const EditCategory = () => {
   const { categoryId } = useParams(); // needed when making the patch request or may be not
   const location = useLocation();
   const navigate = useNavigate();
   const categoryData = location.state.categoryData;
-  const { categories, updateCategories } = useContext(MyContext);
+  const { useEditCategoryQuery } = useCategoryQueries();
+  const editCategoryMutation = useEditCategoryQuery();
 
   //set autofill values
   const defaultValues = {
@@ -88,20 +88,11 @@ const EditCategory = () => {
   };
 
   const EditData = async (data) => {
-    try {
-      const response = await axios.patch(
-        `http://localhost:8080/categories/${encodeURIComponent(categoryId)}`,
-        data
-      );
-      if (response.status === 200) {
-        console.log("Category edited successfully!");
-        const updatedCategories = categories.map((category) =>
-          category.id === categoryId ? response.data : category
-        );
-        updateCategories(updatedCategories);
-      } else {
-        console.error("Failed to edit category");
-      }
+    try 
+    {
+      const editedCategory = await editCategoryMutation.mutateAsync({data:data, id:categoryId});
+      console.log(editedCategory);
+      
     } catch (error) {
       console.error("Error:" + error);
     }
