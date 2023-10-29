@@ -11,6 +11,9 @@ const CategoryList = (props) => {
   const navigate = useNavigate();
   // const categories = props.categorieslist;
   const {categories, updateCategories} = useContext(MyContext);
+  const sortedCategories = [...categories]
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name));
 
   const redirectToEditCategory = (category) => {
       navigate(`/categories/edit/${category.id}`, {
@@ -46,14 +49,14 @@ const CategoryList = (props) => {
       <table className="categories">
         <thead>
           <tr>
-            <th > Category </th>
+            <th> Category </th>
             <th> Amount Allocated ($)</th>
             <th> Amount Spent ($) </th>
             <th> Recurring </th>
           </tr>
         </thead>
         <tbody>
-          {categories.map((row) => {
+          {sortedCategories.map((row) => {
             let counter = 0;
             return (
               <tr key={row.id}>
