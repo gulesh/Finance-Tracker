@@ -54,7 +54,7 @@ const AddExpense= (props) => {
   };
 
   return (
-    <form className="form-category" ref={formRef} onSubmit={handleSubmit}>
+    <form className="form-general" ref={formRef} onSubmit={handleSubmit}>
       <h1>Add Expense</h1>
       <p>
         <label htmlFor="category-recurring">Expense Category</label>
@@ -72,7 +72,7 @@ const AddExpense= (props) => {
         </select>
       </p>
       <p>
-        <label htmlFor="category-recurring">Expense Account</label>
+        <label htmlFor="account-recurring">Expense Account</label>
         <select
           id="account-expense"
           className="select-field"

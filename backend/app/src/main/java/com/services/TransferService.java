@@ -56,6 +56,7 @@ public class TransferService {
         String accountToName = transfer.getAccountTo().getName();
         String accountFromName = transfer.getAccountFrom().getName();
         
+        if(!accountFromName.equals("adjust-balance") ) System.out.println("hi");
         Account acctTo = this.accountRepo.findByName(accountToName);
         Account acctFrom = this.accountRepo.findByName(accountFromName);
         
@@ -64,14 +65,17 @@ public class TransferService {
             throw new AccountNotFound(accountToName);
         }
 
-        if(acctFrom == null)
+        if(!accountFromName.equals("adjust-balance") && acctFrom == null)
         {
             throw new AccountNotFound(accountFromName);
         }
 
         //set the accounts to transfers
         transfer.setAccountTo(acctTo);
-        transfer.setAccountFrom(acctFrom);
+        if( !accountFromName.equals("adjust-balance") ) transfer.setAccountFrom(acctFrom);
+        else{
+            transfer.setAccountFrom(null);
+        }
 
         Transfer savedTransfer  = this.transferRepo.save(transfer);
 
@@ -87,17 +91,21 @@ public class TransferService {
         }
 
         //check account from
-        if(acctFrom.isDebt())
+        if( !accountFromName.equals("adjust-balance") ) 
         {
-            acctFrom.setAmount(acctFrom.getAmount() + savedTransfer.getAmount());
-        }
-        else 
-        {
-            acctFrom.setAmount(acctFrom.getAmount() - savedTransfer.getAmount());
+            if(acctFrom.isDebt())
+            {
+                acctFrom.setAmount(acctFrom.getAmount() + savedTransfer.getAmount());
+            }
+            else 
+            {
+                acctFrom.setAmount(acctFrom.getAmount() - savedTransfer.getAmount());
+            }
+
         }
         
         //save the changes to the db
-        this.accountRepo.save(acctFrom);
+       if( !accountFromName.equals("adjust-balance") )  this.accountRepo.save(acctFrom);
         this.accountRepo.save(acctTo);
 
         return savedTransfer;

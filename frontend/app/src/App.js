@@ -12,6 +12,7 @@ import MyContext from './MyContext';
 import axios from "axios";
 import EditAccount from './components/forms/EditAccount';
 import EditExpense from './components/forms/EditExpense';
+import Transfer from './routes/Transfer';
 
 function App() {
   const {
@@ -62,6 +63,7 @@ function App() {
             element={<Category categories={categories} />}
           />
           <Route path="/accounts" element={<Account accounts={accounts} />} />
+          <Route path="/transfers" element={<Transfer accounts={accounts}/>} />
           <Route
             path="/categories/edit/:categoryId"
             element={<EditCategory />}

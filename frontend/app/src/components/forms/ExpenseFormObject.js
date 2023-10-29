@@ -13,7 +13,12 @@ function formatDate(date) {
     const day = String(defaultDate.getUTCDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   }
-  return new Date();; // Handle undefined date
+  const defaultDate = new Date();
+  const year = defaultDate.getUTCFullYear();
+  const month = String(defaultDate.getUTCMonth() + 1).padStart(2, "0"); // Month is 0-based
+  const day = String(defaultDate.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+  
 }
 
 const ExpenseFormObject = (defaultValues) => {
