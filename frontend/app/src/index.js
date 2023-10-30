@@ -4,19 +4,25 @@ import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
-import MyContextProvider from './MyContextProvider'
 import {QueryClient, QueryClientProvider} from'react-query'
+import MyReactErrorBoundry from './MyReactErrorBoundry';
 
 const queryClient = new QueryClient();
+//the UI is hidden under the error overlay as dev shows all error. Error boundry is useful in prod
+function AppWithErrorBoundary() {
+  return (
+    <MyReactErrorBoundry>
+      <QueryClientProvider client={queryClient}>
+        <App />
+      </QueryClientProvider>
+    </MyReactErrorBoundry>
+  );
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <MyContextProvider>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </MyContextProvider>
+    <AppWithErrorBoundary />
   </React.StrictMode>
 );
 

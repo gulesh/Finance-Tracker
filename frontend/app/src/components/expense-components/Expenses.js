@@ -6,7 +6,7 @@ import ExpensesFilter from "./ExpensesFilter";
 import MyContext from '../../MyContext';
 
 
-const Expenses = ({ accounts, categories }) => {
+const Expenses = () => {
   const { expenses } = useContext(MyContext);
 
   const [filteredYear, setFilteredYear] = useState("All");

@@ -66,16 +66,15 @@ const EditCategory = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     //check if all the values in editeddata matched categorydata
-    let validChange = true;
+    let nochange = true;
     for (const key in editedData) {
-      if (editedData[key] === categoryData[key]) {
-        validChange = false;
+      if (editedData[key] !== categoryData[key]) {
+        nochange = false; //means there is a change
         break;
       }
     }
     //make a server call if the data changed
-    if(validChange)
-    {
+    if (!nochange) {
       EditData(editedData);
       setIsFormEdited(false);
     }

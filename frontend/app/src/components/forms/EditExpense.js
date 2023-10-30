@@ -1,11 +1,10 @@
-import React, { useContext, useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
-import MyContext from '../../MyContext';
 import getExpenseFormObject from './ExpenseFormObject';
 import useForm from "../../utils/useForm";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
-import axios from "axios";
+import { useExpenseQueries } from "../../queries/expenseQueries";
 
 const EditExpense = (props)=>{
   const { expenseId } = useParams();
@@ -15,7 +14,10 @@ const EditExpense = (props)=>{
   const categories = props.categories;
   const accounts = props.accounts;
 
-  const { expenses, updateExpenses } = useContext(MyContext);
+  const { useEditExpenseQuery } = useExpenseQueries();
+  const editExpenseMutation = useEditExpenseQuery();
+
+
   const [isFormEdited, setIsFormEdited] = useState(false);
 
   const defaultValues = {
@@ -30,7 +32,6 @@ const EditExpense = (props)=>{
     account: {name: ""}
   });
 
-  
   const expenseObject = getExpenseFormObject(defaultValues);
   const { renderFormInputs, isFormValid, isInputFieldValid, form } = useForm(expenseObject);
 
@@ -73,16 +74,16 @@ const EditExpense = (props)=>{
     event.preventDefault();
     if (editedData.account && editedData.account.name === "") delete editedData.account;
     if (editedData.category && editedData.category.name === "") delete editedData.category;
-    let nochange = false;
+    let nochange = true;
     for (const key in editedData) {
       if (
         (key === "category" || key === "account") &&
-        editedData[key].name === expenseData[key].name
+        editedData[key].name !== expenseData[key].name
       ) {
-        nochange = true;
+        nochange = false;
         break;
-      } else if (editedData[key] === expenseData[key]) {
-        nochange = true;
+      } else if (editedData[key] !== expenseData[key]) {
+        nochange = false;
         break;
       }
     }
@@ -103,20 +104,8 @@ const EditExpense = (props)=>{
   const EditData = async ( data ) =>{
     try
     {
-        const response = await axios.patch(
-          `http://localhost:8080/expenses/${encodeURIComponent(expenseId)}`,
-          data
-        );
-        if (response.status === 200) {
-            console.log("Expense edited successfully!");
-            const updatedExpenses = expenses.map((expense) =>
-              expense.id === expenseId ? response.data : expense
-            );
-            updateExpenses(updatedExpenses);
-        }
-        else{
-            console.error("Failed to edit expense");
-        }
+        const editedExpense = await editExpenseMutation.mutateAsync({data: data, id: expenseId});
+        console.log(editedExpense);
     }
     catch(error)
     {

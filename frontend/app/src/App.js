@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react'
+import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home  from './routes/Home';
 import Expense from './routes/Expense';
@@ -8,46 +8,20 @@ import Footer from './components/layout/Footer';
 import Content from './components/layout/Content';
 import Account from './routes/Account';
 import EditCategory from './components/forms/EditCategory';
-import MyContext from './MyContext';
-import axios from "axios";
 import EditAccount from './components/forms/EditAccount';
 import EditExpense from './components/forms/EditExpense';
 import Transfer from './routes/Transfer';
+import { useAccountQueries } from './queries/accountQueries';
+import { useCategoryQueries } from './queries/categoryQueries';
 
 function App() {
-  const {
-    accounts,
-    categories,
-    updateCategories,
-    updateAccounts,
-    updateExpenses,
-  } = useContext(MyContext);
+  //fetch using React Query
+  const { useGetAccountsQuery } = useAccountQueries();
+  const { useGetCategoriesQuery } = useCategoryQueries();
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const [categoriesResponse, accountsResponse, expenseResponse] =
-          await Promise.all([
-            axios.get("http://localhost:8080/categories/"),
-            axios.get("http://localhost:8080/accounts/"),
-            axios.get("http://localhost:8080/expenses/"),
-          ]);
-
-        const categoriesData = categoriesResponse.data;
-        const accountsData = accountsResponse.data;
-        const expensesData = expenseResponse.data;
-
-        updateCategories(categoriesData);
-        updateAccounts(accountsData);
-        updateExpenses(expensesData);
-      } catch (error) {
-        console.error("Error fetching data: ", error);
-      }
-    };
-
-    fetchData();
-  }, [updateCategories, updateAccounts, updateExpenses]);
-//a little later try using React-Query to do fetching to remove unnecessary fetch calls 
+  const { data: accounts } = useGetAccountsQuery();
+  const { data: categories } = useGetCategoriesQuery();
+  
   return (
     <Router>
       <Header />
@@ -56,14 +30,13 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route
             path="/expenses"
-            element={<Expense categories={categories} accounts={accounts} />}
+            element={<Expense />}
           />
           <Route
             path="/categories"
-            element={<Category 
-               />}
+            element={<Category />}
           />
-          <Route path="/accounts" element={<Account accounts={accounts} />} />
+          <Route path="/accounts" element={<Account />} />
           <Route path="/transfers" element={<Transfer accounts={accounts}/>} />
           <Route
             path="/categories/edit/:categoryId"

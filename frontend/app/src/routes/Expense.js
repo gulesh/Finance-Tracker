@@ -42,7 +42,7 @@ const Expense = () => {
         </div>
         <div>
           {accounts && categories && (
-            <Expenses accounts={accounts} categories={categories} />
+            <Expenses  />
           )}
         </div>
       </div>
