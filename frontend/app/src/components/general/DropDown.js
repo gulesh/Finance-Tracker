@@ -4,6 +4,7 @@ const DropDown = (props) =>{
     const data = props.data;
     const title = props.title;
     const onValueChange = props.onValueChange;
+    const defaultValue = props.defaultValue !== undefined ? props.defaultValue : "";
 
     const handleSelectChange = (event)=>{
         const newValue = event.target.value;
@@ -19,8 +20,11 @@ const DropDown = (props) =>{
             className="select-field"
             style={{ display: "block" }}
             onChange={handleSelectChange}
+            value={defaultValue}
           >
-            <option key="select-a-value" value="">Select an option</option>
+            <option key="select-a-value" value="">
+              Select an option
+            </option>
             {Object.values(data).map((entry) => (
               <option key={entry.name} value={entry.name}>
                 {entry.name}

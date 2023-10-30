@@ -1,10 +1,9 @@
-import React, { useContext, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import getTransferFormObject from '../forms/TransferFormObject'
 import useForm from "../../utils/useForm";
-import MyContext from "../../MyContext";
 import DropDown from "../general/DropDown";
 import "./AddFormStyles.css";
-import axios from "axios";
+import { useTransferQueries } from '../../queries/transferQueries';
 
 const AddTransfer = (props) =>{
     const data = [...props.accounts];
@@ -14,7 +13,8 @@ const AddTransfer = (props) =>{
 
     const tranferObject = getTransferFormObject({});
     const {renderFormInputs, isFormValid, form, resetForm} = useForm(tranferObject);
-    const { transfers, updateTransfers } = useContext(MyContext);
+    const { useAddTransferQuery } = useTransferQueries();
+    const addTransferMutation = useAddTransferQuery();
     
     const [accountTo, setAccountTo] = useState("");
     const [accountFrom, setAccountFrom] = useState("");
@@ -35,8 +35,10 @@ const AddTransfer = (props) =>{
     const handleSubmit = (e) =>{
         e.preventDefault();
         console.log(formData);
-        //check here if transfer to is "adjust-balance", we don't care about frm as we check that in the backend
-        postTransfer(formData);
+        //better would be to add a validation rule (handle change validation) to the form input itself
+        if (formData.accountTo.name !== "adjust-balance") {
+          postTransfer(formData);
+        }
         resetForm();
         setAccountFrom("");
         setAccountTo("");
@@ -46,15 +48,8 @@ const AddTransfer = (props) =>{
     const postTransfer = async (data)=>{
         try
         {
-            const response = await axios.post("http://localhost:8080/transfers/", data);
-            console.log(response);
-            if(response.status === 200)
-            {
-                const newTransfer = response.data;
-                updateTransfers([...transfers, newTransfer]);
-                console.log("Transfer added successfully!");
-            }
-            console.log("respose is success");
+           const addedTransfer = await addTransferMutation.mutateAsync(data);
+           console.log(addedTransfer);
         }
         catch(error)
         {

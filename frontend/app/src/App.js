@@ -28,16 +28,10 @@ function App() {
       <Content>
         <Routes>
           <Route path="/" element={<Home />} />
-          <Route
-            path="/expenses"
-            element={<Expense />}
-          />
-          <Route
-            path="/categories"
-            element={<Category />}
-          />
+          <Route path="/expenses" element={<Expense />} />
+          <Route path="/categories" element={<Category />} />
           <Route path="/accounts" element={<Account />} />
-          <Route path="/transfers" element={<Transfer accounts={accounts}/>} />
+          <Route path="/transfers" element={<Transfer accounts={accounts} />} />
           <Route
             path="/categories/edit/:categoryId"
             element={<EditCategory />}
@@ -45,7 +39,9 @@ function App() {
           <Route path="/accounts/edit/:accountId" element={<EditAccount />} />
           <Route
             path="/expenses/edit/:expenseId"
-            element={ <EditExpense categories={categories} accounts={accounts} /> }
+            element={
+              <EditExpense categories={categories} accounts={accounts} />
+            }
           />
         </Routes>
       </Content>
