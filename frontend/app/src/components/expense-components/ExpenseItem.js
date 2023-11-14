@@ -9,7 +9,6 @@ import { useExpenseQueries } from '../../queries/expenseQueries';
 
 const ExpenseItem = ({expense}) => {
     const { useDeleteExpenseQuery } = useExpenseQueries();
-    
     const deleteExpenseMutation = useDeleteExpenseQuery();
 
     const navigate = useNavigate();

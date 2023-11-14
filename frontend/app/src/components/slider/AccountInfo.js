@@ -1,15 +1,15 @@
-import React, { useContext } from "react";
+import React from "react";
 import "./Slider.css";
 import { FiEdit } from "react-icons/fi";
 import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useAccountQueries } from '../../queries/accountQueries';
 
 const AccountInfo = (props) => {
   const navigate = useNavigate();
   const creditStatus = props.isDebt ? "Debit" : "Credit";
-  const { accounts, updateAccounts } = useContext(MyContext);
+  const { useDeleteCategoryQuery } = useAccountQueries();
+  const deleteAccountMutation = useDeleteCategoryQuery();
 
   const redirectToEditAccount = (account) => {
     navigate(`/accounts/edit/${account.id}`, {
@@ -26,17 +26,10 @@ const AccountInfo = (props) => {
 
   // Function to delete a category by its ID
   const deleteAccountByName = async (name) => {
-    const updatedAccounts = accounts.filter(
-      (account) => account.name !== name
-    );
-    updateAccounts(updatedAccounts);
     try {
-      const response = await axios.delete(
-        `http://localhost:8080/accounts/${encodeURIComponent(name)}`
-      );
-      if (response.status === 200) {
-        console.log(`Successfully deleted account with name:  ${name}`);
-      }
+      const deletedAccount = await deleteAccountMutation.mutateAsync(name);
+      console.log(deletedAccount);
+      
     } catch (error) {
       console.error("Error deleting the category: " + error);
     }
