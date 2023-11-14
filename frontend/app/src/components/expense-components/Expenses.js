@@ -1,13 +1,15 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import ExpenseItem from "./ExpenseItem";
 import Card from "../general/Card";
 import './Expenses.css'
 import ExpensesFilter from "./ExpensesFilter";
-import MyContext from '../../MyContext';
+import { useExpenseQueries } from '../../queries/expenseQueries'
 
 
 const Expenses = () => {
-  const { expenses } = useContext(MyContext);
+
+  const { useGetExpensesQuery }  = useExpenseQueries();
+  const { data: expenses, isLoading, isError } = useGetExpensesQuery();
 
   const [filteredYear, setFilteredYear] = useState("All");
 
@@ -19,10 +21,9 @@ const Expenses = () => {
 
   let expensesList = <p>No expenses found.</p>;
 
-  if(expenses.length > 0)
-  {
-    expensesList = expenses.map((expense)=>(
-        <ExpenseItem key={expense.id} expense={expense}/>
+  if (expenses && expenses.length > 0) {
+    expensesList = expenses.map((expense) => (
+      <ExpenseItem key={expense.id} expense={expense} />
     ));
   }
 
@@ -33,7 +34,9 @@ const Expenses = () => {
           selected={filteredYear}
           onChangeFilter={filterChangeHandler}
         />
-        {expensesList}
+        {(isLoading) && <p> Loading... </p>}
+        {(isError) && <p> Error occured while loading </p>}
+        {expenses && expensesList}
       </Card>
     </div>
   );

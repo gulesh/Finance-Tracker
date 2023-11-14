@@ -22,6 +22,7 @@ function App() {
   const { data: accounts } = useGetAccountsQuery();
   const { data: categories } = useGetCategoriesQuery();
   
+  
   return (
     <Router>
       <Header />

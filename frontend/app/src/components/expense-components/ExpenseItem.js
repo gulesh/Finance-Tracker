@@ -1,15 +1,17 @@
-import React , { useContext }from 'react';
+import React from 'react';
 import Card from '../general/Card';
 import './ExpenseItem.css'
 import ExpenseDate from "./ExpenseDate";
 import { useNavigate } from "react-router-dom";
 import DeleteConfirmationDialog from '../../utils/DeleteConfirmationDialog'
 import { FiEdit } from "react-icons/fi";
-import axios from "axios";
-import MyContext from "../../MyContext";
+import { useExpenseQueries } from '../../queries/expenseQueries';
 
-const ExpenseItem = ({expense, handleDeleteExpense}) => {
-    const { expenses, updateExpenses } = useContext(MyContext);
+const ExpenseItem = ({expense}) => {
+    const { useDeleteExpenseQuery } = useExpenseQueries();
+    
+    const deleteExpenseMutation = useDeleteExpenseQuery();
+
     const navigate = useNavigate();
     const expenseId = expense.id;
     const accountName = expense.account.name;
@@ -19,7 +21,7 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
     const date = expense.date;
     const details = expense.details;
 
-    const redirectToExpense = (id) => {
+    const redirectToExpenseEdit = (id) => {
       console.log("expenseId Item: " + id);
       navigate(`/expenses/edit/${id}`, {
         state: { expenseData: expense },
@@ -36,20 +38,14 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
     };
 
     const deleteExpenseById = async (id) => {
-        console.log(id);
-      const updatedExpenses = expenses.filter((expense) => expense.id !== id);
-      updateExpenses(updatedExpenses);
-      console.log(updatedExpenses)
-        try {
-        const response = await axios.delete(
-            `http://localhost:8080/expenses/${encodeURIComponent(id)}`
-        );
-        if (response.status === 200) {
-            console.log(`Successfully deleted category with id:  ${id}`);
-        }
-        } catch (e) {
+      try 
+      {
+        const deletedExpense = await deleteExpenseMutation.mutateAsync(id);
+        console.log(deletedExpense);
+      } 
+      catch (e) {
         console.error("Error deleting the category: " + e);
-        }
+      }
     };
 
     return (
@@ -67,7 +63,7 @@ const ExpenseItem = ({expense, handleDeleteExpense}) => {
             <button
               className="edit-button"
               onClick={() => {
-                redirectToExpense(expenseId);
+                redirectToExpenseEdit(expenseId);
               }}
             >
               <FiEdit />
