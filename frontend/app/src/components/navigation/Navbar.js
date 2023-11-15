@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { styled, useTheme } from "@mui/material/styles";
 import Drawer from "@mui/material/Drawer";
 import MuiAppBar from "@mui/material/AppBar";
@@ -46,19 +46,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-const NavBar = () => {
+const NavBar = ({ handleDrawerOpen, handleDrawerClose, open}) => {
     
-    const [open, setOpen] = useState(true);
-    const theme = useTheme();
-    const navigate = useNavigate();
-
-    const handleDrawerOpen = () => {
-      setOpen(true);
-    };
-
-    const handleDrawerClose = () => {
-      setOpen(false);
-    };
+  const theme = useTheme();
+  const navigate = useNavigate();
 
   return (
     <>

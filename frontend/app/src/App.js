@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Home  from './routes/Home';
 import Expense from './routes/Expense';
@@ -13,6 +13,7 @@ import EditExpense from './components/forms/EditExpense';
 import Transfer from './routes/Transfer';
 import { useAccountQueries } from './queries/accountQueries';
 import { useCategoryQueries } from './queries/categoryQueries';
+import NavBar from './components/navigation/Navbar';
 
 function App() {
   //fetch using React Query
@@ -21,12 +22,22 @@ function App() {
 
   const { data: accounts } = useGetAccountsQuery();
   const { data: categories } = useGetCategoriesQuery();
-  
+
+   const [open, setOpen] = useState(true);
+
+   const handleDrawerOpen = () => {
+     setOpen(true);
+   };
+
+   const handleDrawerClose = () => {
+     setOpen(false);
+   };
   
   return (
     <Router>
       <Header />
-      <Content>
+      <Content open={open}>
+        <NavBar handleDrawerOpen={handleDrawerOpen} handleDrawerClose ={handleDrawerClose} open={open} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
