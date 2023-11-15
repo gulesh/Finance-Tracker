@@ -14,6 +14,7 @@ import Transfer from './routes/Transfer';
 import { useAccountQueries } from './queries/accountQueries';
 import { useCategoryQueries } from './queries/categoryQueries';
 import NavBar from './components/navigation/Navbar';
+import EditTransfer from './components/forms/EditTransfer';
 
 function App() {
   //fetch using React Query
@@ -37,7 +38,11 @@ function App() {
     <Router>
       <Header />
       <Content open={open}>
-        <NavBar handleDrawerOpen={handleDrawerOpen} handleDrawerClose ={handleDrawerClose} open={open} />
+        <NavBar
+          handleDrawerOpen={handleDrawerOpen}
+          handleDrawerClose={handleDrawerClose}
+          open={open}
+        />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/home" element={<Home />} />
@@ -55,6 +60,10 @@ function App() {
             element={
               <EditExpense categories={categories} accounts={accounts} />
             }
+          />
+          <Route
+            path="/transfers/edit/:transferId"
+            element={<EditTransfer accounts={accounts} />}
           />
         </Routes>
       </Content>

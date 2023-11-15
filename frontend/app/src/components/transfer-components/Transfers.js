@@ -5,11 +5,11 @@ const Transfers = (props) =>{
 
   const columns = [
     { field: "id", headerName: "ID", hide: true },
-    { field: "date", headerName: "Transfer Date", width: 150 },
-    { field: "description", headerName: "Transfer Description", width: 150 },
-    { field: "accountTo", headerName: "Account To", width: 150 },
-    { field: "accountFrom", headerName: "Account From", width: 150 },
-    { field: "amount", headerName: "Amount", width: 150 },
+    { field: "date", headerName: "Transfer Date", flex: 1 },
+    { field: "description", headerName: "Transfer Description", flex: 1 },
+    { field: "accountTo", headerName: "Account To", flex: 1 },
+    { field: "accountFrom", headerName: "Account From", flex: 1 },
+    { field: "amount", headerName: "Amount", flex: 1 },
   ];
 
   const transfers = props.transfers;

@@ -1,9 +1,10 @@
 import React from "react";
 import { confirmAlert } from "react-confirm-alert"; // Import the library
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import the confirmation dialog styles
-import { RiDeleteBin5Fill } from "react-icons/ri";
 import { AiOutlineCheck } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import IconButton from "@mui/material/IconButton";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 
 const DeleteConfirmationDialog = ({ onConfirmDelete, name, type }) => {
@@ -31,17 +32,9 @@ const DeleteConfirmationDialog = ({ onConfirmDelete, name, type }) => {
   };
 
   return (
-    <button
-      className="delete-button"
-      style={{
-        padding: "0.5rem 1.5rem",
-        border: "1px solid white",
-        borderRadius: "12px",
-      }}
-      onClick={showConfirmationDialog}
-    >
-      <RiDeleteBin5Fill />
-    </button>
+    <IconButton aria-label="delete" onClick={showConfirmationDialog}>
+      <DeleteIcon />
+    </IconButton>
   );
 };
 

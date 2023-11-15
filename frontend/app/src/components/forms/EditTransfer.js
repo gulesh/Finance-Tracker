@@ -13,6 +13,7 @@ const EditTransfer = (props) => {
   const location = useLocation();
   const navigate = useNavigate();
   const transferData = location.state.transferData;
+  console.log(props.accounts);
   const data = [...props.accounts];
   const defaultoption = { name: "adjust-balance" };
   data.push(defaultoption);
@@ -26,8 +27,7 @@ const EditTransfer = (props) => {
   };
 
   const tranferObject = getTransferFormObject(defaultValues);
-  const { renderFormInputs, isFormValid, form, isInputFieldValid } =
-    useForm(tranferObject);
+  const { renderFormInputs, isFormValid, form, isInputFieldValid } = useForm(tranferObject);
   const { useEditTransferQuery } = useTransferQueries();
   const editTransferMutation = useEditTransferQuery();
   const [isFormEdited, setIsFormEdited] = useState(false);
@@ -48,14 +48,16 @@ const EditTransfer = (props) => {
   initialFormValidation(); //call to set the values to true
 
   const handleChangeForDropDowns = (e) => {
-    const { name, value } = e.target;
+    if (e.target) {
+      const { name, value } = e.target;
 
-    setEditedData({
-      ...editedData,
-      [name]: { name: value },
-    });
+      setEditedData((prevData) => ({
+        ...prevData,
+        [name]: { name: value },
+      }));
 
-    setIsFormEdited(true);
+      setIsFormEdited(true);
+    }
   };
 
   const handleSubmit = (event) =>{
