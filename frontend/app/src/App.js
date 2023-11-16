@@ -11,18 +11,10 @@ import EditCategory from './components/forms/EditCategory';
 import EditAccount from './components/forms/EditAccount';
 import EditExpense from './components/forms/EditExpense';
 import Transfer from './routes/Transfer';
-import { useAccountQueries } from './queries/accountQueries';
-import { useCategoryQueries } from './queries/categoryQueries';
 import NavBar from './components/navigation/Navbar';
 import EditTransfer from './components/forms/EditTransfer';
 
 function App() {
-  //fetch using React Query
-  const { useGetAccountsQuery } = useAccountQueries();
-  const { useGetCategoriesQuery } = useCategoryQueries();
-
-  const { data: accounts } = useGetAccountsQuery();
-  const { data: categories } = useGetCategoriesQuery();
 
    const [open, setOpen] = useState(true);
 
@@ -49,7 +41,7 @@ function App() {
           <Route path="/expenses" element={<Expense />} />
           <Route path="/categories" element={<Category />} />
           <Route path="/accounts" element={<Account />} />
-          <Route path="/transfers" element={<Transfer accounts={accounts} />} />
+          <Route path="/transfers" element={<Transfer />} />
           <Route
             path="/categories/edit/:categoryId"
             element={<EditCategory />}
@@ -58,12 +50,12 @@ function App() {
           <Route
             path="/expenses/edit/:expenseId"
             element={
-              <EditExpense categories={categories} accounts={accounts} />
+              <EditExpense  />
             }
           />
           <Route
             path="/transfers/edit/:transferId"
-            element={<EditTransfer accounts={accounts} />}
+            element={<EditTransfer />}
           />
         </Routes>
       </Content>

@@ -1,5 +1,4 @@
 /**
- * 
  * @param {string} ruleName - name of the rule validation rule
  * @param {string} errorMessage - error massage to be displayed
  * @param {function} validationFunction - validation function
@@ -42,4 +41,20 @@ export function positiveValue(inputName) {
     `${inputName} should be greater than zero`,
     (inputValue) => inputValue > 0
   );
+}
+
+export function shouldBeAlphaNumeric(inputName) {
+  return createValidationRule(
+    "alphaNumeric",
+    `${inputName} should start with a letter!`,
+    (inputValue) => isValueAlphaNumeric(inputValue)
+  );
+}
+
+function isValueAlphaNumeric(input) {
+  // Regular expression to match only alphanumeric characters
+  const alphanumericRegex = /^[a-zA-Z]+[a-zA-Z0-9]*$/;
+
+  // Test if the input matches the alphanumeric pattern
+  return alphanumericRegex.test(input);
 }

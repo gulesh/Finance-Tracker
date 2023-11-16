@@ -13,6 +13,7 @@ const EditCategory = () => {
   const categoryData = location.state.categoryData;
   const { useEditCategoryQuery } = useCategoryQueries();
   const editCategoryMutation = useEditCategoryQuery();
+  console.log(categoryData);
 
   //set autofill values
   const defaultValues = {
@@ -68,6 +69,7 @@ const EditCategory = () => {
     //check if all the values in editeddata matched categorydata
     let nochange = true;
     for (const key in editedData) {
+      console.log("data edited: " + editedData[key]);
       if (editedData[key] !== categoryData[key]) {
         nochange = false; //means there is a change
         break;
@@ -107,7 +109,7 @@ const EditCategory = () => {
   };
 
   return (
-    <form className="form-category" onSubmit={handleSubmit}>
+    <form className="form-general" onSubmit={handleSubmit}>
       <h1> Edit Category </h1>
       {renderFormInputs()}
       <p>

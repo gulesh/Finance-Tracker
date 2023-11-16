@@ -1,13 +1,14 @@
-import React from "react";
+import React, {useState} from "react";
 
 const DropDown = (props) =>{
     const data = props.data;
     const title = props.title;
     const onValueChange = props.onValueChange;
-    const defaultValue = props.defaultValue !== undefined ? props.defaultValue : "";
+    const [defaultValue, setDefaultValue] = useState( props.defaultValue !== undefined ? props.defaultValue : "" );
 
     const handleSelectChange = (event)=>{
         const newValue = event.target.value;
+        setDefaultValue(event.target.value);
         onValueChange(newValue);
     }
 

@@ -7,7 +7,14 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import {QueryClient, QueryClientProvider} from'react-query'
 import MyReactErrorBoundry from './MyReactErrorBoundry';
 
-const queryClient = new QueryClient();
+// const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: Infinity, // Set staleTime to Infinity to prevent automatic refetching
+    },
+  },
+});
 //the UI is hidden under the error overlay as dev shows all error. Error boundry is useful in prod
 function AppWithErrorBoundary() {
   return (

@@ -4,10 +4,10 @@ import "../components/categorycomponents/CategoryStyles.css";
 import { FiPlus } from "react-icons/fi";
 import AddTransfer from "../components/forms/AddTransfer";
 import { useTransferQueries } from "../queries/transferQueries";
+import { useAccountQueries } from "../queries/accountQueries";
 import Transfers from "../components/transfer-components/Transfers";
 
-const Transfer = (props) =>{
-    const accounts = props.accounts;
+const Transfer = () =>{
     const [isAddTransferFormVisible, setIsAddTransferFormVisible] =
       useState(false);
 
@@ -17,7 +17,10 @@ const Transfer = (props) =>{
 
     const { useGetTransfersQuery } = useTransferQueries(); //get the query
     const { isLoading, data: transfers, isError } = useGetTransfersQuery();
+    const { useGetAccountsQuery } = useAccountQueries();
+    const { data: accounts } = useGetAccountsQuery();
     console.log(transfers);
+    console.log(accounts);
 
     return (
       <div>
@@ -32,7 +35,7 @@ const Transfer = (props) =>{
             </button>
           </div>
         </div>
-        {isAddTransferFormVisible && <AddTransfer accounts={accounts} />}
+        {isAddTransferFormVisible && accounts &&  <AddTransfer accounts={accounts} />}
         {isLoading && <p> Loading... </p>}
         {isError && <p> Error loading </p>}
         {transfers && <Transfers transfers={transfers} />}

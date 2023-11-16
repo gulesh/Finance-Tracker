@@ -5,18 +5,25 @@ import useForm from "../../utils/useForm";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
 import { useExpenseQueries } from "../../queries/expenseQueries";
+import { useAccountQueries } from "../../queries/accountQueries";
+import { useCategoryQueries } from "../../queries/categoryQueries";
 
-const EditExpense = (props)=>{
+const EditExpense = ()=>{
   const { expenseId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const expenseData = location.state.expenseData;
-  const categories = props.categories;
-  const accounts = props.accounts;
+
 
   const { useEditExpenseQuery } = useExpenseQueries();
   const editExpenseMutation = useEditExpenseQuery();
 
+  //fetch using React Query
+  const { useGetAccountsQuery } = useAccountQueries();
+  const { useGetCategoriesQuery } = useCategoryQueries();
+
+  const { data: accounts, isErrorAcct} = useGetAccountsQuery();
+  const { data: categories, isErrorCat } = useGetCategoriesQuery();
 
   const [isFormEdited, setIsFormEdited] = useState(false);
 
@@ -28,12 +35,13 @@ const EditExpense = (props)=>{
   };
 
   const [editedData, setEditedData] = useState({
-    category: {name: ""},
-    account: {name: ""}
+    category: { name: "" },
+    account: { name: "" },
   });
 
   const expenseObject = getExpenseFormObject(defaultValues);
-  const { renderFormInputs, isFormValid, isInputFieldValid, form } = useForm(expenseObject);
+  const { renderFormInputs, isFormValid, isInputFieldValid, form } =
+    useForm(expenseObject);
 
   //we know initially all values are valid so use this in the start
   function initialFormValidation() {
@@ -51,7 +59,7 @@ const EditExpense = (props)=>{
     (formData) => {
       for (const key in formData) {
         //if the form values is different than previously added data
-        if ( expenseData[key] !== formData[key].value ) {
+        if (expenseData[key] !== formData[key].value) {
           const value = formData[key].value;
           if (!isNaN(value)) {
             editedData[key] = Number(formData[key].value);
@@ -65,15 +73,17 @@ const EditExpense = (props)=>{
     [expenseData, editedData]
   );
 
-    useEffect(() => {
-        updateFormData(form);
-    }, [form, isFormEdited, updateFormData]);
+  useEffect(() => {
+    updateFormData(form);
+  }, [form, isFormEdited, updateFormData]);
 
   //handle submit
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (editedData.account && editedData.account.name === "") delete editedData.account;
-    if (editedData.category && editedData.category.name === "") delete editedData.category;
+    if (editedData.account && editedData.account.name === "")
+      delete editedData.account;
+    if (editedData.category && editedData.category.name === "")
+      delete editedData.category;
     let nochange = true;
     for (const key in editedData) {
       if (
@@ -101,27 +111,26 @@ const EditExpense = (props)=>{
     navigate(-1);
   };
 
-  const EditData = async ( data ) =>{
-    try
-    {
-        const editedExpense = await editExpenseMutation.mutateAsync({data: data, id: expenseId});
-        console.log(editedExpense);
+  const EditData = async (data) => {
+    try {
+      const editedExpense = await editExpenseMutation.mutateAsync({
+        data: data,
+        id: expenseId,
+      });
+      console.log(editedExpense);
+    } catch (error) {
+      console.error("Error:" + error);
     }
-    catch(error)
-    {
-        console.error("Error:" + error);
-    }
-
-  }
+  };
 
   const handleChangeForDropDowns = (e) => {
     const { name, value } = e.target;
 
     setEditedData({
       ...editedData,
-      [name]: { "name": value },
+      [name]: { name: value },
     });
-    
+
     setIsFormEdited(true);
   };
 
@@ -141,6 +150,7 @@ const EditExpense = (props)=>{
               : expenseData.category.name
           }
           name="category"
+          disabled={!categories || isErrorCat}
         >
           {Object.values(categories).map((category) => (
             <option key={category.name} value={category.name}>
@@ -161,6 +171,7 @@ const EditExpense = (props)=>{
               ? editedData.account.name
               : expenseData.account.name
           }
+          disabled={!accounts || isErrorAcct}
           name="account"
         >
           {Object.values(accounts).map((account) => (

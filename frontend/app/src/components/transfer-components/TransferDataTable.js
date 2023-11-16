@@ -28,16 +28,16 @@ const TransferDataTable = ({rows, columns, loading}) => {
       flex: 1,
       renderCell: (params) => (
         <>
-          <IconButton
+          {/* <IconButton
             aria-label="delete"
             onClick={() => handleDeleteRow(params.row.id)}
-          >
+          > */}
             <DeleteConfirmationDialog
               onConfirmDelete={handleDeleteRow}
               name={params.row.id}
               type="transfer"
             />
-          </IconButton>
+          {/* </IconButton> */}
           <IconButton
             aria-label="edit"
             onClick={() => redirectToEditTransfer(params.row)}

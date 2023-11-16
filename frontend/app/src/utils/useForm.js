@@ -31,6 +31,7 @@ function useForm(formObj){
         inputObj.value = value;
         //mark the field as touched 
         inputObj.touched = true;
+        console.log("value change: " + value);
 
         //check the validity
         const isValidInput = isInputFieldValid(inputObj);

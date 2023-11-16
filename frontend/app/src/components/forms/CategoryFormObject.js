@@ -1,6 +1,6 @@
 
 import { CreateFormFieldConfig } from "../../utils/configFormField";
-import { requiredRule, minLengthRule, greaterThanZero, positiveValue } from "../../utils/inputValidationRules";
+import { requiredRule, minLengthRule, greaterThanZero, positiveValue, shouldBeAlphaNumeric} from "../../utils/inputValidationRules";
 
 const CategoryObject = (defaultValues)=>{
   return {
@@ -14,6 +14,7 @@ const CategoryObject = (defaultValues)=>{
       validationRules: [
         requiredRule("Category Name"),
         minLengthRule("Category Name", 4),
+        shouldBeAlphaNumeric("Category Name")
       ],
     },
 
@@ -40,8 +41,8 @@ const CategoryObject = (defaultValues)=>{
       validationRules: [
         requiredRule("Amount Spent"),
         greaterThanZero("Amount Spent"),
-      ]
-    }
+      ],
+    },
   };
 };
 

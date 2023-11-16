@@ -7,14 +7,17 @@ import "./AddFormStyles.css";
 import { useTransferQueries } from "../../queries/transferQueries";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import { useAccountQueries } from "../../queries/accountQueries";
 
-const EditTransfer = (props) => {
+const EditTransfer = () => {
   const { transferId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const transferData = location.state.transferData;
-  console.log(props.accounts);
-  const data = [...props.accounts];
+  const { useGetAccountsQuery } = useAccountQueries();
+  const { data: accounts, isError } = useGetAccountsQuery();
+  const data = Array.isArray(accounts) ? [...accounts] : [];
+  console.log(accounts);
   const defaultoption = { name: "adjust-balance" };
   data.push(defaultoption);
   const sortedData = data.slice().sort((a, b) => a.name.localeCompare(b.name));
@@ -87,6 +90,7 @@ const EditTransfer = (props) => {
         title="Account To"
         onValueChange={handleChangeForDropDowns}
         defaultValue={editedData.accountTo.name}
+        disabled={isError}
       />
       <DropDown
         data={sortedData.filter(
@@ -95,6 +99,7 @@ const EditTransfer = (props) => {
         title="Account From"
         onValueChange={handleChangeForDropDowns}
         defaultValue={editedData.accountFrom.name}
+        disabled={isError}
       />
       {renderFormInputs()}
       <button type="submit" disabled={!isFormEdited || !isFormValid()}>
