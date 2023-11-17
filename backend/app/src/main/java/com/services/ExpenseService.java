@@ -94,6 +94,7 @@ public class ExpenseService {
             System.out.println(existingExpense.getAmount());
 
             // Edit the Expense
+            //need to take away the money from the account
             attributes.forEach((key, value) -> {
                 switch (key) {
                     case "category":
@@ -151,7 +152,6 @@ public class ExpenseService {
         {
             return false;
         }
-
 
     }
 }

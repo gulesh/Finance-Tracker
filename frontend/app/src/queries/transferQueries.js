@@ -36,7 +36,7 @@ export function useTransferQueries() {
       return response.data;
     };
 
-    const useDeleteCategoryQuery = () => {
+    const useDeleteTransferQuery = () => {
       return useMutation(deleteTransferById, {
         onSuccess: (deletedTransfer) => {
           queryClient.invalidateQueries({ queryKey: ["transfers"] });
@@ -61,10 +61,10 @@ export function useTransferQueries() {
     };
 
     return {
-        useGetTransfersQuery,
-        useAddTransferQuery,
-        useEditTransferQuery,
-        useDeleteCategoryQuery
+      useGetTransfersQuery,
+      useAddTransferQuery,
+      useEditTransferQuery,
+      useDeleteTransferQuery,
     };
 
 };

@@ -4,12 +4,33 @@ import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
+import { useTransferQueries } from "../../queries/transferQueries"
+import './transfers.css'
 
 const TransferDataTable = ({rows, columns, loading}) => {
   const navigate = useNavigate();
+  const { useDeleteTransferQuery } = useTransferQueries();
+  const deleteTransferMutation = useDeleteTransferQuery();
 
-  const handleDeleteRow = (id) => {
+  const handleConfirmDelete = (id) => {
+    //check if id is not null
+    if(id !== null)
+    {
+      deleteTransferById(id);
+    }
     console.log(id);
+  }
+
+  const deleteTransferById = async (id) =>{
+    try {
+      const deletedTransfer = await deleteTransferMutation.mutateAsync(id);
+      console.log(deletedTransfer);
+    }
+     catch (error) 
+     {
+      console.error("Error:", error);
+      console.log("Server Response:", error.response);
+     }
   }
 
   const redirectToEditTransfer = (transfer) => {
@@ -28,16 +49,11 @@ const TransferDataTable = ({rows, columns, loading}) => {
       flex: 1,
       renderCell: (params) => (
         <>
-          {/* <IconButton
-            aria-label="delete"
-            onClick={() => handleDeleteRow(params.row.id)}
-          > */}
-            <DeleteConfirmationDialog
-              onConfirmDelete={handleDeleteRow}
-              name={params.row.id}
-              type="transfer"
-            />
-          {/* </IconButton> */}
+          <DeleteConfirmationDialog
+            onConfirmDelete={handleConfirmDelete}
+            name={params.row.id}
+            type="transfer"
+          />
           <IconButton
             aria-label="edit"
             onClick={() => redirectToEditTransfer(params.row)}
@@ -49,7 +65,7 @@ const TransferDataTable = ({rows, columns, loading}) => {
     },
   ];
     return (
-      <div style={{ height: "100%", width: "100%" }}>
+      <div className="transfers">
         <DataGrid
           rows={rows}
           columns={extendedColumns}
@@ -58,6 +74,11 @@ const TransferDataTable = ({rows, columns, loading}) => {
             pagination: {
               paginationModel: {
                 pageSize: 10,
+              },
+            },
+            columns: {
+              columnVisibilityModel: {
+                id: false,
               },
             },
           }}

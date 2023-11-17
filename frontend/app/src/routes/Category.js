@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import CategoryList from "../components/categorycomponents/CategoryList";
 import "../components/categorycomponents/CategoryStyles.css";
 import PageTitle from "../components/general/PageTitle";
 import { useCategoryQueries } from "../queries/categoryQueries";
 
 import AddCategory from "../components/forms/AddCategory";
+import CategoryDataTable from "../components/categorycomponents/CategoryDataTable";
 
 const Category = () => {
   const [isAddCategoryFormVisible, setIsAddCategoryFormVisible] =
@@ -34,7 +34,9 @@ const Category = () => {
         {isAddCategoryFormVisible && <AddCategory />}
         {isLoading && <p> Loading... </p>}
         {isError && <p> Error loading </p>}
-        {categories && <CategoryList categorieslist={categories} />}
+        <div className="categories">
+          {categories && <CategoryDataTable categorieslist={categories} />}
+        </div>
       </div>
     </div>
   );

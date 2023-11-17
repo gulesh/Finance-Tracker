@@ -19,8 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.services.ExpenseService;
-
-
 import com.entities.Expense;
 
 @RestController
@@ -73,7 +71,7 @@ public class ExpenseController {
     public ResponseEntity<String> deleteExpense(@PathVariable("expenseId") String id)
     {
         boolean deletionSuccessful = this.expenseService.deleteExpense(id);
-        logger.info("Deletion of new expense is complete : " + deletionSuccessful);
+        logger.info("Deletion of expense is complete : " + deletionSuccessful);
         if(deletionSuccessful)
         {
             return ResponseEntity.ok("Expense was successfully deleted!");

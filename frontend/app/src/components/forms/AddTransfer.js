@@ -65,11 +65,13 @@ const AddTransfer = (props) =>{
           data={sortedData}
           title="Account To"
           onValueChange={handleAccountTo}
+          defaultValue={accountTo}
         />
         <DropDown
           data={sortedData.filter((item) => item.name !== accountTo)}
           title="Account From"
           onValueChange={(value) => setAccountFrom(value)}
+          defaultValue={accountFrom}
         />
         {renderFormInputs()}
         <button type="submit" disabled={!isFormValid()}>

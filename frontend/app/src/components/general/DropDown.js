@@ -1,10 +1,19 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 
 const DropDown = (props) =>{
     const data = props.data;
     const title = props.title;
     const onValueChange = props.onValueChange;
-    const [defaultValue, setDefaultValue] = useState( props.defaultValue !== undefined ? props.defaultValue : "" );
+    const [defaultValue, setDefaultValue] = useState(
+      props.defaultValue !== undefined && props.defaultValue !== ""
+        ? props.defaultValue
+        : ""
+    );
+
+     useEffect(() => {
+       // Update default value when defaultValue prop changes
+       setDefaultValue(props.defaultValue || "");
+     }, [props.defaultValue]);
 
     const handleSelectChange = (event)=>{
         const newValue = event.target.value;
@@ -23,7 +32,7 @@ const DropDown = (props) =>{
             onChange={handleSelectChange}
             value={defaultValue}
           >
-            <option key="select-a-value" value="">
+            <option key="select-a-value" value="" disabled>
               Select an option
             </option>
             {Object.values(data).map((entry) => (

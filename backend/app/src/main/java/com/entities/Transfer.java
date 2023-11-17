@@ -16,7 +16,7 @@ public class Transfer {
     private Account accountTo;
     @DBRef
     private Account accountFrom;
-    private int amount;
+    private double amount;
     @JsonFormat(pattern = "yyyy-MM-dd")
     private Date date;
     private String description;
@@ -61,11 +61,11 @@ public class Transfer {
         this.accountFrom = accountFrom;
     }
 
-    public int getAmount() {
+    public double getAmount() {
         return amount;
     }
 
-    public void setAmount(int amount) {
+    public void setAmount(double amount) {
         this.amount = amount;
     }
 
@@ -95,9 +95,12 @@ public class Transfer {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((accountTo == null) ? 0 : accountTo.hashCode());
         result = prime * result + ((accountFrom == null) ? 0 : accountFrom.hashCode());
-        result = prime * result + amount;
+        long temp;
+        temp = Double.doubleToLongBits(amount);
+        result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
         return result;
@@ -112,6 +115,11 @@ public class Transfer {
         if (getClass() != obj.getClass())
             return false;
         Transfer other = (Transfer) obj;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
         if (accountTo == null) {
             if (other.accountTo != null)
                 return false;
@@ -122,7 +130,7 @@ public class Transfer {
                 return false;
         } else if (!accountFrom.equals(other.accountFrom))
             return false;
-        if (amount != other.amount)
+        if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
             return false;
         if (date == null) {
             if (other.date != null)
