@@ -32,6 +32,8 @@ const AddExpense= (props) => {
     console.log(formData);
     postExpense(formData);
     resetForm();
+    categoryRef.current = "";
+    accountRef.current = "";
     formRef.current.reset();
   };
 
@@ -60,13 +62,15 @@ const AddExpense= (props) => {
       <h1>Add Expense</h1>
       <DropDown
         data={categories}
-        title="Category"
+        title="Category Name"
         onValueChange={handleCategoryValue}
+        defaultValue={categoryRef && categoryRef.current}
       />
       <DropDown
         data={accounts}
         title="Account Name"
         onValueChange={handleAccountValue}
+        defaultValue={accountRef && accountRef.current}
       />
       {renderFormInputs()}
       <button disabled={!isFormValid() || addExpenseMutation.isLoading}>

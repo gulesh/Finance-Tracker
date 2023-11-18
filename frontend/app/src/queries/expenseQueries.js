@@ -3,6 +3,9 @@ import axios from "axios";
 
 export function useExpenseQueries() {
     const queryClient = useQueryClient();
+    const accountQueryKey = "accounts";
+    const categoryQueryKey = "categories";
+    const expenseQueryKey = "expenses";
 
     const getExpenses = async () =>{
         const response = await axios.get("http://localhost:8080/expenses/");
@@ -25,6 +28,7 @@ export function useExpenseQueries() {
     };
 
     const editExpenseById = async ({data, id}) => {
+      console.log(data);
       const response = await axios.patch(
         `http://localhost:8080/expenses/${encodeURIComponent(id)}`,
         data
@@ -33,13 +37,15 @@ export function useExpenseQueries() {
     };
 
     const useGetExpensesQuery = () => {
-      return useQuery({ queryKey: ["expenses"], queryFn: getExpenses });
+      return useQuery({ queryKey: [expenseQueryKey], queryFn: getExpenses });
     };
 
     const useAddExpenseQuery = () => {
       return useMutation(addExpense, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["expenses"] });
+          queryClient.invalidateQueries({ queryKey: [expenseQueryKey] });
+          queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
+          queryClient.invalidateQueries({ queryKey: [categoryQueryKey] });
         },
       });
     };
@@ -48,7 +54,9 @@ export function useExpenseQueries() {
   const useDeleteExpenseQuery = () => {
     return useMutation(deleteExpenseById, {
       onSuccess: (deletedCategory) => {
-        queryClient.invalidateQueries({ queryKey: ["expenses"] });
+        queryClient.invalidateQueries({ queryKey: [expenseQueryKey] });
+        queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
+        queryClient.invalidateQueries({ queryKey: [categoryQueryKey] });
       },
     });
   };
@@ -56,7 +64,9 @@ export function useExpenseQueries() {
   const useEditExpenseQuery = () => {
     return useMutation(editExpenseById, {
       onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["expenses"] });
+        queryClient.invalidateQueries({ queryKey: [expenseQueryKey] });
+        queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
+        queryClient.invalidateQueries({ queryKey: [categoryQueryKey] });
       },
     });
   };

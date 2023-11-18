@@ -7,7 +7,7 @@ import { useAccountQueries } from '../../queries/accountQueries';
 
 const AccountInfo = (props) => {
   const navigate = useNavigate();
-  const creditStatus = props.isDebt ? "Debit" : "Credit";
+  const creditStatus = props.isDebt ? "Credit" : "Debit";
   const { useDeleteCategoryQuery } = useAccountQueries();
   const deleteAccountMutation = useDeleteCategoryQuery();
 

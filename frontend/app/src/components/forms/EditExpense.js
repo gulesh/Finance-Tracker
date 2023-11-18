@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback} from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import getExpenseFormObject from './ExpenseFormObject';
 import useForm from "../../utils/useForm";
 import { AiOutlineSave } from "react-icons/ai";
 import { RxCross1 } from "react-icons/rx";
+import DropDown from "../general/DropDown";
 import { useExpenseQueries } from "../../queries/expenseQueries";
 import { useAccountQueries } from "../../queries/accountQueries";
 import { useCategoryQueries } from "../../queries/categoryQueries";
@@ -13,7 +14,6 @@ const EditExpense = ()=>{
   const location = useLocation();
   const navigate = useNavigate();
   const expenseData = location.state.expenseData;
-
 
   const { useEditExpenseQuery } = useExpenseQueries();
   const editExpenseMutation = useEditExpenseQuery();
@@ -100,6 +100,7 @@ const EditExpense = ()=>{
     //make a server call if the data changed
     if (!nochange) {
       EditData(editedData);
+      console.log(editedData);
       setIsFormEdited(false);
     }
     console.log(editedData);
@@ -123,64 +124,45 @@ const EditExpense = ()=>{
     }
   };
 
-  const handleChangeForDropDowns = (e) => {
-    const { name, value } = e.target;
+  const handleCategoryNameChange = (value) => {
+    setEditedData((prevData) => ({
+      ...prevData,
+      category: { name: value },
+    }));
+    setIsFormEdited(true);
+  };
 
-    setEditedData({
-      ...editedData,
-      [name]: { name: value },
-    });
-
+  const handleAccountNameChange = (value) =>{
+    setEditedData((prevData) => ({
+      ...prevData,
+      account: { name: value },
+    }));
     setIsFormEdited(true);
   };
 
   return (
-    <form className="form-category" onSubmit={handleSubmit}>
+    <form className="form-general" onSubmit={handleSubmit}>
       <h1>Edit Expense</h1>
-      <p>
-        <label htmlFor="category-expense">Expense Category</label>
-        <select
-          id="category-expense"
-          className="select-field"
-          style={{ display: "block" }}
-          onChange={handleChangeForDropDowns}
-          value={
-            editedData.category && editedData.category.name !== ""
-              ? editedData.category.name
-              : expenseData.category.name
-          }
-          name="category"
-          disabled={!categories || isErrorCat}
-        >
-          {Object.values(categories).map((category) => (
-            <option key={category.name} value={category.name}>
-              {category.name}
-            </option>
-          ))}
-        </select>
-      </p>
-      <p>
-        <label htmlFor="account-expense">Expense Account</label>
-        <select
-          id="account-expense"
-          className="select-field"
-          style={{ display: "block" }}
-          onChange={handleChangeForDropDowns}
-          value={
-            editedData.account && editedData.account.name !== ""
-              ? editedData.account.name
-              : expenseData.account.name
-          }
-          disabled={!accounts || isErrorAcct}
-          name="account"
-        >
-          {Object.values(accounts).map((account) => (
-            <option key={account.name} value={account.name}>
-              {account.name}
-            </option>
-          ))}
-        </select>
-      </p>
+      <DropDown
+        data={!isErrorCat && categories}
+        title="Category Name"
+        onValueChange={handleCategoryNameChange}
+        defaultValue={
+          editedData.category && editedData.category.name !== ""
+            ? editedData.category.name
+            : expenseData.category.name
+        }
+      />
+      <DropDown
+        data={!isErrorAcct && accounts}
+        title="Account Name"
+        onValueChange={handleAccountNameChange}
+        defaultValue={
+          editedData.account && editedData.account.name !== ""
+            ? editedData.account.name
+            : expenseData.account.name
+        }
+      />
       {renderFormInputs()}
       <button type="submit" disabled={!isFormEdited || !isFormValid()}>
         <AiOutlineSave />
