@@ -86,7 +86,7 @@ const EditTransfer = () => {
     <form className="form-general" onSubmit={handleSubmit}>
       <h1> Edit Transfer </h1>
       <DropDown
-        data={sortedData}
+        data={sortedData.filter((item) => item.name !== "adjust-balance")}
         title="Account To"
         onValueChange={handleChangeForDropDowns}
         defaultValue={editedData.accountTo.name}
@@ -94,7 +94,8 @@ const EditTransfer = () => {
       />
       <DropDown
         data={sortedData.filter(
-          (item) => item.name !== editedData.accountTo.name
+          (item) =>
+            item.name !== editedData.accountTo.name && item.debt !== true
         )}
         title="Account From"
         onValueChange={handleChangeForDropDowns}

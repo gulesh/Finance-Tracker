@@ -133,11 +133,13 @@ public class TransferService {
             {
                 acctTo.setAmount(acctTo.getAmount() - amt);
             }
+            this.accountRepo.save(acctTo);
 
             //update acctFrom
             if(acctFrom != null)
             {
                 acctFrom.setAmount(acctFrom.getAmount() + amt);
+                this.accountRepo.save(acctFrom);
             }
             
             this.transferRepo.deleteById(id);
@@ -190,8 +192,7 @@ public class TransferService {
                                 else {
                                     currAccount.setAmount(currAccount.getAmount() - amtPrev[0] + amtNew[0]);
                                 }
-                                this.accountRepo.save(currAccount);
-                               
+                                this.accountRepo.save(currAccount);  
                             }
 
                             //check the accountFrom

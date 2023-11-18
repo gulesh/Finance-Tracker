@@ -3,6 +3,8 @@ import axios from "axios";
 
 export function useTransferQueries() {
     const queryClient = useQueryClient();
+    const accountQueryKey = "accounts";
+    const transferQueryKey = "transfers";
 
     const getTransfers = async () =>{
         const response = await axios.get("http://localhost:8080/transfers/");
@@ -10,7 +12,7 @@ export function useTransferQueries() {
     };
 
     const useGetTransfersQuery = () => {
-      return useQuery({ queryKey: ["transfers"], queryFn: getTransfers });
+      return useQuery({ queryKey: [transferQueryKey], queryFn: getTransfers });
     };
 
     const addTransfer = async (data) => {
@@ -24,7 +26,8 @@ export function useTransferQueries() {
     const useAddTransferQuery = () => {
       return useMutation(addTransfer, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["transfers"] });
+          queryClient.invalidateQueries({ queryKey: [transferQueryKey] });
+          queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
         },
       });
     };
@@ -39,7 +42,8 @@ export function useTransferQueries() {
     const useDeleteTransferQuery = () => {
       return useMutation(deleteTransferById, {
         onSuccess: (deletedTransfer) => {
-          queryClient.invalidateQueries({ queryKey: ["transfers"] });
+          queryClient.invalidateQueries({ queryKey: [transferQueryKey] });
+          queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
         },
       });
     };
@@ -55,7 +59,8 @@ export function useTransferQueries() {
     const useEditTransferQuery = () => {
       return useMutation(editTransferById, {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["transfers"] });
+          queryClient.invalidateQueries({ queryKey: [transferQueryKey] });
+          queryClient.invalidateQueries({ queryKey: [accountQueryKey] });
         },
       });
     };

@@ -49,7 +49,7 @@ const TransferObject = (defaultValues)=> {
           "description",
           "text"
         ),
-        validationRules: [requiredRule("Description (why) ")],
+        validationRules: [],
       },
     };
 }

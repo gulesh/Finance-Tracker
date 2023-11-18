@@ -83,7 +83,6 @@ const TransferDataTable = ({rows, columns, loading}) => {
             },
           }}
           pageSizeOptions={[10, 15, 20]}
-          checkboxSelection
           disableRowSelectionOnClick
         />
       </div>
