@@ -10,6 +10,7 @@ const AddTransfer = (props) =>{
     const defaultoption = { name: "adjust-balance" };
     data.push(defaultoption);
     const sortedData = data.slice().sort((a, b) => a.name.localeCompare(b.name));
+    console.log(sortedData);
 
     const tranferObject = getTransferFormObject({});
     const {renderFormInputs, isFormValid, form, resetForm} = useForm(tranferObject);
@@ -62,13 +63,15 @@ const AddTransfer = (props) =>{
       <form className="form-general" ref={formRef} onSubmit={handleSubmit}>
         <h1> Add Transfer </h1>
         <DropDown
-          data={sortedData}
+          data={sortedData.filter((item) => item.name !== "adjust-balance")}
           title="Account To"
           onValueChange={handleAccountTo}
           defaultValue={accountTo}
         />
         <DropDown
-          data={sortedData.filter((item) => item.name !== accountTo)}
+          data={sortedData.filter(
+            (item) => item.name !== accountTo && item.debt !== true
+          )}
           title="Account From"
           onValueChange={(value) => setAccountFrom(value)}
           defaultValue={accountFrom}

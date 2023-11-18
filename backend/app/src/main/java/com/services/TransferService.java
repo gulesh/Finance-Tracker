@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Date;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,7 @@ public class TransferService {
     //inject repos here
     private final TransferRepository transferRepo;
     private final AccountRepository accountRepo;
+    private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
     @Autowired
     public TransferService(TransferRepository transferrepo, AccountRepository accountrepo)
@@ -62,7 +65,6 @@ public class TransferService {
         String accountToName = transfer.getAccountTo().getName();
         String accountFromName = transfer.getAccountFrom().getName();
         
-        if(!accountFromName.equals("adjust-balance") ) System.out.println("hi");
         Account acctTo = this.accountRepo.findByName(accountToName);
         Account acctFrom = this.accountRepo.findByName(accountFromName);
         
@@ -96,17 +98,11 @@ public class TransferService {
             acctTo.setAmount(acctTo.getAmount() + savedTransfer.getAmount());
         }
 
-        //check account from
+        //check account from. Can't transfer from a credit Account only To a credit account
         if( !accountFromName.equals("adjust-balance") ) 
         {
-            if(acctFrom.isDebt())
-            {
-                acctFrom.setAmount(acctFrom.getAmount() + savedTransfer.getAmount());
-            }
-            else 
-            {
-                acctFrom.setAmount(acctFrom.getAmount() - savedTransfer.getAmount());
-            }
+            
+            acctFrom.setAmount(acctFrom.getAmount() - savedTransfer.getAmount());
 
         }
         
@@ -122,6 +118,28 @@ public class TransferService {
         Optional<Transfer> optionalTransfer = this.transferRepo.findById(id);
        if(optionalTransfer.isPresent())
        {
+            //reset the accounts values
+            Transfer currTransfer = optionalTransfer.get();
+            Account acctTo = currTransfer.getAccountTo();
+            Account acctFrom = currTransfer.getAccountFrom();
+            double amt = currTransfer.getAmount();
+            
+            //update acctTo
+            if(acctTo.isDebt())
+            {
+                acctTo.setAmount(acctTo.getAmount() + amt);
+            } 
+            else 
+            {
+                acctTo.setAmount(acctTo.getAmount() - amt);
+            }
+
+            //update acctFrom
+            if(acctFrom != null)
+            {
+                acctFrom.setAmount(acctFrom.getAmount() + amt);
+            }
+            
             this.transferRepo.deleteById(id);
             return true;
        }
@@ -131,7 +149,7 @@ public class TransferService {
     }
 
     @Transactional
-    public Transfer editTransfer(String id, Map<String, Object> atgtributes)
+    public Transfer editTransfer(String id, Map<String, Object> attributes)
     {
         Optional<Transfer> optionalExistingTransfer = this.transferRepo.findById(id);
         if(!optionalExistingTransfer.isPresent())
@@ -142,8 +160,15 @@ public class TransferService {
         {
             Transfer existingTransfer = optionalExistingTransfer.get();
             //edit the transfer
-            final double[] amt = { 0 }; // Using an array to simulate a mutable variable
-            atgtributes.forEach((key, value) -> {
+            final double[] amtNew = { 0 }; // Using an array to simulate a mutable variable
+            final double[] amtPrev = { existingTransfer.getAmount() };
+            if (attributes.containsKey("amount")) {
+                amtNew[0] = ((Number) attributes.get("amount")).doubleValue();
+            } else {
+                amtNew[0] = existingTransfer.getAmount();
+            }
+
+            attributes.forEach((key, value) -> {
                 switch (key) {
                     case "date":
                         if(value instanceof Date)
@@ -154,42 +179,109 @@ public class TransferService {
                     case "amount":
                         if(value instanceof Number)
                         {
-                            amt[0] = ((Number) value).doubleValue() ;
-                            existingTransfer.setAmount( amt[0] );
+                            //AccountTo not changed then adjust the balance
+                            if(!attributes.containsKey("accountTo"))
+                            {
+                                Account currAccount = existingTransfer.getAccountTo();
+                                if(currAccount.isDebt())
+                                {
+                                    currAccount.setAmount(currAccount.getAmount() + amtPrev[0] - amtNew[0]);
+                                }
+                                else {
+                                    currAccount.setAmount(currAccount.getAmount() - amtPrev[0] + amtNew[0]);
+                                }
+                                this.accountRepo.save(currAccount);
+                               
+                            }
+
+                            //check the accountFrom
+                            Account currAccount = existingTransfer.getAccountFrom();
+                            if(currAccount != null)
+                            {
+                                currAccount.setAmount(currAccount.getAmount() + amtPrev[0] - amtNew[0]);
+                                this.accountRepo.save(currAccount);
+                            }
+                            existingTransfer.setAmount( amtNew[0] );
                         }
                         break;
                     case "accountTo":
-                        if(value instanceof String)
+                        if (value instanceof Map)
                         {
-                            Account newAccountTo = accountRepo.findByName( (String) value);
-                            if(newAccountTo.isDebt())
-                            {
-                                newAccountTo.setAmount(newAccountTo.getAmount() - amt[0]); 
+                            Map<?, ?> catMap = (Map<?, ?>) value;
+                            Object nameValue = catMap.get("name");
+
+                            if (nameValue != null) {
+                                String name = nameValue.toString();
+
+                                //update the previously assigned account
+                                Account prevAccount = existingTransfer.getAccountTo();
+                                if(prevAccount.isDebt())
+                                {
+                                    prevAccount.setAmount(prevAccount.getAmount() - amtPrev[0]); 
+                                }
+                                else
+                                {
+                                    prevAccount.setAmount(prevAccount.getAmount() + amtPrev[0]); 
+                                }
+
+                                //update the new account balance
+                                Account newAccountTo = accountRepo.findByName( name );
+                                if(newAccountTo.isDebt())
+                                {
+                                    newAccountTo.setAmount(newAccountTo.getAmount() - amtNew[0]); 
+                                }
+                                else
+                                {
+                                    newAccountTo.setAmount(newAccountTo.getAmount() + amtNew[0]); 
+                                }
+                                //update the balance
+                                existingTransfer.setAccountTo(newAccountTo);
+                                this.accountRepo.save(prevAccount);
+                                this.accountRepo.save(newAccountTo);
                             }
-                            else
-                            {
-                               newAccountTo.setAmount(newAccountTo.getAmount() + amt[0]); 
+                            else {
+                                logger.info("Value for AccountTo key 'name' is null");
                             }
-                            //update the balance
-                            existingTransfer.setAccountTo(newAccountTo);
-                            this.accountRepo.save(newAccountTo);
+                        }
+                        else {
+                            logger.info("Not a Map for key AccountTo");
                         }
                         break;
                     case "accountFrom":
-                        if(value instanceof String)
+                        if (value instanceof Map)
                         {
-                            String acctFrom = (String) value;
-                            if( !acctFrom.equals("adjust-balance") )
-                            {
-                                Account newAccountFrom = accountRepo.findByName( (String) value);
-                                newAccountFrom.setAmount(newAccountFrom.getAmount() - amt[0]);
-                                existingTransfer.setAccountFrom(newAccountFrom);
-                                this.accountRepo.save(newAccountFrom);
-                            } 
-                            else
-                            {
-                                existingTransfer.setAccountFrom(null);
-                            }      
+                            Map<?, ?> catMap = (Map<?, ?>) value;
+                            Object nameValue = catMap.get("name");
+
+                            if (nameValue != null) {
+                                String name = nameValue.toString();
+
+                                Account prevAccount = existingTransfer.getAccountFrom();
+                                if(prevAccount != null)
+                                {
+                                    prevAccount.setAmount(prevAccount.getAmount() + amtPrev[0]);
+                                    this.accountRepo.save(prevAccount);
+                                }
+
+                                //update new AcconutFrom
+                                if( !name.equals("adjust-balance") )
+                                {
+                                    Account newAccountFrom = accountRepo.findByName( name );
+                                    newAccountFrom.setAmount(newAccountFrom.getAmount() - amtNew[0]);
+                                    existingTransfer.setAccountFrom(newAccountFrom);
+                                    this.accountRepo.save(newAccountFrom);
+                                } 
+                                else
+                                {
+                                    existingTransfer.setAccountFrom(null);
+                                }      
+                            }
+                            else {
+                                logger.info("Value for AccountFrom key 'name' is null");
+                            }   
+                        }
+                        else {
+                            logger.info("Not a Map for key AccountFrom");
                         }
                         break;
                     case "description":
