@@ -40,8 +40,7 @@ const EditExpense = ()=>{
   });
 
   const expenseObject = getExpenseFormObject(defaultValues);
-  const { renderFormInputs, isFormValid, isInputFieldValid, form } =
-    useForm(expenseObject);
+  const { renderFormInputs, isFormValid, isInputFieldValid, form } = useForm(expenseObject);
 
   //we know initially all values are valid so use this in the start
   function initialFormValidation() {
@@ -100,7 +99,6 @@ const EditExpense = ()=>{
     //make a server call if the data changed
     if (!nochange) {
       EditData(editedData);
-      console.log(editedData);
       setIsFormEdited(false);
     }
     console.log(editedData);
