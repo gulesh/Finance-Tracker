@@ -1,11 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export function useAccountQueries() {
     const queryClient = useQueryClient();
+    // const audience = process.env.REACT_APP_AUTH0_AUDIENCE;
+
+    const { getAccessTokenSilently } = useAuth0();
 
     const getAccounts = async () =>{
-        const response = await axios.get("http://localhost:8080/accounts/");
+      const token = await getAccessTokenSilently({ scope: "read:accounts" });
+      console.log(token);
+      const response = await axios.get("http://localhost:8080/accounts/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
         return response.data;
     };
 

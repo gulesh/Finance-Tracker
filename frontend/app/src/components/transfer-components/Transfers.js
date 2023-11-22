@@ -30,7 +30,6 @@ const Transfers = (props) =>{
     accountFrom: row.accountFrom ? row.accountFrom.name : "N/A", // Extracting 'name' property from 'accountFrom' or using 'N/A' if null
   }));
 
-  console.log(transfers);
   return <TransferDataTable rows={updatedTransfers} columns={columns} loading={loading}/>;
 };
 

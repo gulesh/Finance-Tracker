@@ -16,6 +16,7 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 import { mainNavBarItems } from './mainNavigationItems'
+import { useAuth0 } from "@auth0/auth0-react";
 
 
 const drawerWidth = 240;
@@ -50,6 +51,9 @@ const NavBar = ({ handleDrawerOpen, handleDrawerClose, open}) => {
     
   const theme = useTheme();
   const navigate = useNavigate();
+  const { isAuthenticated } = useAuth0();
+  const privateNabigationItems = mainNavBarItems.private;
+  const publicNavitaionItems = mainNavBarItems.public;
 
   return (
     <>
@@ -94,8 +98,27 @@ const NavBar = ({ handleDrawerOpen, handleDrawerClose, open}) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {mainNavBarItems.map((item, index) => (
-            <ListItem key={item.id} disablePadding onClick={() => navigate(item.route)}>
+          {
+            privateNabigationItems.map((item, index) => (
+              <ListItem
+                key={item.id}
+                disablePadding
+                onClick={() => navigate(item.route)}
+              >
+                <ListItemButton>
+                  <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
+                    {item.icon}
+                  </ListItemIcon>
+                  <ListItemText primary={item.label} />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          {publicNavitaionItems.map((item, index) => (
+            <ListItem
+              key={item.id}
+              disablePadding
+              onClick={() => navigate(item.route)}
+            >
               <ListItemButton>
                 <ListItemIcon sx={{ color: "rgba(255, 255, 255, 0.7)" }}>
                   {item.icon}

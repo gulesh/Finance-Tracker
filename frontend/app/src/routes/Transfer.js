@@ -19,8 +19,6 @@ const Transfer = () =>{
     const { isLoading, data: transfers, isError } = useGetTransfersQuery();
     const { useGetAccountsQuery } = useAccountQueries();
     const { data: accounts } = useGetAccountsQuery();
-    console.log(transfers);
-    console.log(accounts);
 
     return (
       <div>
