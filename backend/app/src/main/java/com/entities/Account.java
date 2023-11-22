@@ -11,6 +11,7 @@ public class Account{
     private String id;
     @Indexed(unique = true)
     private String name;
+    private String userID;
     private double amount;
     private boolean debt;
 
@@ -20,6 +21,13 @@ public class Account{
 
     }
 
+    public String getUserID() {
+        return userID;
+    }
+
+    public void setUserID(String userID) {
+        this.userID = userID;
+    }
     public Account(String name, int amount, boolean isDebt) {
         this.name = name;
         this.amount = amount;
@@ -61,7 +69,8 @@ public class Account{
 
     @Override
     public String toString() {
-        return "Account [name=" + name + ", amount=" + amount + ", isDebt=" + debt + "]";
+        return "Account [id=" + id + ", name=" + name + ", userID=" + userID + ", amount=" + amount + ", debt=" + debt
+                + "]";
     }
 
 
@@ -71,6 +80,7 @@ public class Account{
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((userID == null) ? 0 : userID.hashCode());
         long temp;
         temp = Double.doubleToLongBits(amount);
         result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -96,6 +106,11 @@ public class Account{
             if (other.name != null)
                 return false;
         } else if (!name.equals(other.name))
+            return false;
+        if (userID == null) {
+            if (other.userID != null)
+                return false;
+        } else if (!userID.equals(other.userID))
             return false;
         if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
             return false;
