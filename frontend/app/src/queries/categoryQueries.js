@@ -1,37 +1,98 @@
 import { useQuery, useMutation , useQueryClient } from "react-query";
 import axios from "axios";
-
+import { useAuth0 } from "@auth0/auth0-react";
 
 export function useCategoryQueries() {
 
   const queryClient = useQueryClient();
-
+  const { getAccessTokenSilently, user } = useAuth0();
+ 
   const getCategories = async () => {
-    const response = await axios.get("http://localhost:8080/categories/");
-    return response.data;
+    try 
+    {
+      const token = await getAccessTokenSilently({ scope: "read:accounts" });
+      const response = await axios.get("http://localhost:8080/categories/", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          userId: user.sub,
+        },
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching categories: ", error);
+      throw error;
+    } 
+     
   };
 
   const addCategory = async (data) => {
-    const response = await axios.post(
-      "http://localhost:8080/categories/",
-      data
-    );
-    return response.data;
+    try
+    {
+      const token = await getAccessTokenSilently({ scope: "write:data" });
+      const response = await axios.post(
+        "http://localhost:8080/categories/",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            userId: user.sub,
+          },
+        }
+      );
+      return response.data;
+    }
+    catch( error )
+    {
+      console.error("Error adding the new category:", error);
+      throw error; // Re-throw the error to let React Query handle it
+    }
   };
 
   const deleteCategoryByName = async (name) => {
-    const response = await axios.delete(
-      `http://localhost:8080/categories/${encodeURIComponent(name)}`
-    );
-    return response.data;
+    try {
+      const token = await getAccessTokenSilently({ scope: "write:data" });
+      const response = await axios.delete(
+        `http://localhost:8080/categories/${encodeURIComponent(name)}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            userId: user.sub,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error deleting the category: ", error);
+      throw error;
+    }
   };
 
   const editCategoryById = async ({data, id}) => {
-    const response = await axios.patch(
-      `http://localhost:8080/categories/${encodeURIComponent(id)}`,
-      data
-    );
-    return response.data;
+    try {
+      const token = await getAccessTokenSilently({ scope: "write:data" });
+      const response = await axios.patch(
+        `http://localhost:8080/categories/${encodeURIComponent(id)}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            userId: user.sub,
+          },
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Error editing the category: ", error);
+      throw error;
+    } 
   };
 
   const useGetCategoriesQuery = () => {

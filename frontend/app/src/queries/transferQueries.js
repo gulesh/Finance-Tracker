@@ -1,14 +1,32 @@
 import { useQuery, useMutation, useQueryClient } from "react-query";
 import axios from "axios";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export function useTransferQueries() {
     const queryClient = useQueryClient();
     const accountQueryKey = "accounts";
     const transferQueryKey = "transfers";
+    const { getAccessTokenSilently, user } = useAuth0();
 
     const getTransfers = async () =>{
-        const response = await axios.get("http://localhost:8080/transfers/");
+      try {
+        const token = await getAccessTokenSilently({ scope: "read:data" });
+        const response = await axios.get(
+          "http://localhost:8080/transfers/",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: user.sub,
+            },
+          }
+        );
         return response.data;
+      } catch (error) {
+        console.error("Error fetching accounts:", error);
+        throw error;
+      }
     };
 
     const useGetTransfersQuery = () => {
@@ -16,11 +34,25 @@ export function useTransferQueries() {
     };
 
     const addTransfer = async (data) => {
-      const response = await axios.post(
-        "http://localhost:8080/transfers/",
-        data
-      );
-      return response.data;
+      try {
+        const token = await getAccessTokenSilently({ scope: "write:data" });
+        const response = await axios.post(
+          "http://localhost:8080/transfers/",
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: user.sub,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error adding the new transfer:", error);
+        throw error; 
+      }
     };
 
     const useAddTransferQuery = () => {
@@ -33,10 +65,24 @@ export function useTransferQueries() {
     };
 
     const deleteTransferById = async (id) => {
-      const response = await axios.delete(
-        `http://localhost:8080/transfers/${encodeURIComponent(id)}`
-      );
-      return response.data;
+      try {
+        const token = await getAccessTokenSilently({ scope: "write:data" });
+        const response = await axios.delete(
+          `http://localhost:8080/transfers/${encodeURIComponent(id)}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: user.sub,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error deleting the transfer: ", error);
+        throw error;
+      }
     };
 
     const useDeleteTransferQuery = () => {
@@ -49,11 +95,25 @@ export function useTransferQueries() {
     };
 
     const editTransferById = async ({data, id}) => {
-      const response = await axios.patch(
-        `http://localhost:8080/transfers/${encodeURIComponent(id)}`,
-        data
-      );
-      return response.data;
+      try {
+        const token = await getAccessTokenSilently({ scope: "write:data" });
+        const response = await axios.patch(
+          `http://localhost:8080/transfers/${encodeURIComponent(id)}`,
+          data,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: user.sub,
+            },
+          }
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error editing the transfer: ", error);
+        throw error;
+      }
     };
 
     const useEditTransferQuery = () => {
