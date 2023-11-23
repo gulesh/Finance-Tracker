@@ -15,6 +15,9 @@ dist/
 node_modules/
 vendor/
 
+# Ignore properties file
+application.properties
+
 
 ### Log files and temporary files ###
 *.log
