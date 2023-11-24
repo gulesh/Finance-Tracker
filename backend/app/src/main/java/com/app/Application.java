@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.ConfigurableApplicationContext;
+// import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
@@ -30,9 +30,9 @@ public class Application {
     private Environment environment;
 
     public static void main(String[] args) {
-        //SpringApplication.run(Application.class, args);
-        ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
-        Application application = context.getBean(Application.class);
+        SpringApplication.run(Application.class, args);
+        // ConfigurableApplicationContext context = SpringApplication.run(Application.class, args);
+        // Application application = context.getBean(Application.class);
         //application.rn();
     }
 

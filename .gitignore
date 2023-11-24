@@ -15,8 +15,18 @@ dist/
 node_modules/
 vendor/
 
+# Compiled Java class files
+*.class
+
+# Java dependencies
+lib/
+*.jar
+*.war
+*.ear
+
 # Ignore properties file
 application.properties
+backend/app/build
 
 
 ### Log files and temporary files ###

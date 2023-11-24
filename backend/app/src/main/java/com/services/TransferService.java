@@ -12,6 +12,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.config.AuthUtils;
 import com.entities.Account;
 import com.entities.Transfer;
 import com.exceptionhandler.AccountNotFound;
@@ -24,13 +25,15 @@ public class TransferService {
     //inject repos here
     private final TransferRepository transferRepo;
     private final AccountRepository accountRepo;
+    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
     @Autowired
-    public TransferService(TransferRepository transferrepo, AccountRepository accountrepo)
+    public TransferService(TransferRepository transferrepo, AccountRepository accountrepo, AuthUtils authutils)
     {
         this.accountRepo = accountrepo;
         this.transferRepo = transferrepo;
+        this.authUtils = authutils;
     }
 
     //get all the transfers
@@ -65,8 +68,11 @@ public class TransferService {
         String accountToName = transfer.getAccountTo().getName();
         String accountFromName = transfer.getAccountFrom().getName();
         
-        Account acctTo = this.accountRepo.findByName(accountToName);
-        Account acctFrom = this.accountRepo.findByName(accountFromName);
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
+
+        Account acctTo = this.accountRepo.findByNameAndUserId(accountToName, currentUser);
+        Account acctFrom = this.accountRepo.findByNameAndUserId(accountFromName, currentUser);
         
         if(acctTo == null)
         {
@@ -154,6 +160,8 @@ public class TransferService {
     public Transfer editTransfer(String id, Map<String, Object> attributes)
     {
         Optional<Transfer> optionalExistingTransfer = this.transferRepo.findById(id);
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
         if(!optionalExistingTransfer.isPresent())
         {
             throw new TransferNotFound(id);
@@ -226,7 +234,7 @@ public class TransferService {
                                 }
 
                                 //update the new account balance
-                                Account newAccountTo = accountRepo.findByName( name );
+                                Account newAccountTo = accountRepo.findByNameAndUserId( name , currentUser);
                                 if(newAccountTo.isDebt())
                                 {
                                     newAccountTo.setAmount(newAccountTo.getAmount() - amtNew[0]); 
@@ -267,7 +275,7 @@ public class TransferService {
                                 //update new AcconutFrom
                                 if( !name.equals("adjust-balance") )
                                 {
-                                    Account newAccountFrom = accountRepo.findByName( name );
+                                    Account newAccountFrom = accountRepo.findByNameAndUserId( name, currentUser );
                                     newAccountFrom.setAmount(newAccountFrom.getAmount() - amtNew[0]);
                                     existingTransfer.setAccountFrom(newAccountFrom);
                                     this.accountRepo.save(newAccountFrom);

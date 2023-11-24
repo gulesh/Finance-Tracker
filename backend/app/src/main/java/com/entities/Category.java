@@ -1,14 +1,17 @@
 package com.entities;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection= "categories")
+@CompoundIndexes({
+    @CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}", unique = true)
+})
 public class Category {
     @Id
     private String id; // Add this line
-    @Indexed(unique = true)
     private String name;
     private double amountAllocated;
     private double amountSpent;

@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -17,10 +18,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.services.CategoryService;
+import com.config.AuthUtils;
 import com.entities.Category;
 
 @RestController
@@ -28,20 +31,25 @@ import com.entities.Category;
 public class CategoryController {
     //inject CategoryService here
     private final CategoryService categoryService;
+    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
 
     @Autowired
-    public CategoryController(CategoryService categoryservice)
+    public CategoryController(CategoryService categoryservice, AuthUtils authutils)
     {
         this.categoryService = categoryservice;
+        this.authUtils = authutils;
     }
 
     //get all categries
     @GetMapping("/")
-    public ResponseEntity<List<Category>> showAllCategories()
+    @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
+    public ResponseEntity<List<Category>> showAllCategories(@RequestParam("userId") String encodedUserId)
     {
         logger.info("Fetching all categories");
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
         List<Category> categories = this.categoryService.getAllCategories();
         return ResponseEntity.ok(categories);
     }

@@ -8,8 +8,8 @@ import { useAccountQueries } from '../../queries/accountQueries';
 const AccountInfo = (props) => {
   const navigate = useNavigate();
   const creditStatus = props.isDebt ? "Credit" : "Debit";
-  const { useDeleteCategoryQuery } = useAccountQueries();
-  const deleteAccountMutation = useDeleteCategoryQuery();
+  const { useDeleteAccountQuery } = useAccountQueries();
+  const deleteAccountMutation = useDeleteAccountQuery();
 
   const redirectToEditAccount = (account) => {
     navigate(`/accounts/edit/${account.id}`, {

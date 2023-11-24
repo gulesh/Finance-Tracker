@@ -24,8 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.services.AccountService;
-
-
+import com.config.AuthUtils;
 import com.entities.Account;
 
 @RestController
@@ -33,45 +32,46 @@ import com.entities.Account;
 public class AccountController {
     //inject AccountService
     private final AccountService accountService;
+    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
-    public AccountController(AccountService accountservice)
+    public AccountController(AccountService accountservice, AuthUtils authutils)
     {
         this.accountService = accountservice;
+        this.authUtils = authutils;
     }
     //public ResponseEntity<List<Account>> showAllAccounts(@AuthenticationPrincipal Jwt jwt){ can access the sub inside now}
 
      // Get all accounts from the DB
      @GetMapping("/")
-     @PreAuthorize("#decodedUserId == authentication.principal.claims['sub']")
+     @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
      public ResponseEntity<List<Account>> showAllAccounts(@RequestParam("userId") String encodedUserId) {
         logger.info("Fetching all accounts");
-        // Decode the URL-encoded userId
-        String decodedUserId = null;
-        try {
-            decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            // Handle the exception (e.g., log it)
-            e.printStackTrace();
-        }
-        logger.info("userID: " + decodedUserId);
-        List<Account> accounts = this.accountService.getAllAccounts();
-        return ResponseEntity.ok(accounts);
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
+        List<Account> userAccounts = this.accountService.getAllUserAccounts(currentUser);
+        return ResponseEntity.ok(userAccounts);
      }
 
     // Add a new Account
     @PostMapping("/")
-    public ResponseEntity<Account> addAccount(@RequestBody Account acct) {
-        Account newAccount = this.accountService.addNewAccount(acct);
+    @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
+    public ResponseEntity<Account> addAccount(@RequestBody Account acct, @RequestParam("userId") String encodedUserId) {
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
+        Account newAccount = this.accountService.addNewAccount(acct, currentUser);
         return ResponseEntity.status(HttpStatus.CREATED).body(newAccount);
     }
 
     //get a specific account by name
     @GetMapping("/{accountName}")
-    public ResponseEntity<Account> getAccountByAccountName(@PathVariable("accountName") String accountName) {
+    @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
+    public ResponseEntity<Account> getAccountByAccountName(@PathVariable("accountName") String accountName, @RequestParam("userId") String encodedUserId) {
         try {
             String decodedAccountName = URLDecoder.decode(accountName, "UTF-8");
-            Account account = this.accountService.getAccountByName(decodedAccountName);
+            String currentUser = this.authUtils.getCurrentUserId();
+            logger.info("currUserId: " + currentUser);
+            Account account = this.accountService.getAccountByNameAndUserId(decodedAccountName, currentUser);
 
             if (account != null) {
                 return ResponseEntity.ok(account);
@@ -82,13 +82,17 @@ public class AccountController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+
     //edit an existing account
     @PatchMapping("/{accountId}")
-    ResponseEntity<Account> editAccount(@PathVariable("accountId") String id, @RequestBody Map<String, Object> attributes)
+    @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
+    ResponseEntity<Account> editAccount(@PathVariable("accountId") String id, @RequestBody Map<String, Object> attributes, @RequestParam("userId") String encodedUserId)
     {
         try
         {
-            Account updatedAccount = this.accountService.editAccount(id, attributes);
+            String currentUser = this.authUtils.getCurrentUserId();
+            logger.info("currUserId: " + currentUser);
+            Account updatedAccount = this.accountService.editAccount(id, attributes, currentUser);
             logger.info("Correctly edited the account");
             return ResponseEntity.ok(updatedAccount);
         }
@@ -100,12 +104,15 @@ public class AccountController {
     }
     
     @DeleteMapping("/{accountName}")
-    public ResponseEntity<String> deleteAccountByName(@PathVariable("accountName") String accountName)
+    @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
+    public ResponseEntity<String> deleteAccountByName(@PathVariable("accountName") String accountName, @RequestParam("userId") String encodedUserId)
     {
         try
         {
+            String currentUser = this.authUtils.getCurrentUserId();
+            logger.info("currUserId: " + currentUser);
             String decodedAccountName = URLDecoder.decode(accountName, "UTF-8");
-            boolean deletionSuccessful = this.accountService.deleteAccount(decodedAccountName);
+            boolean deletionSuccessful = this.accountService.deleteAccount(decodedAccountName, currentUser);
 
             if(deletionSuccessful)
             {

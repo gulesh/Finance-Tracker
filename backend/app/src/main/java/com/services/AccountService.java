@@ -30,24 +30,35 @@ public class AccountService {
         return this.accountRepo.findAll();
     }
 
-    public Account addNewAccount(Account account)
+    public List<Account> getAllUserAccounts(String userId)
+    {
+        return this.accountRepo.findByUserId(userId);
+    }
+
+    public Account addNewAccount(Account account, String userId)
     {
         try
         {
+            account.setUserID(userId);
+            if (this.accountRepo.existsByNameAndUserId(account.getName(), userId)) {
+                // Handle the case where a duplicate account exists
+                throw new DuplicateAccount(account.getName());
+            }
             return this.accountRepo.save(account);
         } 
         catch(Exception e)
         {
-            throw new DuplicateAccount(account.getName());
+            // Handle other exceptions 
+            throw new RuntimeException("Failed to add a new account", e);
         }
        
     }
 
-    public Account getAccountByName(String name)
+    public Account getAccountByNameAndUserId(String name, String userId)
     {
         try
         {
-            return this.accountRepo.findByName(name);
+            return this.accountRepo.findByNameAndUserId(name, userId);
         }
         catch (Exception e)
         {
@@ -56,7 +67,7 @@ public class AccountService {
     }
 
     //modify existing Account
-    public Account editAccount(String id, Map<String, Object> attributes)
+    public Account editAccount(String id, Map<String, Object> attributes, String userId)
     {
         Optional<Account> optionalExistingAccount = this.accountRepo.findById(id);
         if(!optionalExistingAccount.isPresent())
@@ -69,7 +80,7 @@ public class AccountService {
             String newName = (String) attributes.get("name");
             if(newName != null && !newName.equals(existingAccount.getName()))
             {
-                Account accountWithNewName = this.accountRepo.findByName(newName);
+                Account accountWithNewName = this.accountRepo.findByNameAndUserId(newName, userId);
                 if(accountWithNewName != null)
                 {
                     throw new DuplicateAccount(newName);
@@ -108,15 +119,15 @@ public class AccountService {
     }
 
 
-    public boolean deleteAccount(String name)
+    public boolean deleteAccount(String name, String userId)
     {
-        Account acct = this.accountRepo.findByName(name);
-        if(acct == null)
+        boolean acctExists = this.accountRepo.existsByNameAndUserId(name, userId);
+        if(!acctExists)
         {
             throw new AccountNotFound(name);
             
         } 
-        this.accountRepo.deleteByName(name);
+        this.accountRepo.deleteByNameAndUserId(name, userId);
         return true; //account successfully deleted
     }
 

@@ -1,17 +1,20 @@
 package com.entities;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 //This is Money account like bank account or credit/debit cards
 @Document(collection="accounts")
+@CompoundIndexes({
+    @CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}", unique = true)
+})
 public class Account{
     @Id
     private String id;
-    @Indexed(unique = true)
     private String name;
-    private String userID;
+    private String userId;
     private double amount;
     private boolean debt;
 
@@ -22,11 +25,11 @@ public class Account{
     }
 
     public String getUserID() {
-        return userID;
+        return userId;
     }
 
     public void setUserID(String userID) {
-        this.userID = userID;
+        this.userId = userID;
     }
     public Account(String name, int amount, boolean isDebt) {
         this.name = name;
@@ -69,7 +72,7 @@ public class Account{
 
     @Override
     public String toString() {
-        return "Account [id=" + id + ", name=" + name + ", userID=" + userID + ", amount=" + amount + ", debt=" + debt
+        return "Account [id=" + id + ", name=" + name + ", userID=" + userId + ", amount=" + amount + ", debt=" + debt
                 + "]";
     }
 
@@ -80,7 +83,7 @@ public class Account{
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((userID == null) ? 0 : userID.hashCode());
+        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         long temp;
         temp = Double.doubleToLongBits(amount);
         result = prime * result + (int) (temp ^ (temp >>> 32));
@@ -107,10 +110,10 @@ public class Account{
                 return false;
         } else if (!name.equals(other.name))
             return false;
-        if (userID == null) {
-            if (other.userID != null)
+        if (userId == null) {
+            if (other.userId != null)
                 return false;
-        } else if (!userID.equals(other.userID))
+        } else if (!userId.equals(other.userId))
             return false;
         if (Double.doubleToLongBits(amount) != Double.doubleToLongBits(other.amount))
             return false;

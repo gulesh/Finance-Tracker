@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.repositories.AccountRepository;
 import com.repositories.CategoryRepository;
 import com.repositories.ExpenseRepository;
+import com.config.AuthUtils;
 import com.entities.Account;
 import com.entities.Category;
 import com.entities.Expense;
@@ -28,15 +29,18 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepo;
     private final CategoryRepository categoryRepo;
     private final AccountRepository accountRepo;
+    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
 
 
     @Autowired
-    public ExpenseService(ExpenseRepository expenserepo, CategoryRepository categoryrepo, AccountRepository accountrepo )
+    public ExpenseService(ExpenseRepository expenserepo, CategoryRepository categoryrepo, AccountRepository accountrepo,
+            AuthUtils authutils )
     {
         this.expenseRepo = expenserepo;
         this.categoryRepo = categoryrepo;
         this.accountRepo = accountrepo;
+        this.authUtils = authutils;
     }
 
     //get the expenses by category name
@@ -61,11 +65,13 @@ public class ExpenseService {
     @Transactional
     public Expense addNewExpense(Expense expense)
     {
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
         String categoryName = expense.getCategory().getName();
         String accountName = expense.getAccount().getName();
         // check if the category and account exists
         Category category = categoryRepo.findByName(categoryName);
-        Account account = accountRepo.findByName(accountName);
+        Account account = accountRepo.findByNameAndUserId(accountName, currentUser);
         //check if the account name exists
         if(account == null)
         {
@@ -104,6 +110,8 @@ public class ExpenseService {
     @Transactional
     public Expense editExpense(String id, Map<String, Object> attributes) {
         Optional<Expense> optionalExistingExpense = this.expenseRepo.findById(id);
+        String currentUser = this.authUtils.getCurrentUserId();
+        logger.info("currUserId: " + currentUser);
         if (!optionalExistingExpense.isPresent()) {
             throw new ExpenseNotFound(id);
         } else {
@@ -174,7 +182,7 @@ public class ExpenseService {
                                 }
                                 
                                 //uupdate the new account balance
-                                Account newAssignedAccount = accountRepo.findByName(name);
+                                Account newAssignedAccount = accountRepo.findByNameAndUserId(name, currentUser);
                                 if(newAssignedAccount.isDebt())
                                 {
                                     newAssignedAccount.setAmount(newAssignedAccount.getAmount() + newAmt[0]);
