@@ -1,22 +1,29 @@
 package com.entities;
 
+import java.time.LocalDateTime;
+
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
-import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 //This is Money account like bank account or credit/debit cards
 @Document(collection="accounts")
-@CompoundIndexes({
-    @CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}", unique = true)
-})
+@CompoundIndex(name = "Name_userIdNotDeleted", def = "{'name': 1, 'userId': 1}", unique = true, partialFilter = "{ 'isDeleted': false }")
+@CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}")
 public class Account{
     @Id
     private String id;
     private String name;
+    @Indexed
     private String userId;
     private double amount;
     private boolean debt;
+    @Field("isDeleted")
+    private boolean isDeleted;
+    @Field("createdAt")
+    private LocalDateTime createdAt;
 
     //constructors
     public Account()
@@ -24,13 +31,6 @@ public class Account{
 
     }
 
-    public String getUserID() {
-        return userId;
-    }
-
-    public void setUserID(String userID) {
-        this.userId = userID;
-    }
     public Account(String name, int amount, boolean isDebt) {
         this.name = name;
         this.amount = amount;
@@ -44,6 +44,30 @@ public class Account{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+     public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 
     public String getName() {
@@ -72,8 +96,8 @@ public class Account{
 
     @Override
     public String toString() {
-        return "Account [id=" + id + ", name=" + name + ", userID=" + userId + ", amount=" + amount + ", debt=" + debt
-                + "]";
+        return "Account [id=" + id + ", name=" + name + ", userId=" + userId + ", amount=" + amount + ", debt=" + debt
+                + ", isDeleted=" + isDeleted + ", createdAt=" + createdAt + "]";
     }
 
 

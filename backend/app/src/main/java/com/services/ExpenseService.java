@@ -3,7 +3,7 @@ package com.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +15,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.repositories.AccountRepository;
 import com.repositories.CategoryRepository;
 import com.repositories.ExpenseRepository;
-import com.config.AuthUtils;
 import com.entities.Account;
 import com.entities.Category;
 import com.entities.Expense;
@@ -29,18 +28,16 @@ public class ExpenseService {
     private final ExpenseRepository expenseRepo;
     private final CategoryRepository categoryRepo;
     private final AccountRepository accountRepo;
-    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(ExpenseService.class);
 
 
     @Autowired
-    public ExpenseService(ExpenseRepository expenserepo, CategoryRepository categoryrepo, AccountRepository accountrepo,
-            AuthUtils authutils )
+    public ExpenseService(ExpenseRepository expenserepo, CategoryRepository categoryrepo, AccountRepository accountrepo )
     {
         this.expenseRepo = expenserepo;
         this.categoryRepo = categoryrepo;
         this.accountRepo = accountrepo;
-        this.authUtils = authutils;
+
     }
 
     //get the expenses by category name
@@ -49,74 +46,96 @@ public class ExpenseService {
         return this.expenseRepo.findAll();
     }
 
-    //get expenses by Category
-    public List<Expense> getExpensesByCategory(String categoryName)
+    //get expenses for the user by Category
+    public List<Expense> getExpensesByCategoryForTheUser(String userId, String categoryName)
     {
-        return this.expenseRepo.findByCategory_Name(categoryName);
+        return this.expenseRepo.findByUserIdAndCategory_Name(userId, categoryName);
     }
 
-    //get expenses by date
-    public List<Expense> getExpensesByMonth(String monthName)
+    //get expenses for current month
+    public List<Expense> getAllCurrrentMonthExpensesForTheUser(String userId)
     {
         Sort sortCriteria = Sort.by(Sort.Order.asc("date"));
-        return this.expenseRepo.findByMonth(monthName, sortCriteria);
+        LocalDate currentDate = LocalDate.now();
+        int month = currentDate.getMonthValue();
+        int year = currentDate.getYear();
+        String monthString = String.format("%04d-%02d.*", year, month);
+        return this.expenseRepo.findByUserIdAndMonth(userId, monthString, sortCriteria);
     }
 
-    @Transactional
-    public Expense addNewExpense(Expense expense)
+    //get the active expenses (isDeleted == false)
+    public List<Expense> getCurrrentMonthExpensesForTheUser(String userId)
     {
-        String currentUser = this.authUtils.getCurrentUserId();
-        logger.info("currUserId: " + currentUser);
-        String categoryName = expense.getCategory().getName();
-        String accountName = expense.getAccount().getName();
-        // check if the category and account exists
-        Category category = categoryRepo.findByName(categoryName);
-        Account account = accountRepo.findByNameAndUserId(accountName, currentUser);
-        //check if the account name exists
-        if(account == null)
-        {
-            throw new AccountNotFound(accountName);
-        }
-        //check if categry name exist
-        if(category == null)
-        {
-            throw new CategoryNotFound(categoryName);
-        }
-        //set the category and account name
-        expense.setAccount(account);
-        expense.setCategory(category);
-
-        Expense savedExpense = this.expenseRepo.save(expense); //saved the expense
-
-        //edit the account balance now
-        logger.info(account.toString());
-        if(account.isDebt())
-        {
-            account.setAmount(account.getAmount() + savedExpense.getAmount());
-        } 
-        else 
-        {
-            account.setAmount(account.getAmount() - savedExpense.getAmount());
-        }
-        this.accountRepo.save(account); //save the account with updates
-
-        //update the category amount spent
-        category.setAmountSpent(category.getAmountSpent() + savedExpense.getAmount());
-        this.categoryRepo.save(category);
-
-        return savedExpense;
+        LocalDate currentDate = LocalDate.now();  
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        LocalDate lastdayOfMonth = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+        return this.expenseRepo.findByUserIdAndIsDeletedAndDateBetween(userId, false, firstDayOfMonth, lastdayOfMonth);
     }
 
     @Transactional
-    public Expense editExpense(String id, Map<String, Object> attributes) {
+    public Expense addNewExpense(Expense expense, String userId)
+    {
+        try
+        {
+            String categoryName = expense.getCategory().getName();
+            String accountName = expense.getAccount().getName();
+            // check if the category and account exists
+            Category category = categoryRepo.findByNameAndUserId(categoryName, userId);
+            Account account = accountRepo.findByNameAndUserId(accountName, userId);
+            //check if the account name exists
+            if(account == null)
+            {
+                throw new AccountNotFound(accountName);
+            }
+            //check if categry name exist
+            if(category == null)
+            {
+                throw new CategoryNotFound(categoryName);
+            }
+            //set the category and account name
+            expense.setAccount(account);
+            expense.setCategory(category);
+            expense.setDeleted(false);
+            expense.setUserId(userId);
+
+            Expense savedExpense = this.expenseRepo.save(expense); //saved the expense
+
+            //edit the account balance now
+            if(account.isDebt())
+            {
+                account.setAmount(account.getAmount() + savedExpense.getAmount());
+            } 
+            else 
+            {
+                account.setAmount(account.getAmount() - savedExpense.getAmount());
+            }
+            this.accountRepo.save(account); //save the account with updates
+
+            //update the category amount spent
+            category.setAmountSpent(category.getAmountSpent() + savedExpense.getAmount());
+            this.categoryRepo.save(category);
+
+            return savedExpense;
+        }
+        catch (Exception e) {
+            // Handle other exceptions
+            throw new RuntimeException("Failed to add the new expense", e);
+        }
+        
+    }
+
+    @Transactional
+    public Expense editExpense(String id, Map<String, Object> attributes, String userId) throws Exception
+    {
         Optional<Expense> optionalExistingExpense = this.expenseRepo.findById(id);
-        String currentUser = this.authUtils.getCurrentUserId();
-        logger.info("currUserId: " + currentUser);
         if (!optionalExistingExpense.isPresent()) {
             throw new ExpenseNotFound(id);
         } else {
 
             Expense existingExpense = optionalExistingExpense.get();
+
+            //if this check is not done two user my edit the same data and cause concurrency issue
+            if(!userId.equals(existingExpense.getUserId())) throw  new Exception("Ivalid operation as userIds are different");
 
             // Need amount before switch so that can appropriately update category and account
             final double[] newAmt = {0};
@@ -145,7 +164,7 @@ public class ExpenseService {
                                 prevCat.setAmountSpent(prevCat.getAmountSpent() - prevAmt[0]); 
                                 
                                 //update the new category
-                                Category newAssignedCategory = categoryRepo.findByName(name);
+                                Category newAssignedCategory = categoryRepo.findByNameAndUserId(name, userId);
                                 newAssignedCategory.setAmountSpent(newAssignedCategory.getAmountSpent() + newAmt[0]);
                                 
                                 //save
@@ -182,7 +201,7 @@ public class ExpenseService {
                                 }
                                 
                                 //uupdate the new account balance
-                                Account newAssignedAccount = accountRepo.findByNameAndUserId(name, currentUser);
+                                Account newAssignedAccount = accountRepo.findByNameAndUserId(name, userId);
                                 if(newAssignedAccount.isDebt())
                                 {
                                     newAssignedAccount.setAmount(newAssignedAccount.getAmount() + newAmt[0]);
@@ -236,8 +255,8 @@ public class ExpenseService {
                         }
                         break;
                     case "date":
-                        if (value instanceof Date) {
-                            existingExpense.setDate((Date) value);
+                        if (value instanceof LocalDate) {
+                            existingExpense.setDate((LocalDate) value);
                         }
                         break;
                     case "description":
@@ -256,13 +275,16 @@ public class ExpenseService {
     }
 
     @Transactional
-    public boolean deleteExpense(String id)
+    public boolean deleteExpense(String id, String userId) throws Exception
     {
         Optional<Expense> optionalExpense = this.expenseRepo.findById(id);
         if(optionalExpense.isPresent())
         {
             //update the category and account
             Expense expense = optionalExpense.get();
+            //if this check is not done two user my edit the same data and cause concurrency issue
+            if(!userId.equals(expense.getUserId())) throw  new Exception("Ivalid operation as userIds are different");
+            
             double amt = expense.getAmount();
             Account acct = expense.getAccount();
             Category cat = expense.getCategory();
@@ -275,11 +297,13 @@ public class ExpenseService {
             {
                 acct.setAmount(acct.getAmount() + amt);
             }
-            //update the soent amount for the category
+            //update the spent amount for the category
             cat.setAmountSpent(cat.getAmountSpent() - amt);
             this.accountRepo.save(acct);
             this.categoryRepo.save(cat);
-            this.expenseRepo.deleteById(id);
+            //this.expenseRepo.deleteById(id); not hard delete 
+            expense.setDeleted(true); //soft delete
+            this.expenseRepo.save(expense);
             return true;
         } 
         else

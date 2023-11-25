@@ -1,11 +1,13 @@
 package com.services;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.repositories.AccountRepository;
 
@@ -35,12 +37,19 @@ public class AccountService {
         return this.accountRepo.findByUserId(userId);
     }
 
+    public List<Account> getAllUserAccountsForTheMonth(String userId, boolean isDeleted, LocalDateTime start, LocalDateTime end)
+    {
+        return this.accountRepo.findByUserIdAndIsDeletedAndCreatedAtBetween(userId, isDeleted, start, end);
+    }
+
     public Account addNewAccount(Account account, String userId)
     {
         try
         {
-            account.setUserID(userId);
-            if (this.accountRepo.existsByNameAndUserId(account.getName(), userId)) {
+            account.setUserId(userId);
+            LocalDateTime now = LocalDateTime.now();
+            account.setCreatedAt(now);
+            if (this.accountRepo.existsByNameAndUserIdAndIsDeleted(account.getName(), userId, false) ) {
                 // Handle the case where a duplicate account exists
                 throw new DuplicateAccount(account.getName());
             }
@@ -49,7 +58,7 @@ public class AccountService {
         catch(Exception e)
         {
             // Handle other exceptions 
-            throw new RuntimeException("Failed to add a new account", e);
+            throw new RuntimeException("Failed to add the new account", e);
         }
        
     }
@@ -66,8 +75,22 @@ public class AccountService {
         }
     }
 
+    public Account getCategoryById(String id) throws Exception
+    {
+        Optional<Account> optionalAccount = this.accountRepo.findById(id);
+        if(optionalAccount.isPresent())
+        {
+            return optionalAccount.get();
+        } 
+        else
+        {
+            throw new AccountNotFound(id); 
+        }
+    }
+
     //modify existing Account
-    public Account editAccount(String id, Map<String, Object> attributes, String userId)
+    @Transactional
+    public Account editAccount(String id, Map<String, Object> attributes, String userId) throws Exception
     {
         Optional<Account> optionalExistingAccount = this.accountRepo.findById(id);
         if(!optionalExistingAccount.isPresent())
@@ -80,7 +103,7 @@ public class AccountService {
             String newName = (String) attributes.get("name");
             if(newName != null && !newName.equals(existingAccount.getName()))
             {
-                Account accountWithNewName = this.accountRepo.findByNameAndUserId(newName, userId);
+                Account accountWithNewName = this.accountRepo.findByNameAndUserIdAndIsDeleted(newName, userId, false);
                 if(accountWithNewName != null)
                 {
                     throw new DuplicateAccount(newName);
@@ -118,16 +141,19 @@ public class AccountService {
         }     
     }
 
-
+    @Transactional
     public boolean deleteAccount(String name, String userId)
     {
-        boolean acctExists = this.accountRepo.existsByNameAndUserId(name, userId);
-        if(!acctExists)
+        //boolean acctExists = this.accountRepo.existsByNameAndUserId(name, userId);
+        Account acctExists = this.accountRepo.findByNameAndUserIdAndIsDeleted(name, userId, false);
+        if(acctExists == null)
         {
             throw new AccountNotFound(name);
             
         } 
-        this.accountRepo.deleteByNameAndUserId(name, userId);
+        //this.accountRepo.deleteByNameAndUserId(name, userId); //Hard delete
+        acctExists.setDeleted(true); //soft delete
+        this.accountRepo.save(acctExists);
         return true; //account successfully deleted
     }
 

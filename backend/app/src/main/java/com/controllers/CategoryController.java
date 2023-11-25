@@ -2,6 +2,8 @@ package com.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.time.LocalDateTime;
+import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
@@ -23,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.services.CategoryService;
-import com.config.AuthUtils;
 import com.entities.Category;
 
 @RestController
@@ -31,15 +32,13 @@ import com.entities.Category;
 public class CategoryController {
     //inject CategoryService here
     private final CategoryService categoryService;
-    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(CategoryController.class);
 
 
     @Autowired
-    public CategoryController(CategoryService categoryservice, AuthUtils authutils)
+    public CategoryController(CategoryService categoryservice)
     {
         this.categoryService = categoryservice;
-        this.authUtils = authutils;
     }
 
     //get all categries
@@ -47,29 +46,54 @@ public class CategoryController {
     @PreAuthorize("@authUtils.isCurrentUser(#encodedUserId)")
     public ResponseEntity<List<Category>> showAllCategories(@RequestParam("userId") String encodedUserId)
     {
-        logger.info("Fetching all categories");
-        String currentUser = this.authUtils.getCurrentUserId();
-        logger.info("currUserId: " + currentUser);
-        List<Category> categories = this.categoryService.getAllCategories();
-        return ResponseEntity.ok(categories);
+        
+        try
+        {
+            LocalDateTime now = LocalDateTime.now();
+            Month currentMonth = now.getMonth();
+            int currretYear = now.getYear();
+            LocalDateTime startOfMonth = LocalDateTime.of(currretYear, currentMonth, 1, 0, 0);
+            LocalDateTime endOfMonth = LocalDateTime.of(currretYear, currentMonth, 30, 23, 59);
+
+            String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
+            logger.info("currUserIdDecoded: " + decodedUserId);
+            
+            logger.info("Fetching all categories for the month: " + currentMonth);
+            List<Category> categories = this.categoryService.getAllUserCategoriesForTheMonth(decodedUserId, false, startOfMonth, endOfMonth);
+            return ResponseEntity.ok(categories);
+        }
+        catch (UnsupportedEncodingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 
     //create a new category
     @PostMapping("/")
-    ResponseEntity<Category> addNewCategory(@RequestBody Category category)
+    ResponseEntity<Category> addNewCategory(@RequestBody Category category, @RequestParam("userId") String encodedUserId)
     {
-        logger.info("Adding new category");
-        Category newCategory = this.categoryService.addNewCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
+        try
+        {
+            String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
+            logger.info("currUserIdDecoded: " + decodedUserId);
+            logger.info("Adding new category");
+            Category newCategory = this.categoryService.addNewCategory(category, decodedUserId);
+            return ResponseEntity.status(HttpStatus.CREATED).body(newCategory);
+        }
+        catch (UnsupportedEncodingException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+        
     }
 
     //modify existing category
     @PatchMapping("/{categoryId}")
-    ResponseEntity<Category> editCategory(@PathVariable("categoryId") String id, @RequestBody Map<String, Object> attributes)
+    ResponseEntity<Category> editCategory(@PathVariable("categoryId") String id, @RequestBody Map<String, Object> attributes, @RequestParam("userId") String encodedUserId)
     {
         try
         {
-            Category updatedCategory = this.categoryService.editCategory(id, attributes);
+            String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
+            logger.info("currUserIdDecoded: " + decodedUserId);
+            Category updatedCategory = this.categoryService.editCategory(id, attributes, decodedUserId);
             logger.info("Correctly edited the category");
             return ResponseEntity.ok(updatedCategory);
             
@@ -82,12 +106,14 @@ public class CategoryController {
 
     //delete a category
     @DeleteMapping("/{categoryName}")
-    public ResponseEntity<String> deleteCategoryByName(@PathVariable("categoryName") String categoryName)
+    public ResponseEntity<String> deleteCategoryByName(@PathVariable("categoryName") String categoryName, @RequestParam("userId") String encodedUserId)
     {
         try
         {
+            String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
+            logger.info("currUserIdDecoded: " + decodedUserId);
             String decodedAccountName = URLDecoder.decode(categoryName, "UTF-8");
-            boolean deletionSuccessful = this.categoryService.deleteCategory(decodedAccountName);
+            boolean deletionSuccessful = this.categoryService.deleteCategory(decodedAccountName, decodedUserId);
 
             if(deletionSuccessful)
             {

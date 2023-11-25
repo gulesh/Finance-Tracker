@@ -3,9 +3,9 @@ package com.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
 // import org.springframework.data.mongodb.core.FindAndModifyOptions;
 // import org.springframework.data.mongodb.core.query.Criteria;
 // import org.springframework.data.mongodb.core.query.Query;
@@ -37,10 +37,27 @@ public class CategoryService {
         return this.categoryRepo.findAll();
     }
 
-    //find category by name
-    public Category getCategoryByName(String name)
+    public List<Category> getAllUserCategories(String userId)
     {
-        return this.categoryRepo.findByName(name);
+        return this.categoryRepo.findByUserId(userId);
+    }
+
+    public List<Category> getAllUserCategoriesForTheMonth(String userId, boolean isDeleted, LocalDateTime start, LocalDateTime end)
+    {
+        return this.categoryRepo.findByUserIdAndIsDeletedAndCreatedAtBetween(userId, isDeleted, start, end);
+    }
+
+    //find category by name and userId
+    public Category getCategoryByNameAndUserId(String name, String userId)
+    {
+        try
+        {
+            return this.categoryRepo.findByNameAndUserId(name, userId);
+        }
+        catch (Exception e)
+        {
+            throw new CategoryNotFound(name);
+        }
     }
 
     public Category getCategoryById(String id) throws Exception
@@ -52,25 +69,32 @@ public class CategoryService {
         } 
         else
         {
-            return null; //later check this null
+            throw new CategoryNotFound(id); 
         }
     }
 
     //add new category
-    public Category addNewCategory(Category category) throws DuplicateCategory
+    public Category addNewCategory(Category category, String userId)
     {
         try
         {
+            LocalDateTime now = LocalDateTime.now();
+            category.setUserId(userId);
+            category.setCreatedAt(now);
+            if(this.categoryRepo.existsByNameAndUserIdAndIsDeleted(category.getName(), userId, false))
+            {
+                throw new DuplicateCategory(category.getName());
+            }
             return this.categoryRepo.save(category);
         }
-        catch(DataIntegrityViolationException e)
+        catch(Exception e)
         {
             throw new DuplicateCategory(category.getName());
         }
     }
 
     //modify existing category
-    public Category editCategory(String id, Map<String, Object> attributes) throws Exception
+    public Category editCategory(String id, Map<String, Object> attributes, String userId) throws Exception
     {
         Optional<Category> optionalExistingCategory = this.categoryRepo.findById(id);
         if(!optionalExistingCategory.isPresent())
@@ -83,7 +107,8 @@ public class CategoryService {
             String newName = (String) attributes.get("name");
             if(newName != null && !newName.equals(existingCategory.getName()))
             {
-                Category categoryWithNewName = this.categoryRepo.findByName(newName);
+                //check if there exist an active category with new name
+                Category categoryWithNewName = this.categoryRepo.findByNameAndUserIdAndIsDeleted(newName, userId, false);
                 if(categoryWithNewName != null)
                 {
                     throw new DuplicateCategory(newName);
@@ -152,14 +177,17 @@ public class CategoryService {
     }
 
     //delete a category
-    public boolean deleteCategory(String name)
+    public boolean deleteCategory(String name, String userId)
     {
-        Category category = this.categoryRepo.findByName(name);
+        //check if there exist an active and to be deleted category with the name and userid 
+        Category category = this.categoryRepo.findByNameAndUserIdAndIsDeleted(name, userId, false);
         if( category == null)
         {
             throw new CategoryNotFound(name);
         }
-        this.categoryRepo.deleteByName(name);
+        //this.categoryRepo.deleteByNameAndUserId(name, userId); //hard Delete
+        category.setDeleted(true); //soft delete
+        this.categoryRepo.save(category);
         return true; //category successfully deleted 
     }
 }

@@ -1,26 +1,38 @@
 package com.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @Document(collection="expenses")
+@CompoundIndexes({
+    @CompoundIndex(name = "userId_category", def = "{ 'userId': 1, 'category': 1}"),
+    @CompoundIndex(name = "userId_account", def = "{ 'userId': 1, 'account': 1}")
+})
 public class Expense {
     @Id
     private String id; 
     @DBRef
     private Category category;
+    @Indexed
+    private String userId;
     private String details;
     private double amount;
     @DBRef
     private Account account;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
+    private LocalDate date;
     private String description;
+    @Field("isDeleted")
+    private boolean isDeleted;
 
 
     //Constructors
@@ -29,7 +41,7 @@ public class Expense {
 
     }
 
-    public Expense(Category category, String details, int amount, Date date, String description) {
+    public Expense(Category category, String details, int amount, LocalDate date, String description) {
         this.category = category;
         this.details = details;
         this.amount = amount;
@@ -46,6 +58,23 @@ public class Expense {
     public void setId(String id) {
         this.id = id;
     }
+    
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public Category getCategory() {
         return category;
     }
@@ -70,11 +99,11 @@ public class Expense {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -97,8 +126,9 @@ public class Expense {
 
     @Override
     public String toString() {
-        return "Expense [category=" + category + ", details=" + details + ", amount=" + amount + ", account=" + account
-                + ", date=" + date + ", description=" + description + "]";
+        return "Expense [id=" + id + ", category=" + category + ", userId=" + userId + ", details=" + details
+                + ", amount=" + amount + ", account=" + account + ", date=" + date + ", description=" + description
+                + ", isDeleted=" + isDeleted + "]";
     }
 
 
@@ -108,6 +138,7 @@ public class Expense {
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((category == null) ? 0 : category.hashCode());
+        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         result = prime * result + ((details == null) ? 0 : details.hashCode());
         long temp;
         temp = Double.doubleToLongBits(amount);
@@ -115,6 +146,7 @@ public class Expense {
         result = prime * result + ((account == null) ? 0 : account.hashCode());
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + (isDeleted ? 1231 : 1237);
         return result;
     }
 
@@ -137,6 +169,11 @@ public class Expense {
                 return false;
         } else if (!category.equals(other.category))
             return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        } else if (!userId.equals(other.userId))
+            return false;
         if (details == null) {
             if (other.details != null)
                 return false;
@@ -158,6 +195,8 @@ public class Expense {
             if (other.description != null)
                 return false;
         } else if (!description.equals(other.description))
+            return false;
+        if (isDeleted != other.isDeleted)
             return false;
         return true;
     }
