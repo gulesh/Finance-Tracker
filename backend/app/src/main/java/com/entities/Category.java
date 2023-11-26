@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 @Document(collection= "categories")
 @CompoundIndexes({
-    @CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}", unique = true, partialFilter = "{ 'isDeleted' : false }"),
+    @CompoundIndex(name = "Name_userIdNotDeleted", def = "{'name': 1, 'userId': 1}", unique = true, partialFilter = "{ 'isDeleted' : false }"),
     @CompoundIndex(name = "Name_userId", def = "{'name': 1, 'userId': 1}")
 })
 public class Category {

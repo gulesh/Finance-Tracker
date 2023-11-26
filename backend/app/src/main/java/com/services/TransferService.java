@@ -3,7 +3,7 @@ package com.services;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.config.AuthUtils;
 import com.entities.Account;
 import com.entities.Transfer;
 import com.exceptionhandler.AccountNotFound;
@@ -25,15 +24,13 @@ public class TransferService {
     //inject repos here
     private final TransferRepository transferRepo;
     private final AccountRepository accountRepo;
-    private final AuthUtils authUtils;
     private static final Logger logger = LoggerFactory.getLogger(TransferService.class);
 
     @Autowired
-    public TransferService(TransferRepository transferrepo, AccountRepository accountrepo, AuthUtils authutils)
+    public TransferService(TransferRepository transferrepo, AccountRepository accountrepo)
     {
         this.accountRepo = accountrepo;
         this.transferRepo = transferrepo;
-        this.authUtils = authutils;
     }
 
     //get all the transfers
@@ -42,37 +39,45 @@ public class TransferService {
         return this.transferRepo.findAll();
     }
 
-    //get transfers by AccountTo 
-    public List<Transfer> getTransfersByAccountTo(String accountToName)
+    public List<Transfer> getTransferByAccountToForTheUser(String accountTo, String userId)
     {
-        return this.transferRepo.findByAccountTo(accountToName);
+        return this.transferRepo.findByAccountToAndUserId(accountTo, userId);
     }
 
-    //get transfers by AccountFrom 
-    public List<Transfer> getTransfersByAccountFrom(String accountFromName)
+    public List<Transfer> getTransferByAccountFromForTheUser(String accountFrom, String userId)
     {
-        return this.transferRepo.findByAccountFrom(accountFromName);
+        return this.transferRepo.findByAccountFromAndUserId(accountFrom, userId);
     }
 
-    //get Transfers by date 
-    public List<Transfer> getExpensesByMonth(String monthName)
+    //get all Transfers for the current Month 
+    public List<Transfer> getAllCurrrentMonthTransfersForTheUser(String userId, String monthName)
     {
         Sort sortCriteria = Sort.by(Sort.Order.asc("date"));
-        return this.transferRepo.findByMonth(monthName, sortCriteria);
+        LocalDate currentDate = LocalDate.now();
+        int month = currentDate.getMonthValue();
+        int year = currentDate.getYear();
+        String monthString = String.format("%04d-%02d.*", year, month);
+        return this.transferRepo.findByUserIdAndMonth(userId, monthString, sortCriteria);
+    }
+
+    //get the active Transfers (isDeleted == false)
+    public List<Transfer> getCurrrentMonthActiveTransfersForTheUser(String userId)
+    {
+        LocalDate currentDate = LocalDate.now();  
+        LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
+        LocalDate lastdayOfMonth = currentDate.withDayOfMonth(currentDate.lengthOfMonth());
+        return this.transferRepo.findByUserIdAndIsDeletedAndDateBetween(userId, false, firstDayOfMonth, lastdayOfMonth);
     }
 
     @Transactional
-    public Transfer addNewTransfer(Transfer transfer)
+    public Transfer addNewTransfer(Transfer transfer, String userId)
     {
         //check if the to and From accounts exists and get them
         String accountToName = transfer.getAccountTo().getName();
         String accountFromName = transfer.getAccountFrom().getName();
         
-        String currentUser = this.authUtils.getCurrentUserId();
-        logger.info("currUserId: " + currentUser);
-
-        Account acctTo = this.accountRepo.findByNameAndUserId(accountToName, currentUser);
-        Account acctFrom = this.accountRepo.findByNameAndUserId(accountFromName, currentUser);
+        Account acctTo = this.accountRepo.findByNameAndUserId(accountToName, userId);
+        Account acctFrom = this.accountRepo.findByNameAndUserId(accountFromName, userId);
         
         if(acctTo == null)
         {
@@ -91,6 +96,8 @@ public class TransferService {
             transfer.setAccountFrom(null);
         }
 
+        transfer.setDeleted(false);
+        transfer.setUserId(userId);
         Transfer savedTransfer  = this.transferRepo.save(transfer);
 
        /* change account amounts */
@@ -113,22 +120,25 @@ public class TransferService {
         }
         
         //save the changes to the db
-       if( !accountFromName.equals("adjust-balance") )  this.accountRepo.save(acctFrom);
+        if( !accountFromName.equals("adjust-balance") )  this.accountRepo.save(acctFrom);
         this.accountRepo.save(acctTo);
 
         return savedTransfer;
     }
 
-    public boolean deleteTransfer(String id)
+    @Transactional
+    public boolean deleteTransfer(String id, String userId) throws Exception
     {
         Optional<Transfer> optionalTransfer = this.transferRepo.findById(id);
        if(optionalTransfer.isPresent())
        {
             //reset the accounts values
-            Transfer currTransfer = optionalTransfer.get();
-            Account acctTo = currTransfer.getAccountTo();
-            Account acctFrom = currTransfer.getAccountFrom();
-            double amt = currTransfer.getAmount();
+            Transfer transfer = optionalTransfer.get();
+            // if this check is not done two user my edit the same data and cause concurrency issue
+            if (!userId.equals(transfer.getUserId())) throw new Exception("Ivalid operation as userIds are different");
+            Account acctTo = transfer.getAccountTo();
+            Account acctFrom = transfer.getAccountFrom();
+            double amt = transfer.getAmount();
             
             //update acctTo
             if(acctTo.isDebt())
@@ -148,7 +158,9 @@ public class TransferService {
                 this.accountRepo.save(acctFrom);
             }
             
-            this.transferRepo.deleteById(id);
+            //this.transferRepo.deleteById(id); //hard delete
+            transfer.setDeleted(true); //soft delete
+            this.transferRepo.save(transfer);
             return true;
        }
        else {
@@ -157,11 +169,9 @@ public class TransferService {
     }
 
     @Transactional
-    public Transfer editTransfer(String id, Map<String, Object> attributes)
+    public Transfer editTransfer(String id, Map<String, Object> attributes, String userId) throws Exception
     {
         Optional<Transfer> optionalExistingTransfer = this.transferRepo.findById(id);
-        String currentUser = this.authUtils.getCurrentUserId();
-        logger.info("currUserId: " + currentUser);
         if(!optionalExistingTransfer.isPresent())
         {
             throw new TransferNotFound(id);
@@ -169,6 +179,9 @@ public class TransferService {
         else 
         {
             Transfer existingTransfer = optionalExistingTransfer.get();
+            // if this check is not done two user my edit the same data and cause concurrency issue
+            if (!userId.equals(existingTransfer.getUserId())) throw new Exception("Ivalid operation as userIds are different");
+            
             //edit the transfer
             final double[] amtNew = { 0 }; // Using an array to simulate a mutable variable
             final double[] amtPrev = { existingTransfer.getAmount() };
@@ -181,9 +194,9 @@ public class TransferService {
             attributes.forEach((key, value) -> {
                 switch (key) {
                     case "date":
-                        if(value instanceof Date)
+                        if(value instanceof LocalDate)
                         {
-                            existingTransfer.setDate((Date) value);
+                            existingTransfer.setDate((LocalDate) value);
                         }
                         break;
                     case "amount":
@@ -234,7 +247,7 @@ public class TransferService {
                                 }
 
                                 //update the new account balance
-                                Account newAccountTo = accountRepo.findByNameAndUserId( name , currentUser);
+                                Account newAccountTo = accountRepo.findByNameAndUserId( name , userId);
                                 if(newAccountTo.isDebt())
                                 {
                                     newAccountTo.setAmount(newAccountTo.getAmount() - amtNew[0]); 
@@ -275,7 +288,7 @@ public class TransferService {
                                 //update new AcconutFrom
                                 if( !name.equals("adjust-balance") )
                                 {
-                                    Account newAccountFrom = accountRepo.findByNameAndUserId( name, currentUser );
+                                    Account newAccountFrom = accountRepo.findByNameAndUserId( name, userId );
                                     newAccountFrom.setAmount(newAccountFrom.getAmount() - amtNew[0]);
                                     existingTransfer.setAccountFrom(newAccountFrom);
                                     this.accountRepo.save(newAccountFrom);

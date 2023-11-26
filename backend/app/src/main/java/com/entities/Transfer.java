@@ -1,10 +1,12 @@
 package com.entities;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -12,14 +14,18 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public class Transfer {
     @Id
     private String id;
+    @Indexed
+    private String userId;
     @DBRef
     private Account accountTo;
     @DBRef
     private Account accountFrom;
     private double amount;
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Date date;
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "UTC")
+    private LocalDate date;
     private String description;
+    @Field("isDeleted")
+    private boolean isDeleted;
 
 
     //constructors
@@ -28,7 +34,7 @@ public class Transfer {
 
     }
 
-    public Transfer(Account accountTo, Account accountFrom, int amount, Date date, String description) {
+    public Transfer(Account accountTo, Account accountFrom, int amount, LocalDate date, String description) {
         this.accountTo = accountTo;
         this.accountFrom = accountFrom;
         this.amount = amount;
@@ -45,6 +51,22 @@ public class Transfer {
         this.id = id;
     }
     
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public boolean isDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     public Account getAccountTo() {
         return accountTo;
     }
@@ -69,11 +91,11 @@ public class Transfer {
         this.amount = amount;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -87,8 +109,9 @@ public class Transfer {
 
     @Override
     public String toString() {
-        return "Transfer [accountTo=" + accountTo + ", accountFrom=" + accountFrom + ", amount=" + amount
-                + ", date=" + date + ", description=" + description + "]";
+        return "Transfer [id=" + id + ", userId=" + userId + ", accountTo=" + accountTo + ", accountFrom=" + accountFrom
+                + ", amount=" + amount + ", date=" + date + ", description=" + description + ", isDeleted=" + isDeleted
+                + "]";
     }
 
     @Override
@@ -96,6 +119,7 @@ public class Transfer {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
         result = prime * result + ((accountTo == null) ? 0 : accountTo.hashCode());
         result = prime * result + ((accountFrom == null) ? 0 : accountFrom.hashCode());
         long temp;
@@ -103,6 +127,7 @@ public class Transfer {
         result = prime * result + (int) (temp ^ (temp >>> 32));
         result = prime * result + ((date == null) ? 0 : date.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + (isDeleted ? 1231 : 1237);
         return result;
     }
 
@@ -119,6 +144,11 @@ public class Transfer {
             if (other.id != null)
                 return false;
         } else if (!id.equals(other.id))
+            return false;
+        if (userId == null) {
+            if (other.userId != null)
+                return false;
+        } else if (!userId.equals(other.userId))
             return false;
         if (accountTo == null) {
             if (other.accountTo != null)
@@ -141,6 +171,8 @@ public class Transfer {
             if (other.description != null)
                 return false;
         } else if (!description.equals(other.description))
+            return false;
+        if (isDeleted != other.isDeleted)
             return false;
         return true;
     }

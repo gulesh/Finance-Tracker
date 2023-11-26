@@ -1,4 +1,4 @@
-import React, { useState }from "react";
+import React, { useState, useEffect }from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import IconButton from "@mui/material/IconButton";
 import EditIcon from "@mui/icons-material/Edit";
@@ -16,9 +16,14 @@ const CategoryDataTable = (props) => {
     const { useDeleteCategoryQuery } = useCategoryQueries();
     const deleteCategoryMutation = useDeleteCategoryQuery();
     
-    if (categories.length <= 0) {
-      setLoading(true);
-    }
+
+    useEffect(() => {
+      if (categories.length <= 0) {
+        setLoading(true);
+      } else {
+        setLoading(false);
+      }
+    }, [categories]);
 
     const handleConfirmDelete = async (categoryName) => {
       //make the api call

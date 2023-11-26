@@ -48,7 +48,7 @@ public class ExpenseController {
             String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
             logger.info("currUserIdDecoded: " + decodedUserId);
             logger.info("Fetching all expenses");
-            List<Expense> expenses = this.expenseService.getCurrrentMonthExpensesForTheUser(decodedUserId);
+            List<Expense> expenses = this.expenseService.getCurrrentMonthActiveExpensesForTheUser(decodedUserId);
             return ResponseEntity.ok(expenses);
         }
         catch (UnsupportedEncodingException e) {
@@ -103,9 +103,9 @@ public class ExpenseController {
             String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
             logger.info("currUserIdDecoded: " + decodedUserId);
             boolean deletionSuccessful = this.expenseService.deleteExpense(id, decodedUserId);
-            logger.info("Deletion of expense is complete : " + deletionSuccessful);
             if(deletionSuccessful)
             {
+                logger.info("Deletion of expense is complete : " + deletionSuccessful);
                 return ResponseEntity.ok("Expense was successfully deleted!");
             }
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Expense not found");

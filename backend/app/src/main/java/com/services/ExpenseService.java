@@ -64,7 +64,7 @@ public class ExpenseService {
     }
 
     //get the active expenses (isDeleted == false)
-    public List<Expense> getCurrrentMonthExpensesForTheUser(String userId)
+    public List<Expense> getCurrrentMonthActiveExpensesForTheUser(String userId)
     {
         LocalDate currentDate = LocalDate.now();  
         LocalDate firstDayOfMonth = currentDate.withDayOfMonth(1);
