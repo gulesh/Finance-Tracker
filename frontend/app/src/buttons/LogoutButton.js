@@ -13,7 +13,11 @@ export const LogoutButton = () => {
   };
 
   return (
-    <button className="button__logout" onClick={handleLogout}>
+    <button
+      className="button__logout"
+      onClick={handleLogout}
+      style={{ margin: "0.5rem" }}
+    >
       Log Out
     </button>
   );

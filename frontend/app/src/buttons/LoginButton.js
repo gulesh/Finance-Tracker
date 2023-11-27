@@ -13,7 +13,7 @@ export const LoginButton = () => {
   };
 
   return (
-    <button className="button__login" onClick={handleLogin}>
+    <button className="button__login" onClick={handleLogin} style={{margin: "0.5rem"}}>
       Log In
     </button>
   );

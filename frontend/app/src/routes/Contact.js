@@ -1,9 +1,9 @@
 import React from "react";
 
-const support = () => {
+const Contact = () => {
     return(
         <h1> Support Page </h1>
     )
 }
 
-export default support;
+export default Contact;

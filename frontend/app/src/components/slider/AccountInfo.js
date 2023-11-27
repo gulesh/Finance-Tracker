@@ -1,6 +1,6 @@
 import React from "react";
 import "./Slider.css";
-import { FiEdit } from "react-icons/fi";
+import EditIcon from "@mui/icons-material/Edit";
 import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
 import { useAccountQueries } from '../../queries/accountQueries';
@@ -61,7 +61,7 @@ const AccountInfo = (props) => {
               redirectToEditAccount(props.accountObject);
             }}
           >
-            <FiEdit />
+            <EditIcon />
           </button>
           <DeleteConfirmationDialog
             onConfirmDelete={handleConfirmDelete}

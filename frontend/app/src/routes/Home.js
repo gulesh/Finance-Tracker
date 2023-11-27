@@ -36,16 +36,3 @@ const Home = () =>{
 }
 
 export default Home;
-
-// Canvas is already in use. Chart with ID '0' must be destroyed before the canvas with ID '' can be reused. reactchartjs2
-// const chartRef = useRef<HTMLCanvasElement>(null);
-// const chartId = useRef<string | null>(null);
-
-// useEffect(() => {
-//   if (chartId.current !== null) {
-//     return;
-//   }
-//   const config = {...};
-//   const chart = new Chart(chartRef.current, config);
-//   chartId.current = chart.id;
-// }, []);

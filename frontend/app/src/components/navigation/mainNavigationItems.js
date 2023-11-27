@@ -6,9 +6,7 @@ import ReceiptLongIcon from "@mui/icons-material/ReceiptLong";
 import PaymentsIcon from "@mui/icons-material/Payments";
 import AnalyticsIcon from "@mui/icons-material/Analytics";
 import FlagCircleIcon from "@mui/icons-material/FlagCircle";
-import ContactSupportOutlinedIcon from "@mui/icons-material/ContactSupportOutlined";
 import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 
 export const mainNavBarItems = {
   private: [
@@ -63,19 +61,7 @@ export const mainNavBarItems = {
   ],
   public: [
     {
-      id: 8,
-      icon: <ArrowForwardIosIcon />,
-      label: "Getting Started",
-      route: "/guide",
-    },
-    {
       id: 9,
-      icon: <ContactSupportOutlinedIcon />,
-      label: "Support",
-      route: "/guide",
-    },
-    {
-      id: 10,
       icon: <EmailOutlinedIcon />,
       label: "Contact",
       route: "/guide",

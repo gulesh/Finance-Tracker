@@ -11,13 +11,12 @@ import EditCategory from './components/forms/EditCategory';
 import EditAccount from './components/forms/EditAccount';
 import EditExpense from './components/forms/EditExpense';
 import Transfer from './routes/Transfer';
-import Support from './routes/Support'
+import Contact from './routes/Contact'
 import NavBar from './components/navigation/Navbar';
 import EditTransfer from './components/forms/EditTransfer';
 import { Auth0ProviderWithNavigate} from './AuthProviderWithNavigate'
 import Profile from './routes/Profile';
 import { AuthenticationGuard } from './components/AuthenticationGuard'
-import GettingStarted from './routes/GettingStarted';
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -67,8 +66,7 @@ function App() {
               path="/transfers"
               element={<AuthenticationGuard component={Transfer} />}
             />
-            <Route path="/getting-started" element={<GettingStarted />} />
-            <Route path="/support" element={<Support />} />
+            <Route path="/contact" element={<Contact />} />
             <Route
               path="/categories/edit/:categoryId"
               element={<AuthenticationGuard component={EditCategory} />}

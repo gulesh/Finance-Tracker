@@ -98,7 +98,7 @@ const NavBar = ({ handleDrawerOpen, handleDrawerClose, open}) => {
         </DrawerHeader>
         <Divider />
         <List>
-          {
+          { isAuthenticated && 
             privateNabigationItems.map((item, index) => (
               <ListItem
                 key={item.id}

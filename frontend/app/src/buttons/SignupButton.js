@@ -16,7 +16,11 @@ export const SignupButton = () => {
   };
 
   return (
-    <button className="button__sign-up" onClick={handleSignUp}>
+    <button
+      className="button__sign-up"
+      onClick={handleSignUp}
+      style={{ margin: "0.5rem" }}
+    >
       Sign Up
     </button>
   );
