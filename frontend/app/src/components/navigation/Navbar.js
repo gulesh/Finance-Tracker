@@ -16,7 +16,6 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useNavigate } from "react-router-dom";
 import { mainNavBarItems } from './mainNavigationItems'
-import { useAuth0 } from "@auth0/auth0-react";
 
 
 const drawerWidth = 240;
@@ -47,11 +46,10 @@ const DrawerHeader = styled("div")(({ theme }) => ({
   justifyContent: "flex-start",
 }));
 
-const NavBar = ({ handleDrawerOpen, handleDrawerClose, open}) => {
+const NavBar = ({ handleDrawerOpen, handleDrawerClose, open, isAuthenticated}) => {
     
   const theme = useTheme();
   const navigate = useNavigate();
-  const { isAuthenticated } = useAuth0();
   const privateNabigationItems = mainNavBarItems.private;
   const publicNavitaionItems = mainNavBarItems.public;
 

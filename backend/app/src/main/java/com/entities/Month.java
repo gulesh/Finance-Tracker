@@ -4,25 +4,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="months")
+@CompoundIndexes({
+    @CompoundIndex(name = "monthName_year", def = "{ 'nameOfTheMonth': 1, 'year': 1}", unique = true)
+})
 public class Month {
     @Id
     private String id;
-    @Indexed(unique= true)
     private String nameOfTheMonth;
-    @DBRef
     private List<Category> categories;
     @DBRef
     private List<Expense> expenses;
     @DBRef
     private List<Transfer> transfers;
-
     private int year;
-
     //constructors
     public Month()
     {
@@ -32,6 +32,8 @@ public class Month {
     public Month(String nameOfTheMonth, int year) {
         this.nameOfTheMonth = nameOfTheMonth;
         this.categories = new ArrayList<>();
+        this.expenses = new ArrayList<>();
+        this.transfers = new ArrayList<>();
         this.year = year;
     }
 

@@ -14,8 +14,8 @@ const AddExpense= (props) => {
   const { useAddExpenseQuery } = useExpenseQueries();
   const addExpenseMutation = useAddExpenseQuery();
 
-  const categoryRef = useRef(null);
-  const accountRef = useRef(null);
+  const categoryRef = useRef("");
+  const accountRef = useRef("");
   const formRef = useRef(null);
 
   const handleSubmit = (event) => {
@@ -64,13 +64,13 @@ const AddExpense= (props) => {
         data={categories}
         title="Category Name"
         onValueChange={handleCategoryValue}
-        defaultValue={categoryRef && categoryRef.current}
+        defaultValue={categoryRef !== "" ?  categoryRef.current : ""}
       />
       <DropDown
         data={accounts}
         title="Account Name"
         onValueChange={handleAccountValue}
-        defaultValue={accountRef && accountRef.current}
+        defaultValue={accountRef !== "" ? accountRef.current : ""}
       />
       {renderFormInputs()}
       <button disabled={!isFormValid() || addExpenseMutation.isLoading}>

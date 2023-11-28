@@ -15,7 +15,7 @@ const Profile = () => {
        // Now you can use userEmail and userId in your application logic
        console.log("User Email:", userEmail);
        console.log("User ID:", userId);
-
+       console.log(isAuthenticated)
 
      }
 

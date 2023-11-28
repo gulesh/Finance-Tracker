@@ -5,7 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import "bootstrap/dist/css/bootstrap.min.css";
 import {QueryClient, QueryClientProvider} from'react-query'
+import { BrowserRouter as Router } from "react-router-dom";
 import MyReactErrorBoundry from './MyReactErrorBoundry';
+import { Auth0ProviderWithNavigate } from "./AuthProviderWithNavigate";
 
 // const queryClient = new QueryClient();
 const queryClient = new QueryClient({
@@ -18,11 +20,17 @@ const queryClient = new QueryClient({
 //the UI is hidden under the error overlay as dev shows all error. Error boundry is useful in prod
 function AppWithErrorBoundary() {
   return (
-    <MyReactErrorBoundry>
-      <QueryClientProvider client={queryClient}>
-        <App />
-      </QueryClientProvider>
-    </MyReactErrorBoundry>
+    <React.StrictMode>
+      <Router>
+        <Auth0ProviderWithNavigate>
+          <MyReactErrorBoundry>
+            <QueryClientProvider client={queryClient}>
+              <App />
+            </QueryClientProvider>
+          </MyReactErrorBoundry>
+        </Auth0ProviderWithNavigate>
+      </Router>
+    </React.StrictMode>
   );
 }
 

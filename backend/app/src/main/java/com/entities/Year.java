@@ -1,6 +1,7 @@
 package com.entities;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -20,6 +21,10 @@ public class Year {
     public Year()
     {
 
+    }
+    public Year(String year) {
+        this.year = year;
+        this.months = new ArrayList<>();
     }
 
     public Year(String year, List<Month> months) {

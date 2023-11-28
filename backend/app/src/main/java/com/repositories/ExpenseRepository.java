@@ -20,6 +20,7 @@ public interface ExpenseRepository extends MongoRepository<Expense, String>{
     List<Expense> findByUserId(String userId);
     List<Expense> findByUserIdAndIsDeleted(String userId, boolean isDeleted); 
     List<Expense> findByUserIdAndIsDeletedAndDateBetween(String userId, boolean isDeleted, LocalDate start, LocalDate end);
+    List<Expense> findByDateBetween(LocalDate start, LocalDate end);
     List<Expense> findAll();
     Optional<Expense> findById(String id);
     void deleteById(String id);

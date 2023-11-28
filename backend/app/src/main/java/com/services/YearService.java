@@ -30,7 +30,8 @@ public class YearService {
     }
 
     @Scheduled(cron = "0 59 23 31 12 *") //run this job on the last day of the year at 11:59 pm
-    public void AddDataToYearCollection()
+    // @Scheduled(cron = "0 */1 * * * ?")
+    public void AddMonthsDataToYearCollection()
     {
         LocalDate localDate = LocalDate.now();
         int currentYear = localDate.getYear();
@@ -38,7 +39,7 @@ public class YearService {
 
         //check if the year exists
         Year yearExists = this.yearRepo.findByYear(currentYearString);
-        List<Month> allMonths = this.monthRepo.findAll();
+        List<Month> allMonths = this.monthRepo.findByYear(currentYear);
         if(yearExists != null)
         {
             yearExists.setMonths(allMonths);

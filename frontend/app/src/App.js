@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import Home  from './routes/Home';
 import Expense from './routes/Expense';
 import Category from './routes/Category';
@@ -14,12 +14,14 @@ import Transfer from './routes/Transfer';
 import Contact from './routes/Contact'
 import NavBar from './components/navigation/Navbar';
 import EditTransfer from './components/forms/EditTransfer';
-import { Auth0ProviderWithNavigate} from './AuthProviderWithNavigate'
 import Profile from './routes/Profile';
 import { AuthenticationGuard } from './components/AuthenticationGuard'
+import Goal from './routes/Goal';
+import { useAuth0 } from "@auth0/auth0-react";
 
 function App() {
   const [open, setOpen] = useState(true);
+  const { isAuthenticated } = useAuth0();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -30,15 +32,17 @@ function App() {
   };
 
   return (
-    <Router>
-      <Header />
-      <Content open={open}>
-        <NavBar
-          handleDrawerOpen={handleDrawerOpen}
-          handleDrawerClose={handleDrawerClose}
-          open={open}
-        />
-        <Auth0ProviderWithNavigate>
+    <>
+      {/* <Router> */}
+        <Header />
+        <Content open={open}>
+          <NavBar
+            handleDrawerOpen={handleDrawerOpen}
+            handleDrawerClose={handleDrawerClose}
+            open={open}
+            isAuthenticated={isAuthenticated}
+          />
+          {/* <Auth0ProviderWithNavigate> */}
           <Routes>
             <Route path="/" element={<Profile />} />
             <Route
@@ -66,7 +70,14 @@ function App() {
               path="/transfers"
               element={<AuthenticationGuard component={Transfer} />}
             />
-            <Route path="/contact" element={<Contact />} />
+            <Route
+              path="/contact"
+              element={<AuthenticationGuard component={Contact} />}
+            />
+            <Route
+              path="/goal"
+              element={<AuthenticationGuard component={Goal} />}
+            />
             <Route
               path="/categories/edit/:categoryId"
               element={<AuthenticationGuard component={EditCategory} />}
@@ -83,12 +94,13 @@ function App() {
               path="/transfers/edit/:transferId"
               element={<AuthenticationGuard component={EditTransfer} />}
             />
-            {/* <Route path="*" element={<NotFoundPage />} />  this will be used when user tries to go to different route*/} 
+            {/* <Route path="*" element={<NotFoundPage />} />  this will be used when user tries to go to different route*/}
           </Routes>
-        </Auth0ProviderWithNavigate>
-      </Content>
-      <Footer />
-    </Router>
+          {/* </Auth0ProviderWithNavigate> */}
+        </Content>
+        <Footer />
+      {/* </Router> */}
+    </>
   );
 }
 

@@ -18,6 +18,7 @@ public interface TransferRepository extends MongoRepository<Transfer, String>{
     List<Transfer> findByUserIdAndMonth(String userId, String monthRegex, Sort sort); //find Transfers by month sorted by Date
     List<Transfer> findByUserIdAndIsDeletedAndDateBetween(String userId, boolean isDeleted, LocalDate start, LocalDate end);
     List<Transfer> findByUserIdAndIsDeleted(String userId, boolean isDeleted); 
+    List<Transfer> findByDateBetween(LocalDate start, LocalDate end);
     List<Transfer> findAll();
     Optional<Transfer> findById(String id);
     List<Transfer> findByUserId(String userId);
