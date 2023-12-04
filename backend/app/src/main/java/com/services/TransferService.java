@@ -69,6 +69,20 @@ public class TransferService {
         return this.transferRepo.findByUserIdAndIsDeletedAndDateBetween(userId, false, firstDayOfMonth, lastdayOfMonth);
     }
 
+    public Transfer saveTransfer(Transfer transfer)
+    {
+        return this.transferRepo.save(transfer);
+    }
+
+    public List<Transfer> saveAllTransfers(List<Transfer> transfers) {
+        try {
+            return this.transferRepo.saveAll(transfers);
+        } catch (Exception e) {
+            // Handle the exception (log, rethrow, etc.)
+            throw new RuntimeException("Error saving transfers", e);
+        }
+    }
+
     @Transactional
     public Transfer addNewTransfer(Transfer transfer, String userId)
     {

@@ -72,6 +72,20 @@ public class ExpenseService {
         return this.expenseRepo.findByUserIdAndIsDeletedAndDateBetween(userId, false, firstDayOfMonth, lastdayOfMonth);
     }
 
+    public Expense saveExpense(Expense expense)
+    {
+        return this.expenseRepo.save(expense);
+    }
+
+    public List<Expense> saveAllExpenses(List<Expense> expenses) {
+        try {
+            return this.expenseRepo.saveAll(expenses);
+        } catch (Exception e) {
+
+            throw new RuntimeException("Error saving expenses", e);
+        }
+    }
+
     @Transactional
     public Expense addNewExpense(Expense expense, String userId)
     {

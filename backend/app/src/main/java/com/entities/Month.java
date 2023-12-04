@@ -1,6 +1,7 @@
 package com.entities;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -19,11 +20,11 @@ public class Month {
     private String nameOfTheMonth;
     @Indexed
     private String userId;
-    private List<Category> categories;
+    private List<Category> categories = new ArrayList<>();
     @DBRef
-    private List<Expense> expenses;
+    private List<Expense> expenses = new ArrayList<>();
     @DBRef
-    private List<Transfer> transfers;
+    private List<Transfer> transfers = new ArrayList<>();
     private int year;
     //constructors
     public Month()

@@ -18,29 +18,34 @@ import com.entities.Category;
 import com.entities.Expense;
 import com.entities.Transfer;
 import com.entities.Month;
+import com.entities.User;
+import com.entities.Year;
 import com.exceptionhandler.MonthServiceException;
-import com.repositories.CategoryRepository;
-import com.repositories.ExpenseRepository;
+
 import com.repositories.MonthRepository;
-import com.repositories.TransferRepository;
+
 
 @Service
 public class MonthService {
     //inject month repo
     private final MonthRepository monthRepo;
-    private final CategoryRepository categoryRepo;
-    private final ExpenseRepository expenseRepo;
-    private final TransferRepository transferRepo;
+    private final CategoryService categoryService;
+    private final ExpenseService expenseService;
+    private final TransferService transferService;
+    private final UserService userService;
+    private final YearService yearService;
     private static final Logger logger = LoggerFactory.getLogger(MonthService.class);
 
     @Autowired
-    public MonthService(MonthRepository monthrepo, CategoryRepository categoryrepo, ExpenseRepository expenserepo, 
-                        TransferRepository transferrepo)
+    public MonthService(MonthRepository monthrepo, CategoryService categoryservice, ExpenseService expenseservice, 
+                        TransferService transferservice, UserService userservice, YearService yearservice)
     {
         this.monthRepo = monthrepo;
-        this.categoryRepo = categoryrepo;
-        this.expenseRepo = expenserepo;
-        this.transferRepo = transferrepo;
+        this.categoryService = categoryservice;
+        this.expenseService = expenseservice;
+        this.transferService = transferservice;
+        this.userService = userservice;
+        this.yearService = yearservice;
     }
     
     //@Scheduled(cron = "0 * * * * ?")
@@ -54,66 +59,66 @@ public class MonthService {
             int currentYear = localDate.getYear();
             LocalDateTime now = LocalDateTime.now();
             java.time.Month currentMonth = now.getMonth();
-            
-            LocalDateTime startOfMonth = LocalDateTime.of(currentYear, currentMonth, 1, 0, 0);
-            LocalDateTime endOfMonth = LocalDateTime.of(currentYear, currentMonth, 30, 23, 59);
-            
-            LocalDate firstDayOfMonth = localDate.withDayOfMonth(1);
-            LocalDate lastdayOfMonth = localDate.withDayOfMonth(localDate.lengthOfMonth());
 
-
-            //get data from the collections for the month
-            List<Category> categoriesForThisMonth = this.categoryRepo.findByCreatedAtBetween(startOfMonth, endOfMonth);
-            List<Transfer> transfersForThisMonth = this.transferRepo.findByDateBetween(firstDayOfMonth, lastdayOfMonth);
-            List<Expense> expensesForThisMonth = this.expenseRepo.findByDateBetween(firstDayOfMonth, lastdayOfMonth);
-
-
-            String monthName = currentMonth.getDisplayName(TextStyle.FULL, Locale.ENGLISH); //get full name in English
-            Month newMonth = new Month(monthName, currentYear);
-
-            //set the attributes
-            newMonth.setExpenses(expensesForThisMonth);
-            newMonth.setTransfers(transfersForThisMonth);
-            // newMonth.setCategories(categoriesForThisMonth);
-            List<Category> categoriesToBeAdded = new ArrayList<>();
-
-            //Edit categories: set spent amount to 0 for recurring categories
-            for(Category category : categoriesForThisMonth)
+            //get all the users
+            List<User> users = this.userService.getAllUsers();
+            String monthName = currentMonth.getDisplayName(TextStyle.FULL, Locale.ENGLISH);
+            for(User usr: users)
             {
-                if(category.isRecurring())
+                String userid = usr.getUserId();
+                Month newMonthPerUser = new Month(monthName, userid, currentYear);
+                List<Category> categoriesForTheUserForTheMonth = this.categoryService.getAllActiveCategoriesForTheMonth(userid);
+                List<Expense> expensesForTheUserForTheMonth = this.expenseService.getCurrrentMonthActiveExpensesForTheUser(userid);
+                List<Transfer> transfersForTheUserForTheMonth = this.transferService.getCurrrentMonthActiveTransfersForTheUser(userid);
+
+                // Save categories in a batch after the loop
+                List<Category> updatedCategories = new ArrayList<>();
+                for (Category cat : categoriesForTheUserForTheMonth) {
+                    // Add the category to the month
+                    newMonthPerUser.getCategories().add(cat);
+
+                    // Check if recurring
+                    if (cat.isRecurring()) {
+                        cat.setAmountSpent(0);
+                    } else {
+                        cat.setDeleted(true);
+                    }
+
+                    // Add the category to the batch for update
+                    updatedCategories.add(cat);
+                }
+
+                //add expenses and transfer to the month
+                newMonthPerUser.setExpenses(expensesForTheUserForTheMonth);
+                newMonthPerUser.setTransfers(transfersForTheUserForTheMonth);
+                this.monthRepo.save(newMonthPerUser);
+                this.categoryService.saveAllcCategories(updatedCategories);
+
+                for (Expense expense : expensesForTheUserForTheMonth) {
+                    expense.setDeleted(true);
+                }
+                this.expenseService.saveAllExpenses(expensesForTheUserForTheMonth);
+
+                for (Transfer transfer : transfersForTheUserForTheMonth) {
+                    transfer.setDeleted(true);
+                }
+                this.transferService.saveAllTransfers(transfersForTheUserForTheMonth);
+                logger.info("The Schedule trsanction for the month " + monthName  + " and year " + currentYear + " is complete for the user: " + userid);
+
+                //next add add to the years collections as well for the user:
+                Year yearforuser = this.yearService.getYearByUserAndyearNumber(userid, currentYear);
+                if(yearforuser == null)
                 {
-                    categoriesToBeAdded.add(category); //get the category before resettign the spent amount
-                    category.setAmountSpent(0);
-                } 
-                else 
-                {
-                    
-                    category.setDeleted(true);
-                    categoriesToBeAdded.add(category); //update the isdeleted and then add
-                } 
+                    yearforuser = new Year(currentYear, userid);
+                    usr.getYears().add(yearforuser);
+                }
+                yearforuser.getMonths().add(newMonthPerUser);
+                this.yearService.saveYear(yearforuser);
+                this.userService.addUpdateUser(usr);
+                
             }
-            //save to the month collection
-            newMonth.setCategories(categoriesToBeAdded); //this list marks the non recurring categories ad deleted
-            this.monthRepo.save(newMonth);
-            logger.info("Added " + monthName  + " to the months collection for the year: " + currentYear);
             
-            //add to the collection
-            this.categoryRepo.saveAll(categoriesForThisMonth);
-
-            //mark all the expenses as deleted 
-            for(Expense expense: expensesForThisMonth)
-            {
-                expense.setDeleted(true);
-            }
-            this.expenseRepo.saveAll(expensesForThisMonth);
-
-            //mark all the transfer as deleted
-            for(Transfer transfer : transfersForThisMonth)
-            {
-                transfer.setDeleted(true);
-            }
-            this.transferRepo.saveAll(transfersForThisMonth);
-            logger.info("The Schedule trsaction for the month " + monthName  + " and year " + currentYear + " is complete!");
+            logger.info("The Schedule trsanction for the month " + "monthName"  + " and year " + currentYear + " is complete for all users!");
         }
         catch (Exception e)
         {

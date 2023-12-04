@@ -4,20 +4,31 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.stream.Collectors;
-import java.util.Map;
+import java.time.LocalDateTime;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
+import com.services.UserService;
+import com.entities.User;
+
 
 @Component
 public class AuthUtils {
+    private final UserService userServices;
     private static final Logger logger = LoggerFactory.getLogger(AuthUtils.class);
+
+    @Autowired
+    public AuthUtils(UserService userservices)
+    {
+        this.userServices = userservices;
+    }
 
     public String getCurrentUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -25,13 +36,20 @@ public class AuthUtils {
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Jwt) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             // Assuming "sub" is the key for user ID in the token claims
-            Map<String, Object> claims = jwt.getClaims();
-
-            // Display key-value pairs
-            for (Map.Entry<String, Object> entry : claims.entrySet()) {
-                logger.info("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+            String userId = jwt.getClaim("sub");
+            User user = this.userServices.getUserByuserId(userId);
+            LocalDateTime now = LocalDateTime.now();
+            if(user != null)
+            {
+                user.setLastSignIn(now);
+                this.userServices.addUpdateUser(user);
+            } 
+            else
+            {
+                User newUser = new User(userId, now);
+                this.userServices.addUpdateUser(newUser);
             }
-            return jwt.getClaim("sub");
+            return userId;
         }
         // Return null or handle the case where user ID is not available
         return null;
@@ -41,7 +59,7 @@ public class AuthUtils {
     {
         String decodedUserId = null;
         String currentUser = this.getCurrentUserId();
-        String temp = getCurrentUserId(); //just trying to print all the key value pairs
+    
         try {
             decodedUserId = URLDecoder.decode(id, "UTF-8");
         } catch (UnsupportedEncodingException e) {

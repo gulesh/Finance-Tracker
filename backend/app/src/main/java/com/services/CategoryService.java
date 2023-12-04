@@ -42,6 +42,20 @@ public class CategoryService {
         return this.categoryRepo.findByUserId(userId);
     }
 
+    public Category saveCategory(Category category)
+    {
+        return this.categoryRepo.save(category);
+    }
+
+    public List<Category> saveAllcCategories(List<Category> categories) {
+        try {
+            return this.categoryRepo.saveAll(categories);
+        } catch (Exception e) {
+
+            throw new RuntimeException("Error saving categories", e);
+        }
+    }
+
     public List<Category> getAllUserCategoriesForTheMonth(String userId, boolean isDeleted, LocalDateTime start, LocalDateTime end)
     {
         return this.categoryRepo.findByUserIdAndIsDeletedAndCreatedAtBetween(userId, isDeleted, start, end);

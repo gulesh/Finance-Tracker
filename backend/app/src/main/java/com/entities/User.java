@@ -1,6 +1,7 @@
 package com.entities;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.ArrayList;
 
 
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -16,7 +17,7 @@ public class User {
     @Field("lastSignIn")
     private LocalDateTime lastSignIn;
     @DBRef
-    private List<Year> years;
+    private List<Year> years = new ArrayList<>();
     private boolean isDeleted;
   
     public User()
@@ -70,6 +71,14 @@ public class User {
         this.isDeleted = isDeleted;
     }
 
+    public List<Year> getYears() {
+        return years;
+    }
+
+    public void setYears(List<Year> years) {
+        this.years = years;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -109,5 +118,7 @@ public class User {
             return false;
         return true;
     }
+
+    
     
 }

@@ -1,6 +1,7 @@
 package com.entities;
 
 import java.util.List;
+import java.util.ArrayList;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -18,7 +19,7 @@ public class Year {
     @Indexed
     private String userId;
     @DBRef
-    private List<Month> months;
+    private List<Month> months = new ArrayList<>();
 
     //constructors
     public Year()
@@ -107,8 +108,5 @@ public class Year {
             return false;
         return true;
     }
-
-    
-    
     
 }

@@ -9,4 +9,5 @@ import com.entities.Year;
 public interface YearRepository extends MongoRepository<Year, String>{
     Year findByYear(String year);
     List<Year> findAll();
+    Year findByYearAndUserId(int year, String userId);
 }

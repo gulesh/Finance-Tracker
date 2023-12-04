@@ -9,51 +9,43 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.repositories.MonthRepository;
 import com.repositories.YearRepository;
-import com.entities.Month;
 import com.entities.Year;
+import com.entities.User;
 
 @Service
 public class YearService {
     //inject repos here
-    private final MonthRepository monthRepo;
+    private final UserService userService;
     private final YearRepository yearRepo;
     private static final Logger logger = LoggerFactory.getLogger(YearService.class);
 
 
     @Autowired
-    public YearService(MonthRepository monthrepo, YearRepository yearrepo)
+    public YearService( UserService userservice, YearRepository yearrepo)
     {
-        this.monthRepo = monthrepo;
+        this.userService = userservice;
         this.yearRepo = yearrepo;
     }
 
-    @Scheduled(cron = "0 59 23 31 12 *") //run this job on the last day of the year at 11:59 pm
+    @Scheduled(cron = "0 0 0 1 1 *") //run on the first of every year
     // @Scheduled(cron = "0 */1 * * * ?")
-    public void AddMonthsDataToYearCollection()
+    public void addNewYearPerUserToYearsCollection()
     {
         LocalDate localDate = LocalDate.now();
         int currentYear = localDate.getYear();
-        String currentYearString = String.valueOf(currentYear);
 
         //check if the year exists
-        Year yearExists = this.yearRepo.findByYear(currentYearString);
-        List<Month> allMonths = this.monthRepo.findByYear(currentYear);
-        if(yearExists != null)
+        List<User> users = this.userService.getAllUsers();
+        for(User usr: users)
         {
-            yearExists.setMonths(allMonths);
-            this.yearRepo.save(yearExists);
-        } 
-        else 
-        {
-            Year newYear = new Year(currentYearString, allMonths);
-
-            this.yearRepo.save(newYear);
-
+            Year newYearPerUser = new Year(currentYear, usr.getUserId());
+            //save the year to user DBRefs
+            usr.getYears().add(newYearPerUser);
+            //save the year to years collection as well
+            this.yearRepo.save(newYearPerUser);
         }
-        logger.info("Adding " + currentYear + " to the year collection!"); 
-
+        
     }
 
     public List<Year> getAllYears()
@@ -62,9 +54,20 @@ public class YearService {
         return this.yearRepo.findAll();
     }
 
-    public Year getYearByNumber(String year )
+
+    public Year saveYear(Year year)
+    {
+        return this.yearRepo.save(year);
+    }
+
+    public Year getYearByNumber(String year)
     {
         logger.info("getting the year: " +  year);
         return this.yearRepo.findByYear(year);
+    }
+
+    public Year getYearByUserAndyearNumber(String userid, int year)
+    {
+        return this.yearRepo.findByYearAndUserId(year, userid);
     }
 }
