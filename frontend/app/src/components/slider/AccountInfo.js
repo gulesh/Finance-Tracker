@@ -4,6 +4,7 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteConfirmationDialog from "../../utils/DeleteConfirmationDialog";
 import { useNavigate } from "react-router-dom";
 import { useAccountQueries } from '../../queries/accountQueries';
+import { IconButton } from "@mui/material";
 
 const AccountInfo = (props) => {
   const navigate = useNavigate();
@@ -56,13 +57,13 @@ const AccountInfo = (props) => {
           </div>
         </div>
         <div className="">
-          <button
+          <IconButton
             onClick={() => {
               redirectToEditAccount(props.accountObject);
             }}
           >
             <EditIcon />
-          </button>
+          </IconButton>
           <DeleteConfirmationDialog
             onConfirmDelete={handleConfirmDelete}
             name={props.accountName}

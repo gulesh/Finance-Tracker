@@ -47,6 +47,11 @@ public class CategoryService {
         return this.categoryRepo.findByUserIdAndIsDeletedAndCreatedAtBetween(userId, isDeleted, start, end);
     }
 
+    public List<Category> getAllActiveCategoriesForTheMonth(String userId)
+    {
+        return this.categoryRepo.findByUserIdAndIsDeleted(userId, false);
+    }
+
     //find category by name and userId
     public Category getCategoryByNameAndUserId(String name, String userId)
     {

@@ -4,6 +4,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Collection;
 import java.util.stream.Collectors;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,12 @@ public class AuthUtils {
         if (authentication != null && authentication.isAuthenticated() && authentication.getPrincipal() instanceof Jwt) {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             // Assuming "sub" is the key for user ID in the token claims
+            Map<String, Object> claims = jwt.getClaims();
+
+            // Display key-value pairs
+            for (Map.Entry<String, Object> entry : claims.entrySet()) {
+                logger.info("Key: " + entry.getKey() + ", Value: " + entry.getValue());
+            }
             return jwt.getClaim("sub");
         }
         // Return null or handle the case where user ID is not available
@@ -34,6 +41,7 @@ public class AuthUtils {
     {
         String decodedUserId = null;
         String currentUser = this.getCurrentUserId();
+        String temp = getCurrentUserId(); //just trying to print all the key value pairs
         try {
             decodedUserId = URLDecoder.decode(id, "UTF-8");
         } catch (UnsupportedEncodingException e) {

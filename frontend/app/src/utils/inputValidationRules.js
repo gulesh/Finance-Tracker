@@ -53,7 +53,7 @@ export function shouldBeAlphaNumeric(inputName) {
 
 function isValueAlphaNumeric(input) {
   // Regular expression to match only alphanumeric characters
-  const alphanumericRegex = /^[a-zA-Z]+[a-zA-Z0-9]*$/;
+  const alphanumericRegex = /^[a-zA-Z][a-zA-Z0-9\s]*$/;
 
   // Test if the input matches the alphanumeric pattern
   return alphanumericRegex.test(input);

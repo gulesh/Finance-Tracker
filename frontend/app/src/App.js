@@ -18,6 +18,7 @@ import Profile from './routes/Profile';
 import { AuthenticationGuard } from './components/AuthenticationGuard'
 import Goal from './routes/Goal';
 import { useAuth0 } from "@auth0/auth0-react";
+import Analysis from './routes/Analysis';
 
 function App() {
   const [open, setOpen] = useState(true);
@@ -34,71 +35,75 @@ function App() {
   return (
     <>
       {/* <Router> */}
-        <Header />
-        <Content open={open}>
-          <NavBar
-            handleDrawerOpen={handleDrawerOpen}
-            handleDrawerClose={handleDrawerClose}
-            open={open}
-            isAuthenticated={isAuthenticated}
+      <Header />
+      <Content open={open}>
+        <NavBar
+          handleDrawerOpen={handleDrawerOpen}
+          handleDrawerClose={handleDrawerClose}
+          open={open}
+          isAuthenticated={isAuthenticated}
+        />
+        {/* <Auth0ProviderWithNavigate> */}
+        <Routes>
+          <Route path="/" element={<Profile />} />
+          <Route
+            path="/profile"
+            element={<AuthenticationGuard component={Profile} />}
           />
-          {/* <Auth0ProviderWithNavigate> */}
-          <Routes>
-            <Route path="/" element={<Profile />} />
-            <Route
-              path="/profile"
-              element={<AuthenticationGuard component={Profile} />}
-            />
-            <Route
-              path="/home"
-              element={<AuthenticationGuard component={Home} />}
-            />
+          <Route
+            path="/home"
+            element={<AuthenticationGuard component={Home} />}
+          />
 
-            <Route
-              path="/expenses"
-              element={<AuthenticationGuard component={Expense} />}
-            />
-            <Route
-              path="/categories"
-              element={<AuthenticationGuard component={Category} />}
-            />
-            <Route
-              path="/accounts"
-              element={<AuthenticationGuard component={Account} />}
-            />
-            <Route
-              path="/transfers"
-              element={<AuthenticationGuard component={Transfer} />}
-            />
-            <Route
-              path="/contact"
-              element={<AuthenticationGuard component={Contact} />}
-            />
-            <Route
-              path="/goal"
-              element={<AuthenticationGuard component={Goal} />}
-            />
-            <Route
-              path="/categories/edit/:categoryId"
-              element={<AuthenticationGuard component={EditCategory} />}
-            />
-            <Route
-              path="/accounts/edit/:accountId"
-              element={<AuthenticationGuard component={EditAccount} />}
-            />
-            <Route
-              path="/expenses/edit/:expenseId"
-              element={<AuthenticationGuard component={EditExpense} />}
-            />
-            <Route
-              path="/transfers/edit/:transferId"
-              element={<AuthenticationGuard component={EditTransfer} />}
-            />
-            {/* <Route path="*" element={<NotFoundPage />} />  this will be used when user tries to go to different route*/}
-          </Routes>
-          {/* </Auth0ProviderWithNavigate> */}
-        </Content>
-        <Footer />
+          <Route
+            path="/expenses"
+            element={<AuthenticationGuard component={Expense} />}
+          />
+          <Route
+            path="/categories"
+            element={<AuthenticationGuard component={Category} />}
+          />
+          <Route
+            path="/accounts"
+            element={<AuthenticationGuard component={Account} />}
+          />
+          <Route
+            path="/transfers"
+            element={<AuthenticationGuard component={Transfer} />}
+          />
+          <Route
+            path="/contact"
+            element={<AuthenticationGuard component={Contact} />}
+          />
+          <Route
+            path="/goal"
+            element={<AuthenticationGuard component={Goal} />}
+          />
+          <Route
+            path="/analysis"
+            element={<AuthenticationGuard component={Analysis} />}
+          />
+          <Route
+            path="/categories/edit/:categoryId"
+            element={<AuthenticationGuard component={EditCategory} />}
+          />
+          <Route
+            path="/accounts/edit/:accountId"
+            element={<AuthenticationGuard component={EditAccount} />}
+          />
+          <Route
+            path="/expenses/edit/:expenseId"
+            element={<AuthenticationGuard component={EditExpense} />}
+          />
+          <Route
+            path="/transfers/edit/:transferId"
+            element={<AuthenticationGuard component={EditTransfer} />}
+          />
+          {/* <Route path="*" element={<NotFoundPage />} />  this will be used when user tries to go to different route*/}
+        </Routes>
+        {/* </Auth0ProviderWithNavigate> */}
+      </Content>
+      <Footer />
       {/* </Router> */}
     </>
   );

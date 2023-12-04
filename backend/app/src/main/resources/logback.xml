@@ -11,7 +11,7 @@
         </encoder>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
              <!-- Daily rollover -->
-            <fileNamePattern>backend/app/src/logs/applogs.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/applogs.%d{yyyy-MM-dd}.log</fileNamePattern>
         </rollingPolicy>
     </appender>
     <!-- Set a higher log level for a specific package -->

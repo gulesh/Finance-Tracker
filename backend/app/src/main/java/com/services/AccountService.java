@@ -37,6 +37,11 @@ public class AccountService {
         return this.accountRepo.findByUserId(userId);
     }
 
+    public List<Account> getAllActiveAccountsForTheUser(String userId)
+    {
+        return this.accountRepo.findByUserIdAndIsDeleted(userId, false);
+    }
+
     public List<Account> getAllUserAccountsForTheMonth(String userId, boolean isDeleted, LocalDateTime start, LocalDateTime end)
     {
         return this.accountRepo.findByUserIdAndIsDeletedAndCreatedAtBetween(userId, isDeleted, start, end);

@@ -2,8 +2,6 @@ package com.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
@@ -47,18 +45,13 @@ public class AccountController {
      public ResponseEntity<List<Account>> showAllAccounts(@RequestParam("userId") String encodedUserId) {
         try
         {
-            LocalDateTime now = LocalDateTime.now();
-            Month currentMonth = now.getMonth();
-            int currretYear = now.getYear();
-            LocalDateTime startOfMonth = LocalDateTime.of(currretYear, currentMonth, 1, 0, 0);
-            LocalDateTime endOfMonth = LocalDateTime.of(currretYear, currentMonth, 30, 23, 59);
             
             String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
             logger.info("currUserIdDecoded: " + decodedUserId);
             
-            logger.info("Fetching all accounts for the month: " + currentMonth);
-            List<Account> userAccounts = this.accountService.getAllUserAccountsForTheMonth(decodedUserId, false, startOfMonth, endOfMonth);
-            return ResponseEntity.ok(userAccounts);
+            logger.info("Fetching all Active accounts for the user : " + decodedUserId);
+            List<Account> activeAccounts = this.accountService.getAllUserAccounts(decodedUserId);
+            return ResponseEntity.ok(activeAccounts);
         }
         catch(UnsupportedEncodingException e)
         {

@@ -10,7 +10,8 @@ public class User {
     private String firstName;
     private String lastName;
     @Indexed(unique = true)
-    private int favNumber;
+    private String userId;
+  
     public User()
     {
 
@@ -20,7 +21,7 @@ public class User {
     {
         this.firstName = firstname;
         this.lastName = lastname;
-        this.favNumber = favnum;
+        
     }
 
     @Override
@@ -52,13 +53,6 @@ public class User {
         this.lastName = lastName;
     }
 
-    public int getFavNumber() {
-        return favNumber;
-    }
-
-    public void setFavNumber(int favNumber) {
-        this.favNumber = favNumber;
-    }
     
     
 }

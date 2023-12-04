@@ -2,8 +2,6 @@ package com.controllers;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.List;
 import java.util.Map;
 
@@ -49,18 +47,14 @@ public class CategoryController {
         
         try
         {
-            LocalDateTime now = LocalDateTime.now();
-            Month currentMonth = now.getMonth();
-            int currretYear = now.getYear();
-            LocalDateTime startOfMonth = LocalDateTime.of(currretYear, currentMonth, 1, 0, 0);
-            LocalDateTime endOfMonth = LocalDateTime.of(currretYear, currentMonth, 30, 23, 59);
 
             String decodedUserId = URLDecoder.decode(encodedUserId, "UTF-8");
             logger.info("currUserIdDecoded: " + decodedUserId);
             
-            logger.info("Fetching all categories for the month: " + currentMonth);
-            List<Category> categories = this.categoryService.getAllUserCategoriesForTheMonth(decodedUserId, false, startOfMonth, endOfMonth);
-            return ResponseEntity.ok(categories);
+            logger.info("Fetching all active categories! ");
+            
+            List<Category> activeCategories = this.categoryService.getAllActiveCategoriesForTheMonth(decodedUserId);
+            return ResponseEntity.ok(activeCategories);
         }
         catch (UnsupportedEncodingException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
