@@ -44,6 +44,7 @@ public class YearService {
             usr.getYears().add(newYearPerUser);
             //save the year to years collection as well
             this.yearRepo.save(newYearPerUser);
+            this.userService.addUpdateUser(usr);
         }
         
     }

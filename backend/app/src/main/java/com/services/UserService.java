@@ -33,5 +33,10 @@ public class UserService {
         return this.userRepo.save(user);
     }
 
+    public boolean checkIfUserExists(String userId)
+    {
+        return this.userRepo.existsByUserId(userId);
+    }
+
     
 }

@@ -21,13 +21,13 @@ import com.entities.User;
 
 @Component
 public class AuthUtils {
-    private final UserService userServices;
+    private final UserService userService;
     private static final Logger logger = LoggerFactory.getLogger(AuthUtils.class);
 
     @Autowired
-    public AuthUtils(UserService userservices)
+    public AuthUtils(UserService userservice)
     {
-        this.userServices = userservices;
+        this.userService = userservice;
     }
 
     public String getCurrentUserId() {
@@ -37,17 +37,17 @@ public class AuthUtils {
             Jwt jwt = (Jwt) authentication.getPrincipal();
             // Assuming "sub" is the key for user ID in the token claims
             String userId = jwt.getClaim("sub");
-            User user = this.userServices.getUserByuserId(userId);
+            User existinUser = this.userService.getUserByuserId(userId);
             LocalDateTime now = LocalDateTime.now();
-            if(user != null)
+            if(existinUser != null)
             {
-                user.setLastSignIn(now);
-                this.userServices.addUpdateUser(user);
+                existinUser.setLastSignIn(now);
+                this.userService.addUpdateUser(existinUser);
             } 
             else
             {
                 User newUser = new User(userId, now);
-                this.userServices.addUpdateUser(newUser);
+                this.userService.addUpdateUser(newUser);
             }
             return userId;
         }

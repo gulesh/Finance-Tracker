@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection="months")
 @CompoundIndexes({
-    @CompoundIndex(name = "userId_monthName_year", def = "{ 'userId': 1, nameOfTheMonth': 1, 'year': 1}", unique = true)
+        @CompoundIndex(name = "userId_monthName_year", def = "{ 'userId': 1, 'nameOfTheMonth': 1, 'year': 1}", unique = true)
 })
 public class Month {
     @Id

@@ -48,8 +48,8 @@ public class MonthService {
         this.yearService = yearservice;
     }
     
-    //@Scheduled(cron = "0 * * * * ?")
-    @Scheduled(cron = "0 59 23 28-31 * ?") //run on last day of the month at 11:59 PM;
+    @Scheduled(cron = "0 * * * * ?")
+    //@Scheduled(cron = "0 59 23 28-31 * ?") //run on last day of the month at 11:59 PM;
     @Transactional
     public void AddDataToMonthCollectionAtTheEndOfTheMonth()
     {
@@ -66,6 +66,8 @@ public class MonthService {
             for(User usr: users)
             {
                 String userid = usr.getUserId();
+                logger.info("user is " + userid);
+
                 Month newMonthPerUser = new Month(monthName, userid, currentYear);
                 List<Category> categoriesForTheUserForTheMonth = this.categoryService.getAllActiveCategoriesForTheMonth(userid);
                 List<Expense> expensesForTheUserForTheMonth = this.expenseService.getCurrrentMonthActiveExpensesForTheUser(userid);
@@ -87,13 +89,13 @@ public class MonthService {
                     // Add the category to the batch for update
                     updatedCategories.add(cat);
                 }
-
+                logger.info("categories are edited!");
                 //add expenses and transfer to the month
                 newMonthPerUser.setExpenses(expensesForTheUserForTheMonth);
                 newMonthPerUser.setTransfers(transfersForTheUserForTheMonth);
                 this.monthRepo.save(newMonthPerUser);
                 this.categoryService.saveAllcCategories(updatedCategories);
-
+                logger.info("saved categories are edited!");
                 for (Expense expense : expensesForTheUserForTheMonth) {
                     expense.setDeleted(true);
                 }
@@ -111,11 +113,11 @@ public class MonthService {
                 {
                     yearforuser = new Year(currentYear, userid);
                     usr.getYears().add(yearforuser);
+                    this.userService.addUpdateUser(usr);
                 }
                 yearforuser.getMonths().add(newMonthPerUser);
                 this.yearService.saveYear(yearforuser);
-                this.userService.addUpdateUser(usr);
-                
+                 
             }
             
             logger.info("The Schedule trsanction for the month " + "monthName"  + " and year " + currentYear + " is complete for all users!");
