@@ -1,0 +1,21 @@
+<configuration>
+    <!-- Defin the default log level-->
+    <root level="DEBUG">
+        <appender-ref ref="FILE"/>
+    </root>
+    <!-- Console Appender -->
+    <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+        <file>src/logs/applogs.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+             <!-- Daily rollover -->
+            <fileNamePattern>logs/applogs.%d{yyyy-MM-dd}.log</fileNamePattern>
+        </rollingPolicy>
+    </appender>
+    <!-- Set a higher log level for a specific package -->
+    <logger name="com.app" level="DEBUG">
+        <appender-ref ref="FILE" />
+    </logger>
+</configuration>
