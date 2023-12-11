@@ -1,23 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import { LoginButton } from '../buttons/LoginButton'
 import { LogoutButton } from "../buttons/LogoutButton";
 import { SignupButton } from "../buttons/SignupButton";
+import axios from 'axios'
 import { Avatar, Box, Container, Paper, Typography } from "@mui/material";
 
 const Profile = () => {
-    const { isAuthenticated, user } = useAuth0();
-     
-    if (isAuthenticated) {
-       const userEmail = user.email;
-       const userId = user.sub;
+    const [count , setCount] = useState(0);
+    
+    const { isAuthenticated, getAccessTokenSilently, user } = useAuth0();
 
-       // Now you can use userEmail and userId in your application logic
-       console.log("User Email:", userEmail);
-       console.log("User ID:", userId);
-       console.log(isAuthenticated)
-
-     }
+    useEffect(() => {
+      const fetchData = async () => {
+        try {
+          // Perform the root request only on the first render
+          console.log(isAuthenticated && count === 0);
+          if (isAuthenticated && count === 0) {
+            const token = await getAccessTokenSilently();
+            const res = await axios.get("http://localhost:8080/", {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+              params: {
+                userId: user?.sub,
+              },
+            });
+            console.log(res.data);
+            setCount(1); // Update count to prevent future re-renders from making additional requests
+          }
+        } catch (error) {
+          console.error("Error making request:", error);
+        }
+      };
+      if (isAuthenticated) {
+        fetchData();
+      }
+    }, [isAuthenticated, count, user, getAccessTokenSilently]);
 
     return (
       <Container maxWidth="sm">

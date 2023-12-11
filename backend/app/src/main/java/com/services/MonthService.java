@@ -105,7 +105,7 @@ public class MonthService {
                     transfer.setDeleted(true);
                 }
                 this.transferService.saveAllTransfers(transfersForTheUserForTheMonth);
-                logger.info("The Schedule trsanction for the month " + monthName  + " and year " + currentYear + " is complete for the user: " + userid);
+                logger.info("The Schedule trsanction for the month: " + monthName  + " and year " + currentYear + " is complete for the user: " + userid);
 
                 //next add add to the years collections as well for the user:
                 Year yearforuser = this.yearService.getYearByUserAndyearNumber(userid, currentYear);
@@ -120,7 +120,7 @@ public class MonthService {
                  
             }
             
-            logger.info("The Schedule trsanction for the month " + "monthName"  + " and year " + currentYear + " is complete for all users!");
+            logger.info("The Schedule trsanction for the month " + monthName  + " and year " + currentYear + " is complete for all users!");
         }
         catch (Exception e)
         {
